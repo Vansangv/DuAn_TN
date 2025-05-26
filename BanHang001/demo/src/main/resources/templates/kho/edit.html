@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chỉnh sửa Kho</title>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 60px;
+            max-width: 600px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 30px;
+        }
+        .form-label i {
+            margin-right: 8px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2><i class="fas fa-edit"></i> Chỉnh sửa kho</h2>
+    <form th:action="@{/kho/edit}" th:object="${kho}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="mb-3">
+            <label for="sanPhamChiTiet" class="form-label">
+                <i class="fas fa-box"></i> Sản phẩm
+            </label>
+            <select class="form-select" th:field="*{sanPhamChiTiet}" id="sanPhamChiTiet" required>
+                <option disabled value="">-- Chọn sản phẩm --</option>
+                <option th:each="spct : ${sanPhamChiTietList}"
+                        th:value="${spct.id}"
+                        th:text="${spct.sanPham.tenSanPham}"
+                        th:selected="${spct.id == kho.sanPhamChiTiet.id}"></option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="soLuong" class="form-label">
+                <i class="fas fa-sort-numeric-up"></i> Số lượng
+            </label>
+            <input type="number" class="form-control" th:field="*{soLuong}" id="soLuong" min="0" required>
+        </div>
+
+        <div class="form-actions">
+            <a th:href="@{/kho}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Cập nhật
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

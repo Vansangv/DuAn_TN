@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê Doanh Thu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+            color: #333;
+        }
+
+        header {
+            background-color: #0044cc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .left-column {
+            width: 60%;
+            padding-right: 20px;
+        }
+
+        .right-column {
+            width: 35%;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .filter-form label {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .filter-form select {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .filter-form button {
+            background-color: #0044cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .filter-form button:hover {
+            background-color: #0033aa;
+        }
+
+        h2, h3 {
+            color: #0044cc;
+        }
+
+        .statistics-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .statistics-summary div {
+            text-align: center;
+        }
+
+        .statistics-summary strong {
+            display: block;
+            font-size: 24px;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        canvas {
+            width: 100%;
+            height: 300px;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📊 Thống Kê Doanh Thu</h1>
+</header>
+
+<div class="container">
+    <div class="left-column">
+        <form action="#" th:action="@{/admin/thong-ke}" method="get" class="filter-form">
+            <label for="filter">Lọc theo:</label>
+            <select name="filter" id="filter" th:value="${filter}">
+                <option value="day">Ngày</option>
+                <option value="month">Tháng</option>
+                <option value="year">Năm</option>
+            </select>
+            <button type="submit">Lọc</button>
+        </form>
+
+        <div class="statistics-summary">
+            <div>
+                <h3>🧾 Số đơn hàng</h3>
+                <strong th:text="${todayOrders}">0</strong>
+            </div>
+            <div>
+                <h3>💰 Doanh thu</h3>
+                <strong th:text="${todayRevenue}">0</strong> VNĐ
+            </div>
+        </div>
+
+        <h3>🔥 Sản phẩm bán chạy</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Tổng số lượng bán</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="sp : ${topSellingProducts}">
+                <td th:text="${sp.tenSanPham}">Sản phẩm</td>
+                <td th:text="${sp.tongSoLuong}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="right-column">
+        <!-- Doanh thu theo ngày -->
+        <h3 th:if="${filter == 'day'}">📈 Doanh thu theo ngày trong tháng</h3>
+        <canvas id="barChart" th:if="${filter == 'day'}"></canvas>
+
+        <!-- Doanh thu theo tháng -->
+        <h3 th:if="${filter == 'month'}">📈 Doanh thu theo tháng trong năm</h3>
+        <canvas id="barChart2" th:if="${filter == 'month'}"></canvas>
+
+        <!-- Doanh thu theo năm -->
+        <h3 th:if="${filter == 'year'}">📈 Doanh thu theo năm</h3>
+        <canvas id="barChart3" th:if="${filter == 'year'}"></canvas>
+
+        <!-- Biểu đồ sản phẩm bán chạy -->
+        <h3>📦 Biểu đồ sản phẩm bán chạy (Pie)</h3>
+        <canvas id="topSellingChartPie"></canvas>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+    /* Biểu đồ doanh thu theo ngày */
+    [[${filter}]] == 'day' ? (() => {
+        const days = [[${doanhThuNgay}]].map(item => item.thoiGian);
+        const revenueByDay = [[${doanhThuNgay}]].map(item => item.tongTien);
+
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: days,
+                datasets: [{
+                    label: 'Doanh thu theo ngày',
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    data: revenueByDay
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Doanh thu theo ngày trong tháng'
+                    }
+                }
+            }
+        });
+    })() : null;
+
+    /* Biểu đồ doanh thu theo tháng */
+    [[${filter}]] == 'month' ? (() => {
+        const months = [[${doanhThuThang}]].map(item => item.thoiGian);
+        const revenueByMonth = [[${doanhThuThang}]].map(item => item.tongTien);
+
+        new Chart(document.getElementById('barChart2'), {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Doanh thu theo tháng',
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    data: revenueByMonth
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Doanh thu theo tháng trong năm'
+                    }
+                }
+            }
+        });
+    })() : null;
+
+    /* Biểu đồ doanh thu theo năm */
+    [[${filter}]] == 'year' ? (() => {
+        const years = [[${doanhThuNam}]].map(item => item.thoiGian);
+        const revenueByYear = [[${doanhThuNam}]].map(item => item.tongTien);
+
+        new Chart(document.getElementById('barChart3'), {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Doanh thu theo năm',
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    data: revenueByYear
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Doanh thu theo năm'
+                    }
+                }
+            }
+        });
+    })() : null;
+
+    /* Biểu đồ sản phẩm bán chạy */
+
+    /* Biểu đồ hình tròn cho sản phẩm bán chạy */
+    (() => {
+        const productNames = [[${topSellingProducts}]].map(item => item.tenSanPham);
+        const quantitiesSold = [[${topSellingProducts}]].map(item => item.tongSoLuong);
+
+        const backgroundColors = [
+            'rgba(255, 99, 132, 0.6)',
+            'rgba(54, 162, 235, 0.6)',
+            'rgba(255, 206, 86, 0.6)',
+            'rgba(75, 192, 192, 0.6)',
+            'rgba(153, 102, 255, 0.6)',
+            'rgba(255, 159, 64, 0.6)',
+            'rgba(199, 199, 199, 0.6)',
+            'rgba(83, 102, 255, 0.6)',
+            'rgba(102, 255, 178, 0.6)',
+            'rgba(255, 102, 255, 0.6)'
+        ];
+
+        new Chart(document.getElementById('topSellingChartPie'), {
+            type: 'pie',
+            data: {
+                labels: productNames,
+                datasets: [{
+                    label: 'Số lượng bán',
+                    backgroundColor: backgroundColors.slice(0, productNames.length),
+                    data: quantitiesSold
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Tỷ lệ sản phẩm bán chạy (Pie Chart)'
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    })();
+</script>
+
+</body>
+</html>

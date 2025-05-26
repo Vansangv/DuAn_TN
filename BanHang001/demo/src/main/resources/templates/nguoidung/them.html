@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm người dùng</title>
+    <meta charset="UTF-8">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+    <script>
+        function validateForm() {
+            let isValid = true;
+
+            const tenDangNhap = document.getElementById("tenDangNhap").value.trim();
+            const matKhau = document.getElementById("matKhau").value.trim();
+            const hoTen = document.getElementById("hoTen").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const soDienThoai = document.getElementById("soDienThoai").value.trim();
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^[0-9]{9,15}$/;
+
+            // Xóa thông báo lỗi cũ
+            document.getElementById("tenDangNhapError").innerText = "";
+            document.getElementById("matKhauError").innerText = "";
+            document.getElementById("hoTenError").innerText = "";
+            document.getElementById("emailError").innerText = "";
+            document.getElementById("soDienThoaiError").innerText = "";
+
+            // Kiểm tra tên đăng nhập
+            if (tenDangNhap === "") {
+                document.getElementById("tenDangNhapError").innerText = "Vui lòng nhập tên đăng nhập.";
+                isValid = false;
+                hideErrorAfterDelay("tenDangNhapError");
+            }
+
+            // Kiểm tra mật khẩu
+            if (matKhau === "") {
+                document.getElementById("matKhauError").innerText = "Vui lòng nhập mật khẩu.";
+                isValid = false;
+                hideErrorAfterDelay("matKhauError");
+            }
+
+            // Kiểm tra họ tên
+            if (hoTen === "") {
+                document.getElementById("hoTenError").innerText = "Vui lòng nhập họ tên.";
+                isValid = false;
+                hideErrorAfterDelay("hoTenError");
+            }
+
+            // Kiểm tra email
+            if (email === "") {
+                document.getElementById("emailError").innerText = "Vui lòng nhập email.";
+                isValid = false;
+                hideErrorAfterDelay("emailError");
+            } else if (!emailRegex.test(email)) {
+                document.getElementById("emailError").innerText = "Email không đúng định dạng.";
+                isValid = false;
+                hideErrorAfterDelay("emailError");
+            }
+
+            // Kiểm tra số điện thoại
+            if (soDienThoai === "") {
+                document.getElementById("soDienThoaiError").innerText = "Vui lòng nhập số điện thoại.";
+                isValid = false;
+                hideErrorAfterDelay("soDienThoaiError");
+            } else if (!phoneRegex.test(soDienThoai)) {
+                document.getElementById("soDienThoaiError").innerText = "Số điện thoại không hợp lệ (9-15 chữ số).";
+                isValid = false;
+                hideErrorAfterDelay("soDienThoaiError");
+            }
+
+            return isValid;
+        }
+
+        // Hàm để ẩn thông báo lỗi sau 2 giây
+        function hideErrorAfterDelay(errorId) {
+            setTimeout(function() {
+                document.getElementById(errorId).innerText = "";
+            }, 2000);
+        }
+    </script>
+
+</head>
+<body>
+<h2>Thêm người dùng</h2>
+<form th:action="@{/nguoi-dung/them}" th:object="${nguoiDung}" method="post" onsubmit="return validateForm();">
+
+    <label>Tên đăng nhập:</label>
+    <input type="text" th:field="*{tenDangNhap}" id="tenDangNhap"/>
+    <div id="tenDangNhapError" class="error-message"></div><br/>
+
+    <label>Mật khẩu:</label>
+    <input type="password" th:field="*{matKhau}" id="matKhau"/>
+    <div id="matKhauError" class="error-message"></div><br/>
+
+    <label>Họ tên:</label>
+    <input type="text" th:field="*{hoTen}" id="hoTen"/>
+    <div id="hoTenError" class="error-message"></div><br/>
+
+    <label>Email:</label>
+    <input type="email" th:field="*{email}" id="email"/>
+    <div id="emailError" class="error-message"></div><br/>
+
+    <label>Số điện thoại:</label>
+    <input type="text" th:field="*{soDienThoai}" id="soDienThoai"/>
+    <div id="soDienThoaiError" class="error-message"></div><br/>
+
+    <label>Địa chỉ:</label>
+    <input type="text" th:field="*{diaChi}"/><br/>
+
+    <label>Trạng thái:</label>
+    <input type="checkbox" th:field="*{trangThai}" checked/><br/>
+
+    <button type="submit">Thêm mới</button>
+    <a th:href="@{/nguoi-dung}">Quay lại</a>
+</form>
+</body>
+</html>

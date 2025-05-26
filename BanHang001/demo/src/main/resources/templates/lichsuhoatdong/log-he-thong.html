@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lịch sử đăng nhập</title>
+</head>
+<body>
+<h2>Lịch sử đăng nhập</h2>
+<table border="1">
+    <thead>
+    <tr>
+
+        <th>Tên người dùng</th>
+        <th>Thời gian</th>
+        <th>Hành động</th>
+        <th>IP</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="log : ${logs}">
+        <td th:text="${log.nguoiDung.hoTen}"></td>
+        <td th:text="${log.thoiGian}"></td>
+        <td th:text="${log.hanhDong}"></td>
+        <td th:text="${log.ip}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

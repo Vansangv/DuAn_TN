@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lịch sử đăng nhập</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body class="container mt-5">
+<h2 class="mb-4">Lịch sử đăng nhập</h2>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+    <tr>
+        <th>Thời gian</th>
+        <th>Địa chỉ IP</th>
+        <th>Thiết bị</th>
+        <th>Trạng thái</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${lichSuDangNhap}">
+        <td th:text="${#dates.format(item.thoiGianDangNhap, 'dd/MM/yyyy HH:mm:ss')}">Thời gian</td>
+        <td th:text="${item.diaChiIp}">IP</td>
+        <td th:text="${item.thietBi}">Thiết bị</td>
+        <td>
+            <span th:if="${item.thanhCong}" class="text-success">Thành công</span>
+            <span th:unless="${item.thanhCong}" class="text-danger">Thất bại</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

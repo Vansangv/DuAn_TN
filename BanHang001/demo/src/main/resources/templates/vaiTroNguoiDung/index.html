@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách Vai trò người dùng</title>
+</head>
+<body>
+<h2>Danh sách Vai trò người dùng</h2>
+
+<!-- Form lọc theo vai trò -->
+<form th:action="@{/vai-tro-nguoi-dung}" method="get">
+    <label for="searchVaiTro">Lọc theo vai trò:</label>
+    <select name="searchVaiTro" id="searchVaiTro">
+        <option value="">Tất cả vai trò</option>
+        <option th:each="vaiTro : ${vaiTros}"
+                th:value="${vaiTro.tenVaiTro}"
+                th:text="${vaiTro.tenVaiTro}"
+                th:selected="${vaiTro.tenVaiTro == searchVaiTro}">
+        </option>
+    </select>
+
+    <label for="searchNguoiDung">Tìm người dùng:</label>
+    <input type="text" name="searchNguoiDung" placeholder="Nhập tên người dùng" th:value="${searchNguoiDung}" />
+
+    <button type="submit">Lọc</button>
+</form>
+<a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/vai-tro-nguoi-dung/add}">
+    <button type="button">+ Thêm vai trò</button>
+</a>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Người dùng</th>
+        <th>Vai trò</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="vaiTroNguoiDung : ${vaiTroNguoiDungs.content}">
+        <td th:text="${vaiTroNguoiDung.id}">ID</td>
+        <td th:text="${vaiTroNguoiDung.nguoiDung.hoTen}">Tên người dùng</td>
+        <td th:text="${vaiTroNguoiDung.vaiTro.tenVaiTro}">Tên vai trò</td>
+        <td>
+            <!-- Form để cập nhật vai trò -->
+            <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                  th:action="@{|/vai-tro-nguoi-dung/update/${vaiTroNguoiDung.id}|}" method="post">
+                <select name="vaiTroId">
+                    <option value="" disabled selected>Chọn vai trò</option>
+                    <option th:each="vaiTro : ${vaiTros}"
+                            th:value="${vaiTro.id}"
+                            th:text="${vaiTro.tenVaiTro}"></option>
+                </select>
+                <button type="submit">Cập nhật</button>
+            </form>
+
+
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Phân trang -->
+<div>
+    <span>Trang: </span>
+    <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">1</span>
+    <div>
+        <span th:if="${currentPage > 0}">
+            <a th:href="@{/vai-tro-nguoi-dung(page=0, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">Đầu</a> |
+            <a th:href="@{/vai-tro-nguoi-dung(page=${currentPage - 1}, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">Trước</a> |
+        </span>
+        <span th:if="${currentPage < totalPages - 1}">
+            <a th:href="@{/vai-tro-nguoi-dung(page=${currentPage + 1}, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">Sau</a> |
+            <a th:href="@{/vai-tro-nguoi-dung(page=${totalPages - 1}, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">Cuối</a>
+        </span>
+    </div>
+</div>
+
+</body>
+</html>

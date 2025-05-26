@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Chủ - Bán Hàng Online</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand" href="#">🛍️ Bán Hàng</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+        <!-- Menu chính -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link active" href="/home">Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/san-pham">Sản phẩm</a></li>
+            <li class="nav-item"><a class="nav-link" href="/gio-hang">Giỏ hàng</a></li>
+            <li class="nav-item"><a class="nav-link" href="/phieu-nhap">Phiếu nhập</a></li>
+            <li class="nav-item"><a class="nav-link" href="/thong-bao">Thông báo</a></li>
+            <li class="nav-item"><a class="nav-link" href="/log-he-thong">Hoạt động</a></li>
+        </ul>
+
+        <!-- Tìm kiếm -->
+        <form class="d-flex me-2" th:action="@{/tim-kiem}" method="get">
+            <input class="form-control me-2" name="keyword" type="search" placeholder="Tìm kiếm...">
+            <button class="btn btn-outline-light" type="submit">Tìm</button>
+        </form>
+
+        <!-- Giỏ hàng -->
+        <a href="/gio-hang" class="btn btn-warning me-2">
+            <i class="fas fa-shopping-cart"></i> Giỏ hàng
+        </a>
+
+        <!-- Dropdown người dùng -->
+        <div class="dropdown">
+            <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                <li>
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-user"></i>
+                        Xin chào, <span th:text="${tenNguoiDung}">Người dùng</span>
+                    </a>
+                </li>
+
+                <li><a class="dropdown-item" href="#"><i class="fas fa-id-card"></i> Thông tin cá nhân</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Đổi mật khẩu</a></li>
+                <li><a class="dropdown-item" href="/lich-su-dang-nhap"><i class="fas fa-history"></i> Lịch sử đăng nhập</a></li>
+                <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Nội dung sản phẩm -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🔥 Sản phẩm nổi bật</h2>
+    <div class="row g-4">
+        <div class="col-md-3" th:each="sp : ${danhSachSanPham}">
+            <div class="card product-card h-100 shadow-sm">
+                <!-- Hiển thị ảnh sản phẩm -->
+                <img th:src="@{'/images/' + ${sp.anhDaiDien}}" class="card-img-top product-img" alt="Ảnh sản phẩm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title" th:text="${sp.tenSanPham}">Tên sản phẩm</h5>
+                    <p class="card-text text-danger fw-bold" th:text="${#numbers.formatDecimal(sp.gia, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</p>
+                    <a th:href="@{'/chi-tiet/' + ${sp.id}}" class="btn btn-outline-primary mt-auto">Xem chi tiết</a>
+                    <form th:action="@{'/them-vao-gio-hang/' + ${sp.id}}" method="post" class="mt-2">
+                        <button type="submit" class="btn btn-success w-100">Thêm vào giỏ hàng</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center p-4 mt-5">
+    © 2025 Bán Hàng Online | Địa chỉ: 243 Khuất Duy Tiến, Nhân Chính, Thanh Xuân, Hà Nội
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

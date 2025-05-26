@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết Sản phẩm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .product-image {
+            width: 80%; /* Đặt ảnh có chiều rộng là 80% so với phần chứa */
+            max-width: 400px; /* Đặt chiều rộng tối đa để không quá lớn */
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            object-fit: cover; /* Giữ tỷ lệ ảnh nhưng cắt bớt phần không cần thiết */
+        }
+
+        .product-details {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .product-details h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .product-details p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .product-details strong {
+            color: #007bff;
+        }
+
+        .icon {
+            color: #007bff;
+            margin-right: 10px;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .image-container {
+            text-align: center; /* Căn giữa ảnh */
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="product-details">
+        <h2><i class="fas fa-info-circle icon"></i>Chi tiết Sản phẩm</h2>
+        <p><strong>ID:</strong> <span th:text="${sanPhamChiTiet.id}"></span></p>
+        <p><strong>Sản phẩm:</strong> <span th:text="${sanPhamChiTiet.sanPham.tenSanPham}"></span></p>
+
+        <!-- Ảnh sản phẩm -->
+        <div class="image-container">
+            <img th:src="@{/uploads/{fileName}(fileName=${sanPhamChiTiet.sanPham.anhDaiDien})}" alt="Ảnh sản phẩm" class="product-image" />
+        </div>
+
+        <p><strong><i class="fas fa-palette icon"></i>Màu sắc:</strong> <span th:text="${sanPhamChiTiet.mauSac.tenMau}"></span></p>
+        <p><strong><i class="fas fa-ruler icon"></i>Kích cỡ:</strong> <span th:text="${sanPhamChiTiet.kichCo.tenKichCo}"></span></p>
+        <p><strong><i class="fas fa-sort-numeric-up icon"></i>Số lượng:</strong> <span th:text="${sanPhamChiTiet.soLuong}"></span></p>
+
+        <div class="form-footer">
+            <a th:href="@{/san-pham-chi-tiet}" class="back-link"><i class="fas fa-arrow-left"></i> Quay lại danh sách</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

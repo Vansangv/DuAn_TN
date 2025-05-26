@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm phiếu nhập</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">Thêm phiếu nhập</h2>
+
+    <!-- Form Thêm Phiếu Nhập -->
+    <form th:action="@{/phieu-nhap/luu}" th:object="${phieuNhap}" method="post">
+
+        <!-- Người nhập -->
+        <div class="mb-3">
+            <label for="nguoiNhap" class="form-label">Người nhập:</label>
+            <select th:field="*{nguoiNhap}" class="form-select" id="nguoiNhap">
+                <option th:each="nd : ${nguoiDungs}" th:value="${nd.id}" th:text="${nd.hoTen}"></option>
+            </select>
+        </div>
+
+        <!-- Ghi chú -->
+        <div class="mb-3">
+            <label for="ghiChu" class="form-label">Ghi chú:</label>
+            <textarea th:field="*{ghiChu}" class="form-control" id="ghiChu" rows="4" placeholder="Nhập ghi chú..."></textarea>
+        </div>
+
+        <!-- Nút Lưu -->
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-save"></i> Lưu
+        </button>
+
+        <!-- Quay lại danh sách -->
+        <a th:href="@{/phieu-nhap}" class="btn btn-secondary ms-2">
+            <i class="fas fa-arrow-left"></i> Quay lại danh sách
+        </a>
+    </form>
+</div>
+
+<!-- Bootstrap JS & Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

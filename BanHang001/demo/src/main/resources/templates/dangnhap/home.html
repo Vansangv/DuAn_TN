@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Trang chủ</title>
+</head>
+<body>
+<h1>Trang chủ</h1>
+<p th:text="${message}"></p>
+<a href="/login">Đăng xuất</a><br>
+<a href="/lich-su-dang-nhap">Lịch sử đăng nhập</a><br>
+<a href="/phieu-nhap">Phiếu nhập</a><br>
+<a href="/log-he-thong">Hoạt động gần đây </a><br>
+<a href="/thong-bao">Thông báo </a><br>
+<a href="/gio-hang/nguoi-dung">gio hang</a><br>
+<a href="/ma-giam-gia">Ma giam gia</a><br>
+
+<!-- Nút chuyển sang trang đổi mật khẩu -->
+<p>Bạn quên mật khẩu?</p>
+<a th:href="@{/change-password}">
+    <button type="button">Đổi mật khẩu</button>
+</a>
+
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý Giỏ hàng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h2, h3 {
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 30px;
+        }
+
+        .highlight {
+            background-color: #e7f9e7;
+            padding: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #4CAF50;
+            display: flex;
+            align-items: center;
+        }
+
+        .error {
+            background-color: #ffe0e0;
+            padding: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #d8000c;
+            display: flex;
+            align-items: center;
+            color: #d8000c;
+        }
+
+        .error i, .highlight i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button, select {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .no-items {
+            color: #888;
+            font-size: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .form-block {
+            margin-bottom: 30px;
+        }
+
+        .add-user-button {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            display: inline-block;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .add-user-button:hover {
+            background-color: #1976D2;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            padding: 8px 16px;
+            margin: 0 5px;
+            text-decoration: none;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .pagination .active {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+
+    <!-- 🛒 DANH SÁCH SẢN PHẨM TRONG GIỎ -->
+    <h2>
+        Danh sách Sản phẩm trong Giỏ hàng
+        <span th:if="${gioHang != null}">
+    - ID: <span th:text="${gioHang.id ?: 'N/A'}"></span>
+    </span>
+    </h2>
+
+    <table th:if="${gioHang != null && !#lists.isEmpty(danhSachSanPham)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Giỏ hàng ID</th>
+            <th>Tên sản phẩm</th>
+            <th>Màu sắc</th>
+            <th>Kích cỡ</th>
+            <th>Số lượng</th>
+            <th><i class="fas fa-cogs"></i> Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="sp : ${danhSachSanPham}">
+            <td th:text="${sp.id}"></td>
+            <td th:text="${sp.gioHang.id}"></td>
+            <td th:text="${sp.sanPhamChiTiet.sanPham.tenSanPham}"></td>
+            <td th:text="${sp.sanPhamChiTiet.mauSac.tenMau}"></td>
+            <td th:text="${sp.sanPhamChiTiet.kichCo.tenKichCo}"></td>
+            <td th:text="${sp.soLuong}"></td>
+            <td>
+                <form th:action="@{/gio-hang/huy_san_pham}" method="post" style="display:inline;">
+                    <input type="hidden" name="sanPhamTrongGioHangId" th:value="${sp.id}" />
+                    <button type="submit" class="add-user-button" onclick="return confirm('Bạn có chắc muốn hủy sản phẩm này?')">
+                        <i class="fas fa-user-times"></i> Hủy
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:if="${gioHang != null && #lists.isEmpty(danhSachSanPham)}" class="no-items">
+        <p>Không có sản phẩm nào trong giỏ hàng này.</p>
+    </div>
+    <!-- Nút thanh toán -->
+    <div th:if="${gioHang != null && !#lists.isEmpty(danhSachSanPham)}">
+        <form th:action="@{/gio-hang/thanh-toan}" method="get">
+            <input type="hidden" name="gioHangId" th:value="${gioHang.id}" />
+            <button type="submit" class="add-user-button">
+                <i class="fas fa-credit-card"></i> Thanh toán
+            </button>
+        </form>
+    </div>
+
+
+
+    <!--    -->
+
+
+    <h2>Quản lý Giỏ hàng</h2>
+
+    <h3>Chọn người dùng để quản lý giỏ hàng</h3>
+
+    <!-- Form chọn người dùng -->
+    <form class="form-block" th:action="@{/gio-hang/nguoi-dung}" method="get">
+        <label for="nguoiDungId">Người dùng:</label>
+        <select name="id" id="nguoiDungId" required>
+            <option value="" disabled th:selected="${nguoiDungId == null}">-- Chọn người dùng --</option>
+            <option th:each="nd : ${nguoiDungs}"
+                    th:value="${nd.id}"
+                    th:text="${nd.hoTen}"
+                    th:selected="${nd.id == nguoiDungId}">
+            </option>
+        </select>
+        <button type="submit">
+            <i class="fas fa-check-circle"></i> Xác nhận
+        </button>
+        <!-- Thêm nút "Thêm mới người dùng" -->
+        <a href="/gio-hang/them-nguoi-dung" class="add-user-button">
+            <i class="fas fa-user-plus"></i> Thêm mới người dùng
+        </a>
+    </form>
+
+    <!-- Nếu đã chọn người dùng -->
+    <div th:if="${nguoiDungId != null}">
+
+        <!-- Form tạo giỏ hàng mới -->
+        <form method="post" th:action="@{/gio-hang/tao-moi}">
+            <input type="hidden" name="nguoiDungId" th:value="${nguoiDungId}" />
+            <button type="submit">
+                <i class="fas fa-cart-plus"></i> Tạo giỏ hàng mới
+            </button>
+        </form>
+
+        <div th:if="${isNew}" class="highlight">
+            <i class="fas fa-check-circle"></i>
+            <strong>Giỏ hàng mới đã được tạo!</strong>
+        </div>
+
+        <div th:if="${isLimitReached}" class="error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Người dùng này đã có tối đa 10 giỏ hàng. Không thể tạo thêm!</strong>
+        </div>
+
+        <h3 style="margin-top: 30px;">Giỏ hàng của người dùng ID [[${nguoiDungId}]]</h3>
+
+        <div th:if="${#lists.isEmpty(gioHangs)}">
+            <p class="no-items">Không có giỏ hàng nào để hiển thị.</p>
+        </div>
+
+
+        <table th:if="${!#lists.isEmpty(gioHangs)}">
+            <thead>
+            <tr>
+                <th>Mã giỏ hàng</th>
+                <th><i class="fas fa-user"></i> Họ Tên</th>
+                <th><i class="fas fa-calendar-alt"></i> Ngày tạo</th>
+                <th><i class="fas fa-info-circle"></i> Trạng thái</th>
+                <th><i class="fas fa-cogs"></i> Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="gh, iterStat : ${gioHangs}" th:if="${gh.trangThai == 1}">
+                <td th:text="'MGH' + ${gh.id}"></td>
+                <td th:text="${gh.nguoiDung.hoTen}"></td>
+                <td th:text="${#temporals.format(gh.ngayTao, 'dd-MM-yyyy HH:mm')}"></td>
+                <td>
+                    <span>Đang chờ</span> <!-- Chỉ có trạng thái 1 nên cố định là "Đang chờ" -->
+                </td>
+                <td>
+                    <form th:action="@{'/gio-hang/xoa/' + ${gh.id}}" method="post" style="display:inline;">
+                        <input type="hidden" name="nguoiDungId" th:value="${nguoiDungId}" />
+                        <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa giỏ hàng này?')">
+                            <i class="fas fa-trash-alt"></i> Xóa
+                        </button>
+                    </form>
+
+                    <a th:href="@{'/gio-hang/chon/' + ${gh.id} + '?id=' + ${nguoiDungId}}" class="btn btn-select">
+                        <i class="fas fa-check-circle"></i> Chọn
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <!-- PHÂN TRANG -->
+        <div th:if="${totalPages > 1}" class="pagination">
+            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                <a th:href="@{/gio-hang/nguoi-dung(id=${nguoiDungId}, page=${i}, size=${size})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == currentPage} ? 'active' : ''">
+                </a>
+            </span>
+        </div>
+    </div>
+
+    <!-- DANH SÁCH SẢN PHẨM CHI TIẾT -->
+    <h2>Danh sách Sản phẩm Chi Tiết</h2>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên sản phẩm</th>
+            <th>Màu sắc</th>
+            <th>Kích cỡ</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Thêm vào Giỏ hàng</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="spct : ${danhSachSanPhamChiTiet}">
+            <td th:text="${spct.id}"></td>
+            <td th:text="${spct.sanPham.tenSanPham}"></td>
+            <td th:text="${spct.mauSac.tenMau}"></td>
+            <td th:text="${spct.kichCo.tenKichCo}"></td>
+            <td th:text="${spct.soLuong}"></td>
+            <td th:text="${spct.sanPham.gia}"></td>
+
+            <td>
+                <form method="post" th:action="@{/gio-hang/them-san-pham}" th:if="${gioHang != null}">
+                    <input type="hidden" name="gioHangId" th:value="${gioHang.id}" />
+                    <input type="hidden" name="sanPhamChiTietId" th:value="${spct.id}" />
+                    <input type="number" name="soLuong" min="1" th:value="1" max="${spct.soLuong}" required />
+                    <button type="submit">
+                        <i class="fas fa-cart-plus"></i> Thêm vào Giỏ hàng
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Hiển thị thông báo -->
+    <div th:if="${message != null}" class="alert alert-success">
+        <p th:text="${message}"></p>
+    </div>
+    <div th:if="${error != null}" class="alert alert-danger">
+        <p th:text="${error}"></p>
+    </div>
+
+
+</div>
+</body>
+</html>

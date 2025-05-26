@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách người dùng</title>
+</head>
+<body>
+<h2>Danh sách người dùng</h2>
+<form action="#" method="get">
+    <input type="text" name="search" placeholder="Tìm kiếm người dùng" >
+    <button type="submit">Tìm kiếm</button>
+</form>
+
+
+<a th:href="@{/nguoi-dung/them}"
+   th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Thêm mới</a>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tên đăng nhập</th>
+        <th>Họ tên</th>
+        <th>Email</th>
+        <th>SĐT</th>
+        <th>Địa chỉ</th>
+        <th>Trạng thái</th>
+        <th>Ngày tạo</th>
+        <th>Ngày cập nhật</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="nguoiDung : ${nguoiDungs.content}">
+        <td th:text="${nguoiDung.id}">ID</td>
+        <td th:text="${nguoiDung.tenDangNhap}">Tên đăng nhập</td>
+        <td th:text="${nguoiDung.hoTen}">Họ tên</td>
+        <td th:text="${nguoiDung.email}">Email</td>
+        <td th:text="${nguoiDung.soDienThoai}">SĐT</td>
+        <td th:text="${nguoiDung.diaChi}">Địa chỉ</td>
+        <td th:text="${nguoiDung.trangThai ? 'Hoạt động' : 'Khóa'}">Trạng thái</td>
+        <td th:text="${nguoiDung.ngayTao}">Địa chỉ</td>
+        <td th:text="${nguoiDung.ngayCapNhat}">Địa chỉ</td>
+        <td>
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+               th:href="@{'/nguoi-dung/sua/' + ${nguoiDung.id}}">Sửa</a>
+            <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}"> | </span>
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+               th:href="@{'/nguoi-dung/xoa/' + ${nguoiDung.id}}"
+               onclick="return confirm('Bạn có chắc muốn xoá?')">Xoá</a>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+<div>
+    <span th:if="${currentPage > 0}">
+        <a th:href="@{|/nguoi-dung?page=0&search=${search != null ? search : ''}|}">Đầu tiên</a>
+        <a th:href="@{|/nguoi-dung?page=${currentPage - 1}&search=${search != null ? search : ''}|}">Trước</a>
+    </span>
+    <span th:if="${currentPage < totalPages - 1}">
+        <a th:href="@{|/nguoi-dung?page=${currentPage + 1}&search=${search != null ? search : ''}|}">Tiếp</a>
+        <a th:href="@{|/nguoi-dung?page=${totalPages - 1}&search=${search != null ? search : ''}|}">Cuối cùng</a>
+    </span>
+</div>
+
+</body>
+</html>

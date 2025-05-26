@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Menu Sidebar Thu Gọn/Mở Rộng</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+
+        :root {
+
+            --sidebar-width: 270px;
+
+            --sidebar-collapsed: 64px;
+
+            --transition: 0.23s cubic-bezier(.7,.2,.4,1.2);
+
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family: 'Segoe UI', Arial, sans-serif;
+
+            background: #f8f9fa;
+
+        }
+
+        .sidebar {
+
+            width: var(--sidebar-width);
+
+            background: #fff;
+
+            min-height: 100vh;
+
+            box-shadow: 2px 0 8px #eee;
+
+            position: fixed;
+
+            top: 0; left: 0;
+
+            padding-bottom: 40px;
+
+            overflow-y: auto;
+
+            z-index: 10;
+
+            transition: width var(--transition);
+
+        }
+
+        .sidebar.collapsed {
+
+            width: var(--sidebar-collapsed);
+
+            overflow-x: hidden;
+
+        }
+
+        .sidebar h2 {
+
+            padding: 24px 24px 16px 24px;
+
+            margin: 0;
+
+            color: #323232;
+
+            font-size: 1.25rem;
+
+            font-weight: 700;
+
+            letter-spacing: 1px;
+
+            transition: opacity var(--transition);
+
+        }
+
+        .sidebar.collapsed h2 {
+
+            opacity: 0;
+
+            height: 0;
+
+            padding: 0;
+
+            overflow: hidden;
+
+        }
+
+        .toggle-btn {
+
+            position: absolute;
+
+            top: 13px;
+
+            right: 18px;
+
+            width: 36px;
+
+            height: 36px;
+
+            background: #007bff;
+
+            color: #fff;
+
+            border-radius: 50%;
+
+            border: none;
+
+            font-size: 1.2rem;
+
+            cursor: pointer;
+
+            transition: right var(--transition) background 0.2s;
+
+            box-shadow: 0 2px 8px #c2d5f5a8;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 20;
+
+        }
+
+        .sidebar.collapsed .toggle-btn {
+
+            right: 18px;
+
+            background: #495057;
+
+        }
+
+        .menu-group {
+
+            border-bottom: 1px solid #f1f1f1;
+
+        }
+
+        .menu-title {
+
+            padding: 13px 24px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            color: #333;
+
+            font-weight: 500;
+
+            user-select: none;
+
+            font-size: 1.07rem;
+
+            justify-content: space-between;
+
+            transition: background 0.1s, color 0.1s;
+
+        }
+
+        .menu-title .icon {
+
+            width: 28px;
+
+            text-align: center;
+
+            margin-right: 10px;
+
+            font-size: 1.21rem;
+
+            transition: margin var(--transition);
+
+        }
+
+        .menu-title:hover {
+
+            background: #f0f4fa;
+
+            color: #007bff;
+
+        }
+
+        .arrow {
+
+            transition: transform 0.2s;
+
+            font-size: 1rem;
+
+            margin-left: 6px;
+
+            color: #999;
+
+        }
+
+        .arrow.open {
+
+            transform: rotate(90deg);
+
+        }
+
+        .submenu {
+
+            display: none;
+
+            padding-left: 34px;
+
+            background: #fafafd;
+
+            animation: fadein 0.3s;
+
+        }
+
+        .submenu.open {
+
+            display: block;
+
+        }
+
+        .submenu li {
+
+            padding: 10px 16px 10px 0;
+
+            font-size: 1rem;
+
+            color: #444;
+
+            cursor: pointer;
+
+            border-left: 3px solid transparent;
+
+            transition: background 0.1s, border-color 0.2s;
+
+            margin-bottom: 2px;
+
+            list-style: none;
+
+            margin-left: 0;
+
+            margin-right: 0;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+        }
+
+        .submenu li:hover {
+
+            background: #e5eefe;
+
+            border-left: 3px solid #007bff;
+
+            color: #007bff;
+
+        }
+
+        /* Thu gọn sidebar */
+
+        .sidebar.collapsed .menu-title span:not(.icon),
+
+        .sidebar.collapsed .arrow,
+
+        .sidebar.collapsed .submenu {
+
+            display: none !important;
+
+        }
+
+        .sidebar.collapsed .menu-title {
+
+            justify-content: center;
+
+            padding-left: 0;
+
+            padding-right: 0;
+
+        }
+
+        .sidebar.collapsed .menu-title .icon {
+
+            margin-right: 0;
+
+        }
+
+        /* Responsive */
+
+        @media (max-width:600px) {
+
+            .sidebar { width: 100vw; min-height: unset; position: fixed; z-index: 99; }
+
+            .sidebar.collapsed { width: 62px; }
+
+            .toggle-btn { top: 12px; right: -18px;}
+
+        }
+
+        @keyframes fadein {
+
+            from { opacity: 0;}
+
+            to { opacity: 1;}
+
+        }
+
+        /* Add a subtle hover effect for the whole sidebar when collapsed */
+
+        .sidebar.collapsed .menu-title:hover {
+
+            background: #f0f4fa;
+
+        }
+
+        a.nav-link {
+
+            text-decoration: none;
+
+            color: inherit;
+
+        }
+
+        css
+
+        Copier
+        a.nav-link:hover {
+            text-decoration: underline;
+            color: #007bff;
+        }
+        .user-info {
+            position: fixed;
+            top: 12px;
+            right: 24px;
+            font-size: 14px;
+            background-color: #ffffffdd;
+            padding: 10px 14px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            z-index: 99;
+            color: #333;
+            max-width: 240px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            .user-info {
+                position: static;
+                margin: 12px auto;
+                text-align: center;
+                background: none;
+                box-shadow: none;
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="sidebar" id="sidebar">
+
+    <button class="toggle-btn" id="toggleBtn" title="Thu gọn/Mở rộng menu">&#9776;</button>
+
+    <h2>🛍️ Sh-Shop </h2>
+
+    <div class="user-info">
+
+        👋 Xin chào: <strong th:text="${nguoiDung.hoTen}">Tên người dùng</strong><br>
+
+        🎓 Vai trò:
+
+        <span th:each="v : ${vaiTros}" th:text="${v.tenVaiTro} + ' '" />
+
+    </div>
+
+    <div class="menu-group">
+
+        <div class="menu-title" onclick="toggleMenu(this)">
+
+            <span class="icon">👤</span><span>Người dùng & Bảo mật</span>
+
+            <span class="arrow">&#9654;</span>
+
+        </div>
+
+        <ul class="submenu">
+
+            <li><a class="nav-link" href="/nguoi-dung">👥 Quản lý người dùng</a></li>
+
+            <li><a class="nav-link" href="/vai-tro-nguoi-dung">🔑 Quản lý vai trò</a></li>
+
+            <li>📜 Lịch sử đăng nhập</li>
+
+            <li>🔐 Xác thực/quên mật khẩu</li>
+
+        </ul>
+
+    </div>
+
+    <div class="menu-group">
+
+        <div class="menu-title" onclick="toggleMenu(this)">
+
+            <span class="icon">📦</span><span>Sản phẩm & Phân loại</span>
+
+            <span class="arrow">&#9654;</span>
+
+        </div>
+
+        <ul class="submenu">
+
+            <li>🗂️ Loại sản phẩm</li>
+
+            <li><a class="nav-link" href="/sanpham">🛒 Sản phẩm</a></li>
+
+            <li>🎨 Màu sắc</li>
+
+            <li>📏 Kích cỡ</li>
+
+            <li><a class="nav-link" href="/san-pham-chi-tiet">🧾 Sản phẩm chi tiết</a></li>
+
+        </ul>
+
+    </div>
+
+    <div class="menu-group">
+
+        <div class="menu-title" onclick="toggleMenu(this)">
+
+            <span class="icon">🧧</span><span>Mã giảm giá</span>
+
+            <span class="arrow">&#9654;</span>
+
+        </div>
+
+        <ul class="submenu">
+
+            <li>🎟️ Mã giảm giá</li>
+
+        </ul>
+
+    </div>
+
+    <div class="menu-group">
+
+        <div class="menu-title" onclick="toggleMenu(this)">
+
+            <span class="icon">🛒</span><span>Giỏ hàng & Yêu thích</span>
+
+            <span class="arrow">&#9654;</span>
+
+        </div>
+
+        <ul class="submenu">
+
+            <li>🛍️ Giỏ hàng</li>
+
+            angelscript
+
+            Copier
+        </ul>
+    </div>
+    <div class="menu-group">
+        <div class="menu-title" onclick="toggleMenu(this)">
+            <span class="icon">🧾</span><span>Đơn hàng & Thanh toán</span>
+            <span class="arrow">&#9654;</span>
+        </div>
+        <ul class="submenu">
+            <li><a class="nav-link" href="/gio-hang/chon-nguoi-dung">📦 Đơn hàng</a></li>
+            <li>🏷️ Chi tiết đơn hàng</li>
+            <li><a class="nav-link" href="/lich-su-thanh-toan">💸 Lịch sử thanh toán</a></li>
+        </ul>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-title" onclick="toggleMenu(this)">
+            <span class="icon">🏬</span><span>Kho & Phiếu nhập</span>
+            <span class="arrow">&#9654;</span>
+        </div>
+        <ul class="submenu">
+            <li>🏢 Kho</li>
+            <li>🧾 Phiếu nhập hàng</li>
+            <li>📋 Chi tiết phiếu nhập</li>
+        </ul>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-title" onclick="toggleMenu(this)">
+            <span class="icon">💰</span><span>Doanh Thu</span>
+            <span class="arrow">&#9654;</span>
+        </div>
+        <ul class="submenu">
+            <li><a class="nav-link" href="/admin/thong-ke">📊 Thống kê</a></li>
+        </ul>
+    </div>
+</nav>
+
+<script>
+
+    // Ẩn/Hiện submenu
+
+    function toggleMenu(titleElem) {
+
+// Nếu sidebar đang thu gọn thì không cho bật submenu
+
+        if(document.getElementById('sidebar').classList.contains('collapsed')) return;
+
+        document.querySelectorAll('.menu-title').forEach(function(menu) {
+
+            if (menu !== titleElem) {
+
+                menu.nextElementSibling.classList.remove('open');
+
+                menu.querySelector('.arrow').classList.remove('open');
+
+            }
+
+        });
+
+        var submenu = titleElem.nextElementSibling;
+
+        submenu.classList.toggle('open');
+
+        titleElem.querySelector('.arrow').classList.toggle('open');
+
+    }
+
+    // Thu gọn/Mở rộng sidebar
+
+    document.getElementById('toggleBtn').onclick = function() {
+
+        var sidebar = document.getElementById('sidebar');
+
+        sidebar.classList.toggle('collapsed');
+
+// Đóng tất cả submenu khi thu gọn
+
+        if(sidebar.classList.contains('collapsed')) {
+
+            document.querySelectorAll('.submenu').forEach(function(sm){
+
+                sm.classList.remove('open');
+
+            });
+
+            document.querySelectorAll('.arrow').forEach(function(arrow){
+
+                arrow.classList.remove('open');
+
+            });
+
+        }
+
+    }
+
+    // Đóng sidebar khi bấm ra ngoài (trên mobile)
+
+    document.addEventListener('click', function(e){
+
+        var sidebar = document.getElementById('sidebar');
+
+        if(window.innerWidth <= 600 && !sidebar.contains(e.target) && !e.target.classList.contains('toggle-btn')){
+
+            sidebar.classList.add('collapsed');
+
+        }
+
+    });
+
+</script>
+
+</body>
+
+</html>

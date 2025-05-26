@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách Mã Giảm Giá</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f8;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            background-color: #28a745;
+            padding: 10px 15px;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .btn-add:hover {
+            background-color: #218838;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f8f9fa;
+        }
+
+        td i {
+            margin-right: 5px;
+        }
+
+        .actions a {
+            margin: 0 5px;
+            color: #007bff;
+            font-size: 16px;
+        }
+
+        .status-valid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-expired {
+            color: red;
+            font-weight: bold;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .pagination a, .pagination span.current-page {
+            display: inline-block;
+            margin: 0 5px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            color: #007bff;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .pagination span.current-page {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .back-button {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        .back-button a:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fa-solid fa-tags"></i> Danh sách Mã Giảm Giá</h1>
+
+    <div class="action-bar">
+        <form action="#" method="get" class="search-form">
+            <input type="text" name="keyword" placeholder="Tìm mã..." th:value="${keyword}" />
+            <button type="submit"><i class="fa fa-search"></i> Tìm</button>
+        </form>
+
+
+        <table>
+            <thead>
+            <tr>
+                <th>Mã</th>
+                <th>Loại giảm</th>
+                <th>% Giảm</th>
+                <th>Tiền Giảm</th>
+                <th>Bắt Đầu</th>
+                <th>Kết Thúc</th>
+                <th>Số Lượng</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="ma : ${maGiamGiaList1}">
+                <td th:text="${ma.ma}"></td>
+                <td>
+               <span th:switch="${ma.loaiGiam}">
+                  <span th:case="'phan_tram'">Giảm theo phần trăm</span>
+                  <span th:case="'tien_mat'">Giảm theo số tiền</span>
+                </span>
+                </td>
+                <td th:text="${ma.phanTramGiam + '%'}"></td>
+                <td th:text="${ma.soTienGiam} + '₫'"></td>
+                <td th:text="${ma.ngayBatDau}"></td>
+                <td th:text="${ma.ngayKetThuc}"></td>
+                <td th:text="${ma.soLuong}"></td>
+                <td>
+                    <span th:if="${ma.trangThai}" class="status-valid"><i class="fa fa-check-circle"></i> Còn hiệu lực</span>
+                    <span th:if="${!ma.trangThai}" class="status-expired"><i class="fa fa-times-circle"></i> Hết hạn</span>
+                </td>
+                <td class="actions">
+                    <a th:href="@{/ma-giam-gia/edit/{id}(id=${ma.id})}" title="Sửa"><i class="fa fa-edit"></i></a>
+                    <a th:href="@{/ma-giam-gia/delete/{id}(id=${ma.id})}" title="Xóa"><i class="fa fa-trash"></i></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="back-button">
+            <a href="/ma-giam-gia"><i class="fa fa-arrow-left"></i> Quay lại</a>
+        </div>
+
+        <div class="pagination">
+    <span th:if="${currentPage > 0}">
+        <a th:href="@{|/ma-giam-gia/trangthai?page=0&keyword=${keyword}|}"><i class="fa fa-angle-double-left"></i></a>
+        <a th:href="@{|/ma-giam-gia/trangthai?page=${currentPage - 1}&keyword=${keyword}|}"><i class="fa fa-angle-left"></i></a>
+    </span>
+
+            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+        <span th:if="${i == currentPage}" class="current-page" th:text="${i + 1}"></span>
+        <a th:if="${i != currentPage}" th:href="@{|/ma-giam-gia/trangthai?page=${i}&keyword=${keyword}|}" th:text="${i + 1}"></a>
+    </span>
+
+            <span th:if="${currentPage + 1 < totalPages}">
+        <a th:href="@{|/ma-giam-gia/trangthai?page=${currentPage + 1}&keyword=${keyword}|}"><i class="fa fa-angle-right"></i></a>
+        <a th:href="@{|/ma-giam-gia/trangthai?page=${totalPages - 1}&keyword=${keyword}|}"><i class="fa fa-angle-double-right"></i></a>
+    </span>
+        </div>
+
+    </div>
+</body>
+</html>

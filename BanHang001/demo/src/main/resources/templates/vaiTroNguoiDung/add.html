@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm vai trò</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>Thêm Vai Trò Mới</h2>
+
+<form th:action="@{/vai-tro-nguoi-dung/save}" method="post">
+    <label for="tenVaiTro">Tên vai trò:</label>
+    <input type="text" id="tenVaiTro" name="tenVaiTro" required />
+
+    <button type="submit">Lưu</button>
+</form>
+
+<a th:href="@{/vai-tro-nguoi-dung}">Quay lại danh sách vai trò người dùng</a>
+</body>
+</html>
