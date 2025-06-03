@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách Loại Sản Phẩm</title>
+</head>
+<body>
+<h2>Danh sách Loại Sản Phẩm</h2>
+<a th:href="@{/loai-san-pham/add}">Thêm mới</a>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Tên loại</th>
+        <th>Mô tả</th>
+        <th>Ngày tạo</th>
+        <th>Hành động</th>
+    </tr>
+    <tr th:each="item : ${list}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.tenLoai}"></td>
+        <td th:text="${item.moTa}"></td>
+        <td th:text="${item.ngayTao}"></td>
+        <td>
+            <a th:href="@{'/loai-san-pham/edit/' + ${item.id}}">Sửa</a>
+            |
+            <a th:href="@{'/loai-san-pham/delete/' + ${item.id}}" onclick="return confirm('Xác nhận xóa?')">Xóa</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

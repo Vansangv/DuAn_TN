@@ -20,9 +20,6 @@ public class SanPham {
     @Column(name = "mo_ta", length = 500)
     private String moTa;
 
-    @Column(name = "gia")
-    private Integer gia;
-
     @ManyToOne
     @JoinColumn(name = "loai_san_pham_id")
     private LoaiSanPham loaiSanPham;

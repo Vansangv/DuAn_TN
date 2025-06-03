@@ -13,6 +13,7 @@ public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
     @Query("SELECT s FROM SanPham s ORDER BY s.ngayTao DESC")
     List<SanPham> findSanPhamNoiBat();
 
-    List<SanPham> findByGiaBetween(Integer min, Integer max);
     Page<SanPham> findByTenSanPhamContaining(String tenSanPham, Pageable pageable);
+
+
 }

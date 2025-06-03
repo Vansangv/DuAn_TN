@@ -59,14 +59,6 @@
                 }, 3000);  // 3 giây
                 isValid = false;
             }
-            if (gia === "" || gia <= 0) {
-                var errorGia = document.getElementById("errorGia");
-                errorGia.style.display = 'block';
-                setTimeout(function() {
-                    errorGia.style.display = 'none';
-                }, 3000);  // 3 giây
-                isValid = false;
-            }
             if (loaiSanPham === "") {
                 var errorLoaiSanPham = document.getElementById("errorLoaiSanPham");
                 errorLoaiSanPham.style.display = 'block';
@@ -102,12 +94,6 @@
             <span id="errorMoTa" class="error">Mô tả không được để trống</span>
         </div>
 
-        <!-- Giá sản phẩm -->
-        <div class="form-group position-relative">
-            <label for="gia"><i class="fas fa-money-bill-wave"></i> Giá:</label>
-            <input type="number" id="gia" th:field="*{gia}" class="form-control" placeholder="Nhập giá sản phẩm" />
-            <span id="errorGia" class="error">Giá không hợp lệ</span>
-        </div>
 
         <!-- Ảnh hiện tại -->
         <div class="form-group">

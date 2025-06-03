@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Form Loại Sản Phẩm</title>
+</head>
+<body>
+<h2 th:text="${loai.id == null} ? 'Thêm mới' : 'Chỉnh sửa'">Form</h2>
+<form th:action="@{/loai-san-pham/save}" th:object="${loai}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+    <p>Tên loại: <input type="text" th:field="*{tenLoai}" required/></p>
+    <p>Mô tả: <textarea th:field="*{moTa}"></textarea></p>
+    <button type="submit">Lưu</button>
+</form>
+<a th:href="@{/loai-san-pham}">Quay lại</a>
+</body>
+</html>

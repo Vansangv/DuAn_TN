@@ -106,7 +106,6 @@ public class SanPhamController {
         if (existingSanPham != null) {
             existingSanPham.setTenSanPham(sanPham.getTenSanPham());
             existingSanPham.setMoTa(sanPham.getMoTa());
-            existingSanPham.setGia(sanPham.getGia());
             existingSanPham.setTrangThai(sanPham.getTrangThai());
             existingSanPham.setLoaiSanPham(sanPham.getLoaiSanPham());
 

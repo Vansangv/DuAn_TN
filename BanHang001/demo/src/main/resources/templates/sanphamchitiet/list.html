@@ -69,6 +69,7 @@
             <th>Màu sắc</th>
             <th>Kích cỡ</th>
             <th>Số lượng</th>
+            <th>Giá</th>
             <th>Thao tác</th>
         </tr>
         </thead>
@@ -79,6 +80,7 @@
             <td th:text="${spct.mauSac.tenMau}"></td>
             <td th:text="${spct.kichCo.tenKichCo}"></td>
             <td th:text="${spct.soLuong}"></td>
+            <td th:text="${spct.gia}"></td>
             <td>
                 <a th:href="@{/san-pham-chi-tiet/view/{id}(id=${spct.id})}" class="btn btn-info btn-sm">
                     <i class="fas fa-eye"></i> Xem
@@ -89,13 +91,6 @@
                 <a th:href="@{/san-pham-chi-tiet/delete/{id}(id=${spct.id})}" class="btn btn-danger btn-sm">
                     <i class="fas fa-trash-alt"></i> Xóa
                 </a>
-                <form th:action="@{/san-pham-chi-tiet/Capnhat/{id}(id=${spct.id})}" method="post">
-                    <div class="form-group">
-                        <label>Số lượng mới</label>
-                        <input type="number" name="soLuong" th:value="${spct.soLuong}" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Cập nhật</button>
-                </form>
 5
             </td>
         </tr>

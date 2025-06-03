@@ -318,7 +318,7 @@ public class BanHangController {
 
         int tongTien = 0;
         for (SanPhamTrongGioHang sp : danhSachSanPham) {
-            tongTien += sp.getSoLuong() * sp.getSanPhamChiTiet().getSanPham().getGia(); // giả sử `gia` là kiểu int
+            tongTien += sp.getSoLuong() * sp.getSanPhamChiTiet().getGia(); // giả sử `gia` là kiểu int
         }
         model.addAttribute("tongTien", tongTien);
 
@@ -360,7 +360,7 @@ public class BanHangController {
 
         int tongTien = 0;
         for (SanPhamTrongGioHang sp : danhSachSanPham) {
-            tongTien += sp.getSoLuong() * sp.getSanPhamChiTiet().getSanPham().getGia();
+            tongTien += sp.getSoLuong() * sp.getSanPhamChiTiet().getGia();
         }
 
         // Áp dụng mã giảm giá nếu có chọn
@@ -421,7 +421,7 @@ public class BanHangController {
             ct.setDonHang(donHang);
             ct.setSanPhamChiTiet(sp.getSanPhamChiTiet());
             ct.setSoLuong(sp.getSoLuong());
-            ct.setGiaDonVi(sp.getSanPhamChiTiet().getSanPham().getGia().doubleValue());
+            ct.setGiaDonVi(sp.getSanPhamChiTiet().getGia().doubleValue());
             chiTietDonHangRepository.save(ct);
         }
 

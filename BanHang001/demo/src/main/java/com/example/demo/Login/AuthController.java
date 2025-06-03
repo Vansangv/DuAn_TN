@@ -61,12 +61,6 @@ public class AuthController {
 
 
 
-//    @GetMapping("/home")
-//    public String home(Model model) {
-//        model.addAttribute("message", "Chào mừng bạn đến với hệ thống!");
-//        return "dangnhap/home";
-//    }
-
 
 //    @GetMapping("/home")
 //    public String home(Model model, Authentication authentication) {

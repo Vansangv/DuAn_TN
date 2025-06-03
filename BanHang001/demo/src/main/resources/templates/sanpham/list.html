@@ -40,7 +40,6 @@
             <tr>
                 <th>STT</th>
                 <th>Tên</th>
-                <th>Giá</th>
                 <th>Loại</th>
                 <th>Ảnh</th>
                 <th>Trạng thái</th>
@@ -52,7 +51,6 @@
             <tr th:each="sp, iterStat : ${listSanPham}" class="text-center">
                 <td th:text="${iterStat.index + 1}"></td> <!-- Số thứ tự -->
                 <td th:text="${sp.tenSanPham}"></td>
-                <td th:text="${sp.gia}"></td>
                 <td th:text="${sp.loaiSanPham.tenLoai}"></td>
                 <td>
                     <img th:src="@{/uploads/{fileName}(fileName=${sp.anhDaiDien})}" alt="Ảnh" class="product-image" />

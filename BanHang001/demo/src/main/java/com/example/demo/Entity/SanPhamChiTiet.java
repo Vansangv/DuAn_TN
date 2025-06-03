@@ -27,4 +27,7 @@ public class SanPhamChiTiet {
     @Column(name = "so_luong")
     private int soLuong;
 
+    @Column(name = "gia")
+    private Integer gia;
+
 }

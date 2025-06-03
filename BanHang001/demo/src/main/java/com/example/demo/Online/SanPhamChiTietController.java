@@ -28,8 +28,6 @@ public class SanPhamChiTietController {
     @Autowired
     private KichCoRepository kichCoRepository;
 
-    @Autowired
-    private KhoRepository khoRepository;
 
     @GetMapping
     public String getAllSanPhamChiTiet(
