@@ -60,7 +60,18 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             request.setAttribute("logs", logs);
         }
 
-        // Điều hướng người dùng đến trang chủ sau khi đăng nhập thành công
-        response.sendRedirect("/home");
+//        // Điều hướng người dùng đến trang chủ sau khi đăng nhập thành công
+//        response.sendRedirect("/home");
+
+        // Điều hướng người dùng đến trang chủ tùy theo giao diện login
+        String referer = request.getHeader("Referer");
+
+        if (referer != null && referer.contains("/login-online")) {
+            response.sendRedirect("/home-online");
+        } else {
+            response.sendRedirect("/home");
+        }
     }
+
+
 }

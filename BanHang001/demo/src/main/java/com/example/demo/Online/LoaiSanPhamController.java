@@ -53,4 +53,6 @@ public class LoaiSanPhamController {
         repository.deleteById(id);
         return "redirect:/loai-san-pham";
     }
+
+
 }
