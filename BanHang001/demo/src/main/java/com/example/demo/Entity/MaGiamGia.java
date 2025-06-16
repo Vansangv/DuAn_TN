@@ -13,7 +13,7 @@ public class MaGiamGia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // AUTO_INCREMENT in MySQL is equivalent to @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "ma")
     private String ma;

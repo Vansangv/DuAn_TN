@@ -1,6 +1,8 @@
 package com.example.demo.Repository;
 
 import com.example.demo.Entity.DonHang;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,63 +12,7 @@ import java.util.Map;
 
 public interface DonHangRepository extends JpaRepository<DonHang, Long> {
 
-    // dùng sql
-
-//    // 1. Đếm số đơn hàng trong ngày hôm nay
-//    @Query(value = "SELECT COUNT_BIG(*) FROM don_hang WHERE CAST(ngay_tao AS DATE) = CAST(GETDATE() AS DATE)", nativeQuery = true)
-//    long countTodayOrders();
-//
-//    // 2. Tổng doanh thu hôm nay
-//    @Query(value = "SELECT SUM(so_tien) FROM lich_su_thanh_toan WHERE CAST(thoi_gian AS DATE) = CAST(GETDATE() AS DATE)", nativeQuery = true)
-//    Integer sumTodayRevenue();
-//
-//    // 3. Doanh thu theo từng ngày trong tháng
-//    @Query(value = """
-//            SELECT DAY(dh.ngay_tao) AS thoiGian,
-//                   SUM(lstt.so_tien) AS tongTien
-//            FROM lich_su_thanh_toan lstt
-//            JOIN don_hang dh ON lstt.don_hang_id = dh.id
-//            WHERE MONTH(dh.ngay_tao) = :month AND YEAR(dh.ngay_tao) = :year
-//            GROUP BY DAY(dh.ngay_tao)
-//            ORDER BY DAY(dh.ngay_tao)
-//            """, nativeQuery = true)
-//    List<Map<String, Object>> getRevenueByDay(@Param("month") int month, @Param("year") int year);
-//
-//    // 4. Doanh thu theo từng tháng trong năm
-//    @Query(value = """
-//            SELECT MONTH(dh.ngay_tao) AS thoiGian,
-//                   SUM(lstt.so_tien) AS tongTien
-//            FROM lich_su_thanh_toan lstt
-//            JOIN don_hang dh ON lstt.don_hang_id = dh.id
-//            WHERE YEAR(dh.ngay_tao) = :year
-//            GROUP BY MONTH(dh.ngay_tao)
-//            ORDER BY MONTH(dh.ngay_tao)
-//            """, nativeQuery = true)
-//    List<Map<String, Object>> getRevenueByMonth(@Param("year") int year);
-//
-//    // 5. Doanh thu theo từng năm
-//    @Query(value = """
-//            SELECT YEAR(dh.ngay_tao) AS thoiGian,
-//                   SUM(lstt.so_tien) AS tongTien
-//            FROM lich_su_thanh_toan lstt
-//            JOIN don_hang dh ON lstt.don_hang_id = dh.id
-//            GROUP BY YEAR(dh.ngay_tao)
-//            ORDER BY YEAR(dh.ngay_tao)
-//            """, nativeQuery = true)
-//    List<Map<String, Object>> getRevenueByYear();
-//
-//    // 6. Danh sách sản phẩm bán chạy
-//    @Query(value = """
-//            SELECT sp.ten_san_pham AS tenSanPham,
-//                   SUM(ctdh.so_luong) AS tongSoLuong
-//            FROM chi_tiet_don_hang ctdh
-//            JOIN san_pham_chi_tiet spct ON ctdh.san_pham_chi_tiet_id = spct.id
-//            JOIN san_pham sp ON spct.san_pham_id = sp.id
-//            GROUP BY sp.ten_san_pham
-//            ORDER BY tongSoLuong DESC
-//            """, nativeQuery = true)
-//    List<Map<String, Object>> findTopSellingProducts();
-
+    Page<DonHang> findByNguoiDung_HoTenContainingIgnoreCase(String hoTen, Pageable pageable);
 
     ///dùng mysql
 

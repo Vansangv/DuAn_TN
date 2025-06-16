@@ -22,4 +22,6 @@ public class LoaiSanPham {
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
 
+
+
 }

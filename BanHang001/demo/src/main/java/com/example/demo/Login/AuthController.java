@@ -2,6 +2,8 @@ package com.example.demo.Login;
 
 import com.example.demo.Entity.NguoiDung;
 import com.example.demo.Entity.PasswordReset;
+import com.example.demo.Offline.Repository.OnlineSanPhamChiTietRepository;
+import com.example.demo.Repository.SanPhamChiTietRepository;
 import com.example.demo.Repository.SanPhamRepository;
 import com.example.demo.Service.EmailService;
 import com.example.demo.Service.NguoiDungService;
@@ -26,7 +28,8 @@ import java.util.UUID;
 public class AuthController {
 
     @Autowired
-    private SanPhamRepository sanPhamRepository;
+    private OnlineSanPhamChiTietRepository sanPhamChiTietRepository;
+
 
     private final NguoiDungService nguoiDungService;
     private final PasswordEncoder passwordEncoder;
@@ -48,6 +51,8 @@ public class AuthController {
         return "dangnhap/login";
     }
 
+
+
     @GetMapping("/home")
     public String home(Model model, Principal principal) {
         if (principal != null) {
@@ -60,22 +65,29 @@ public class AuthController {
     }
 
 
+///////////////////
 
 
-//    @GetMapping("/home")
-//    public String home(Model model, Authentication authentication) {
-//        // Lấy người dùng
-//        if (authentication != null) {
-//            String username = authentication.getName();
-//            NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
-//            model.addAttribute("tenNguoiDung", nguoiDung != null ? nguoiDung.getHoTen() : "Khách");
-//        }
-//
-//        // Lấy danh sách sản phẩm
-//        model.addAttribute("danhSachSanPham", sanPhamRepository.findAll());
-//
-//        return "index";
-//    }
+    @GetMapping("/login-online")
+    public String loginOnline() {
+        return "dangnhap/login-online"; // Trỏ đến login-online.html
+    }
+
+
+    @GetMapping("/online-home")
+    public String onlineHome(Model model, Authentication authentication) {
+        // Lấy người dùng
+        if (authentication != null) {
+            String username = authentication.getName();
+            NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
+            model.addAttribute("tenNguoiDung", nguoiDung != null ? nguoiDung.getHoTen() : "Khách");
+        }
+
+        // Lấy danh sách sản phẩm
+        model.addAttribute("danhSachSanPham",sanPhamChiTietRepository.findAll());
+
+        return "index";
+    }
 
 
     /// đăng ký

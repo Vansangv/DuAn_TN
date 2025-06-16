@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lịch Sử Thanh Toán</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        :root {
+            --main-bg: #f7fafd;
+            --card-bg: #fff;
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --gray: #6b7280;
+            --border: #e5e7eb;
+            --radius: 16px;
+            --shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: var(--main-bg);
+            margin: 0;
+            color: #24292f;
+        }
+        h2 {
+            color: var(--primary);
+            margin-top: 0.5em;
+            margin-bottom: 0.7em;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.25rem;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: center;
+        }
+        .left-column, .right-column {
+            flex: 1 1 400px;
+            min-width: 320px;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                gap: 0;
+            }
+            .left-column, .right-column {
+                margin-left: auto;
+                margin-right: auto;
+                width: 98vw;
+                min-width: unset;
+                padding: 16px;
+            }
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1.2em;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        }
+        th, td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+        th {
+            background: var(--main-bg);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.98em;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        td {
+            font-size: 0.97em;
+        }
+        .pagination {
+            margin: 10px 0 20px 0;
+            text-align: center;
+        }
+        .pagination a, .pagination span a {
+            display: inline-block;
+            margin: 0 4px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--gray);
+            background: #f3f4f6;
+            font-weight: 500;
+            transition: all .15s;
+        }
+        .pagination a.active, .pagination span a.active {
+            color: #fff;
+            background: var(--primary);
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .pagination a:hover:not(.active) {
+            background: var(--primary-light);
+            color: #fff;
+        }
+        /* Search form */
+        form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius);
+            padding: 14px 20px;
+            margin: 24px auto 32px auto;
+            width: 98vw;
+            max-width: 700px;
+        }
+        input[type="text"] {
+            flex: 1 1 180px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1em;
+            background: #f1f5f9;
+            outline: none;
+            transition: border .15s;
+        }
+        input[type="text"]:focus {
+            border: 1.5px solid var(--primary);
+            background: #fff;
+        }
+        button[type="submit"] {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 2px 4px 0 rgba(37,99,235,0.08);
+            transition: background .15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        button[type="submit"]:hover {
+            background: var(--primary-light);
+        }
+        /* Icon cell */
+        td i, th i {
+            color: var(--primary);
+            margin-right: 6px;
+        }
+        /* Responsive table */
+        @media (max-width: 600px) {
+            th, td {
+                padding: 7px 5px;
+                font-size: 0.95em;
+            }
+        }
+        /* Highlight for important columns */
+        td[data-highlight] {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        /* Tag styles for status */
+        .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.96em;
+            font-weight: 500;
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        .status.paid { background: #d1fae5; color: #059669;}
+        .status.cancel { background: #fef2f2; color: #dc2626;}
+        .status.pending { background: #fef9c3; color: #b45309;}
+        /* Subtle hover on row */
+        tbody tr:hover {
+            background: #f3f4f6;
+        }
+    </style>
+</head>
+<body>
+<h2><i class="fa-solid fa-receipt"></i> Danh sách đơn hàng và lịch sử thanh toán</h2>
+<!-- Tìm kiếm -->
+<form method="get" action="/lich-su-thanh-toan">
+    <i class="fa-solid fa-magnifying-glass" style="color:var(--primary);font-size:1.1em"></i>
+    <input type="text" name="keyword" placeholder="Tìm theo người mua" th:value="${keyword}"/>
+    <!-- Giữ nguyên trạng thái các trang khi tìm kiếm -->
+    <input type="hidden" name="pageLichSu" th:value="${currentPageLichSu}"/>
+    <input type="hidden" name="pageDonHang" th:value="${currentPageDonHang}"/>
+    <input type="hidden" name="pageChiTiet" th:value="${currentPageChiTiet}"/>
+    <button type="submit"><i class="fa-solid fa-search"></i> Tìm kiếm</button>
+</form>
+<div class="container">
+    <!-- Cột trái -->
+    <div class="left-column">
+        <!-- Đơn hàng -->
+        <h2><i class="fa-solid fa-cart-shopping"></i> Danh sách đơn hàng</h2>
+        <table>
+            <thead>
+            <tr>
+                <th><i class="fa-solid fa-hashtag"></i> ID</th>
+                <th><i class="fa-solid fa-user"></i> Người mua</th>
+                <th><i class="fa-solid fa-ticket"></i> Mã giảm giá</th>
+                <th><i class="fa-solid fa-money-bill"></i> Tổng tiền</th>
+                <th><i class="fa-solid fa-store"></i> Hình thức mua</th>
+                <th><i class="fa-regular fa-credit-card"></i> PTTT</th>
+                <th><i class="fa-solid fa-circle-check"></i> Trạng thái</th>
+                <th><i class="fa-solid fa-calendar"></i> Ngày tạo</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="donHang : ${donHangPage.content}">
+                <td th:text="${donHang.id}" data-highlight>1</td>
+                <td th:text="${donHang.nguoiDung.hoTen}">Người mua</td>
+                <td th:text="${donHang.maGiamGia != null ? donHang.maGiamGia.ma : 'Không có'}">Mã</td>
+                <td th:text="${donHang.tongTien}" data-highlight>Tổng tiền</td>
+                <td th:text="${donHang.hinhThucMua}">Hình thức</td>
+                <td th:text="${donHang.phuongThucThanhToan}">Thanh toán</td>
+                <td>
+                            <span th:class="'status ' +
+                                (${donHang.trangThai} == 'Đã thanh toán' ? 'paid' :
+                                (${donHang.trangThai} == 'Đã hủy' ? 'cancel' : 'pending'))"
+                                  th:text="${donHang.trangThai}">Trạng thái</span>
+                </td>
+                <td th:text="${#temporals.format(donHang.ngayTao, 'dd/MM/yyyy HH:mm')}">Ngày</td>
+            </tr>
+            </tbody>
+        </table>
+        <!-- PHÂN TRANG ĐƠN HÀNG -->
+        <div class="pagination" th:if="${totalPagesDonHang > 1}">
+            <a th:if="${currentPageDonHang > 0}"
+               th:href="@{/lich-su-thanh-toan(pageLichSu=${currentPageLichSu}, pageDonHang=${currentPageDonHang - 1}, pageChiTiet=${currentPageChiTiet}, keyword=${keyword})}">
+                <i class="fa-solid fa-angle-left"></i> Trước
+            </a>
+            <span th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, currentPageDonHang - 1), T(java.lang.Math).min(totalPagesDonHang - 1, currentPageDonHang + 1))}">
+                    <a th:href="@{/lich-su-thanh-toan(pageLichSu=${currentPageLichSu}, pageDonHang=${i}, pageChiTiet=${currentPageChiTiet}, keyword=${keyword})}"
+                       th:text="${i + 1}"
+                       th:classappend="${i == currentPageDonHang} ? 'active' : ''"></a>
+                </span>
+            <a th:if="${currentPageDonHang < totalPagesDonHang - 1}"
+               th:href="@{/lich-su-thanh-toan(pageLichSu=${currentPageLichSu}, pageDonHang=${currentPageDonHang + 1}, pageChiTiet=${currentPageChiTiet}, keyword=${keyword})}">
+                Sau <i class="fa-solid fa-angle-right"></i>
+            </a>
+        </div>
+        <br>
+        <!-- Lịch sử thanh toán -->
+        <h2><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử thanh toán</h2>
+        <table>
+            <thead>
+            <tr>
+                <th><i class="fa-solid fa-hashtag"></i> ID</th>
+                <th><i class="fa-solid fa-user"></i> Người mua</th>
+                <th><i class="fa-solid fa-cart-shopping"></i> Đơn hàng</th>
+                <th><i class="fa-solid fa-money-bill"></i> Số tiền</th>
+                <th><i class="fa-regular fa-credit-card"></i> Phương thức</th>
+                <th><i class="fa-solid fa-calendar-check"></i> Thời gian</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${lichSuPage.content}">
+                <td th:text="${item.id}" data-highlight>1</td>
+                <td th:text="${item.nguoiDung.hoTen}">Tên người dùng</td>
+                <td th:text="${item.donHang.id}">ID đơn hàng</td>
+                <td th:text="${item.soTien}" data-highlight>Số tiền</td>
+                <td th:text="${item.phuongThuc}">Phương thức</td>
+                <td th:text="${#temporals.format(item.thoiGian, 'dd/MM/yyyy HH:mm')}">Thời gian</td>
+            </tr>
+            </tbody>
+        </table>
+        <!-- PHÂN TRANG LỊCH SỬ -->
+        <div class="pagination" th:if="${totalPagesLichSu > 1}">
+            <a th:if="${currentPageLichSu > 0}"
+               th:href="@{/lich-su-thanh-toan(pageLichSu=${currentPageLichSu - 1}, pageDonHang=${currentPageDonHang}, pageChiTiet=${currentPageChiTiet}, keyword=${keyword})}">
+                <i class="fa-solid fa-angle-left"></i> Trước
+            </a>
+            <span th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, currentPageLichSu - 1), T(java.lang.Math).min(totalPagesLichSu - 1, currentPageLichSu + 1))}">
+                    <a th:href="@{/lich-su-thanh-toan(pageLichSu=${i}, pageDonHang=${currentPageDonHang}, pageChiTiet=${currentPageChiTiet}, keyword=${keyword})}"
+                       th:text="${i + 1}"
+                       th:classappend="${i == currentPageLichSu} ? 'active' : ''"></a>
+                </span>
+            <a th:if="${currentPageLichSu < totalPagesLichSu - 1}"
+               th:href="@{/lich-su-thanh-toan(pageLichSu=${currentPageLichSu + 1}, pageDonHang=${currentPageDonHang}, pageChiTiet=${currentPageChiTiet}, keyword=${keyword})}">
+                Sau <i class="fa-solid fa-angle-right"></i>
+            </a>
+        </div>
+    </div>
+    <!-- Cột phải -->
+    <div class="right-column">
+        <h2><i class="fa-solid fa-list"></i> Chi tiết đơn hàng</h2>
+        <table>
+            <thead>
+            <tr>
+                <th><i class="fa-solid fa-hashtag"></i> ID</th>
+                <th><i class="fa-solid fa-cart-shopping"></i> Đơn hàng</th>
+                <th><i class="fa-solid fa-box"></i> Tên SP</th>
+                <th><i class="fa-solid fa-palette"></i> Màu sắc</th>
+                <th><i class="fa-solid fa-ruler"></i> Kích cỡ</th>
+                <th><i class="fa-solid fa-sort-numeric-up"></i> SL</th>
+                <th><i class="fa-solid fa-money-check-dollar"></i> Giá đơn vị</th>
+                <th><i class="fa-solid fa-coins"></i> Tổng giá</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="ct : ${chiTietPage.content}">
+                <td th:text="${ct.id}" data-highlight></td>
+                <td th:text="${ct.donHang.id}">ID đơn hàng</td>
+                <td th:text="${ct.sanPhamChiTiet.sanPham.tenSanPham}">Tên SP</td>
+                <td th:text="${ct.sanPhamChiTiet.mauSac.tenMau}">Màu</td>
+                <td th:text="${ct.sanPhamChiTiet.kichCo.tenKichCo}">Kích cỡ</td>
+                <td th:text="${ct.soLuong}">Số lượng</td>
+                <td th:text="${ct.giaDonVi}">Giá</td>
+                <td th:text="${ct.soLuong * ct.giaDonVi}" data-highlight>Tổng</td>
+            </tr>
+            </tbody>
+        </table>
+        <!-- PHÂN TRANG CHI TIẾT ĐƠN HÀNG -->
+        <div class="pagination" th:if="${totalPagesChiTiet > 1}">
+            <a th:if="${currentPageChiTiet > 0}"
+               th:href="@{/lich-su-thanh-toan(pageLichSu=${currentPageLichSu}, pageDonHang=${currentPageDonHang}, pageChiTiet=${currentPageChiTiet - 1}, keyword=${keyword})}">
+                <i class="fa-solid fa-angle-left"></i> Trước
+            </a>
+            <span th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, currentPageChiTiet - 1), T(java.lang.Math).min(totalPagesChiTiet - 1, currentPageChiTiet + 1))}">
+                    <a th:href="@{/lich-su-thanh-toan(pageLichSu=${currentPageLichSu}, pageDonHang=${currentPageDonHang}, pageChiTiet=${i}, keyword=${keyword})}"
+                       th:text="${i + 1}"
+                       th:classappend="${i == currentPageChiTiet} ? 'active' : ''"></a>
+                </span>
+            <a th:if="${currentPageChiTiet < totalPagesChiTiet - 1}"
+               th:href="@{/lich-su-thanh-toan(pageLichSu=${currentPageLichSu}, pageDonHang=${currentPageDonHang}, pageChiTiet=${currentPageChiTiet + 1}, keyword=${keyword})}">
+                Sau <i class="fa-solid fa-angle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
