@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm Kích Cỡ</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        button {
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .back-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-button a {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .back-button a:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1><i class="fa-solid fa-ruler form-icon"></i> Thêm Kích Cỡ</h1>
+
+    <div th:if="${error}" class="error-message">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form th:action="@{/kich-co/save}" th:object="${kichCo}" method="post" onsubmit="return validateForm()">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="form-group">
+            <label for="tenKichCo"><i class="fa-solid fa-text-height form-icon"></i> Tên Kích Cỡ:</label>
+            <input type="text" id="tenKichCo" th:field="*{tenKichCo}" placeholder="Nhập tên kích cỡ" required maxlength="50"/>
+        </div>
+
+        <button type="submit"><i class="fa-solid fa-save"></i> Lưu</button>
+    </form>
+
+    <div class="back-button">
+        <a href="/kich-co"><i class="fa fa-arrow-left"></i> Quay lại</a>
+    </div>
+</div>
+
+<script>
+    function validateForm() {
+        const ten = document.getElementById('tenKichCo').value.trim();
+        if(ten.length === 0) {
+            alert('Tên kích cỡ không được để trống!');
+            return false;
+        }
+        if(ten.length > 50) {
+            alert('Tên kích cỡ không được vượt quá 50 ký tự!');
+            return false;
+        }
+        return true;
+    }
+</script>
+
+</body>
+</html>

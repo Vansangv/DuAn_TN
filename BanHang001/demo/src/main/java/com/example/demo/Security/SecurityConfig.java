@@ -43,6 +43,8 @@ public class SecurityConfig {
                         // Quản lý vai trò người dùng
                         .requestMatchers("/vai-tro-nguoi-dung/add", "/vai-tro-nguoi-dung/update/**").hasRole("ADMIN")
                         .requestMatchers("/vai-tro-nguoi-dung/**").hasAnyRole("ADMIN", "NHANVIEN")
+//                        .requestMatchers("/kich-co/**").hasAnyRole("ADMIN", "NHANVIEN")
+//                        .requestMatchers("/mau-sac/**").hasAnyRole("ADMIN", "NHANVIEN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

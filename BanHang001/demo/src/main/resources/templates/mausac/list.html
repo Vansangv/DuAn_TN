@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách Màu sắc</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        thead {
+            background-color: #007bff;
+            color: white;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .actions a {
+            margin-right: 10px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .actions a:hover {
+            text-decoration: underline;
+        }
+        .add-button {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .add-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fa-solid fa-palette"></i> Danh sách Màu sắc</h1>
+
+    <a href="/mau-sac/add" class="add-button"><i class="fa fa-plus"></i> Thêm Màu sắc mới</a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên Màu sắc</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="mau : ${mauSacList}">
+            <td th:text="${mau.id}">1</td>
+            <td th:text="${mau.tenMau}">Đỏ</td>
+            <td class="actions">
+                <a th:href="@{'/mau-sac/edit/' + ${mau.id}}"><i class="fa fa-edit"></i> Sửa</a>
+                <a th:href="@{'/mau-sac/delete/' + ${mau.id}}" onclick="return confirm('Bạn có chắc muốn xóa màu sắc này?');">
+                    <i class="fa fa-trash"></i> Xóa
+                </a>
+            </td>
+        </tr>
+        <tr th:if="${mauSacList.size() == 0}">
+            <td colspan="3" style="text-align: center; font-style: italic; color: #888;">
+                Không có màu sắc nào.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
