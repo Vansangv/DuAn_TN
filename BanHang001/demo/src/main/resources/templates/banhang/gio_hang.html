@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Quản lý giỏ hàng tại quầy</title>
     <meta charset="UTF-8">
@@ -73,7 +73,7 @@
         }
     </style>
 </head>
-<body>
+<body th:fragment="quanly">
 <div class="container py-4">
     <div class="text-center mb-4">
         <h2 class="fw-bold" style="color:#2a9d8f">

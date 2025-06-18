@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Danh sách Loại Sản Phẩm</title>
 </head>
-<body>
+<body th:fragment="quanly">
 <h2>Danh sách Loại Sản Phẩm</h2>
 <a th:href="@{/loai-san-pham/add}">Thêm mới</a>
 <table border="1">

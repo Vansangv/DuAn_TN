@@ -61,7 +61,7 @@ public class AuthController {
             model.addAttribute("nguoiDung", nguoiDung);
             model.addAttribute("vaiTros", nguoiDung.getVaiTros());
         }
-        return "menutrangchu/menu";
+        return "thongke/thong-ke";
     }
 
 

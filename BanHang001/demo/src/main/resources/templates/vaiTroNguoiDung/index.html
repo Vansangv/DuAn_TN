@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Danh sách Vai trò người dùng</title>
 </head>
-<body>
+<body th:fragment="quanly">
 <h2>Danh sách Vai trò người dùng</h2>
 
 <!-- Form lọc theo vai trò -->

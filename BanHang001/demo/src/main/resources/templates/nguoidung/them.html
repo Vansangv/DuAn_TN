@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Thêm người dùng</title>
     <meta charset="UTF-8">
@@ -84,7 +84,7 @@
     </script>
 
 </head>
-<body>
+<body th:fragment="quanly">
 <h2>Thêm người dùng</h2>
 <form th:action="@{/nguoi-dung/them}" th:object="${nguoiDung}" method="post" onsubmit="return validateForm();">
 

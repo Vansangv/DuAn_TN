@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Lịch Sử Thanh Toán</title>
     <meta charset="UTF-8">
@@ -195,7 +195,7 @@
         }
     </style>
 </head>
-<body>
+<body th:fragment="quanly">
 <h2><i class="fa-solid fa-receipt"></i> Danh sách đơn hàng và lịch sử thanh toán</h2>
 <!-- Tìm kiếm -->
 <form method="get" action="/lich-su-thanh-toan">

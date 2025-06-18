@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Danh sách sản phẩm</title>
     <!-- Bootstrap CSS -->
@@ -15,7 +15,7 @@
         }
     </style>
 </head>
-<body class="bg-light">
+<body class="bg-light" th:fragment="quanly">
 <div class="container mt-5">
 
     <h2 class="mb-4 text-primary"><i class="fas fa-boxes"></i> Danh sách sản phẩm</h2>

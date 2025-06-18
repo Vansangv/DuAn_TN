@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Lịch sử đăng nhập</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
-<body class="container mt-5">
+<body class="container mt-5" th:fragment="quanly">
 <h2 class="mb-4">Lịch sử đăng nhập</h2>
 
 <table class="table table-bordered table-hover">

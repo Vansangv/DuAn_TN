@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Xác nhận thanh toán</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
@@ -112,7 +112,7 @@
         }
     </style>
 </head>
-<body>
+<body th:fragment="quanly">
 <div class="container">
     <h2>Xác nhận thanh toán cho giỏ hàng ID: <span th:text="${gioHang.id}"></span></h2>
     <h3>Tên người dùng: <span th:text="${gioHang.nguoiDung.hoTen}"></span></h3>

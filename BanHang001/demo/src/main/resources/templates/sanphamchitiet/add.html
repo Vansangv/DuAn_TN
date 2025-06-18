@@ -1,55 +1,56 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Thêm Mới Sản Phẩm Chi Tiết</title>
     <!-- Thêm link đến FontAwesome để sử dụng các icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-    <style>
-        .error-message {
-            color: red;
-            font-size: 0.9em;
-            display: none;
-            margin-top: 5px;
-        }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 5px;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
-
-        .container {
-            margin-top: 50px;
-        }
-
-        .form-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .icon-label {
-            margin-right: 8px;
-        }
-    </style>
 </head>
-<body>
+<body th:fragment="quanly">
+<style>
+    .error-message {
+        color: red;
+        font-size: 0.9em;
+        display: none;
+        margin-top: 5px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 5px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .icon-label {
+        margin-right: 8px;
+    }
+</style>
 
 <div class="container">
     <h1 class="form-header">Thêm Mới Sản Phẩm Chi Tiết</h1>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Form Loại Sản Phẩm</title>
 </head>
-<body>
+<body th:fragment="quanly">
 <h2 th:text="${loai.id == null} ? 'Thêm mới' : 'Chỉnh sửa'">Form</h2>
 <form th:action="@{/loai-san-pham/save}" th:object="${loai}" method="post">
     <input type="hidden" th:field="*{id}"/>

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Thêm vai trò</title>
     <meta charset="UTF-8">
 </head>
-<body>
+<body th:fragment="quanly">
 <h2>Thêm Vai Trò Mới</h2>
 
-<form th:action="@{/vai-tro-nguoi-dung/save}" method="post">
+<form th:action="@{/vai-tro-nguoi-dung/save}" method="post" >
     <label for="tenVaiTro">Tên vai trò:</label>
     <input type="text" id="tenVaiTro" name="tenVaiTro" required />
 

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Quản lý giỏ hàng</title>
     <meta charset="UTF-8">
 </head>
-<body>
+<body th:fragment="quanly">
 
 <h2>Danh sách giỏ hàng</h2>
 <a th:href="@{/gio-hang-off}">Trạng thái</a>

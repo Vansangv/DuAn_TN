@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Lịch sử đăng nhập</title>
 </head>
-<body>
+<body th:fragment="quanly">
 <h2>Lịch sử đăng nhập</h2>
 <table border="1">
     <thead>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/menutrangchu/menu.html :: dynamic(~{::quanly})}">
 <head>
     <title>Thêm Mã Giảm Giá</title>
     <meta charset="UTF-8">
@@ -129,7 +129,7 @@
         }
     </style>
 </head>
-<body>
+<body th:fragment="quanly">
 
 <div class="container">
     <h1><i class="fa-solid fa-tag form-icon"></i> Thêm Mã Giảm Giá</h1>
