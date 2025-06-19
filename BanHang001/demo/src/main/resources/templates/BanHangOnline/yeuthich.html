@@ -38,6 +38,8 @@
 <body>
 <div class="container mt-5">
     <h2 class="text-center mb-5">❤️ Danh sách sản phẩm yêu thích</h2>
+
+    <!-- Nếu danh sách rỗng -->
     <div class="row" th:if="${#lists.isEmpty(danhSachYeuThich)}">
         <div class="col-12 text-center text-muted">
             <i class="fas fa-heart-broken fa-2x"></i>
@@ -45,6 +47,7 @@
         </div>
     </div>
 
+    <!-- Nếu có dữ liệu -->
     <div class="row g-4" th:each="sp : ${danhSachYeuThich}">
         <div class="col-md-3">
             <div class="card h-100 shadow-sm">
@@ -56,18 +59,26 @@
                     <p class="price-tag" th:text="${#numbers.formatDecimal(sp.gia, 0, 'COMMA', 0, 'POINT')} + ' đ'">Giá</p>
 
                     <p class="card-text small text-truncate" th:text="'Mã sản phẩm: ' + ${sp.id}">Mã sản phẩm</p>
-                    <p class="card-text small text-truncate" th:text="'Ngày thêm: ' + ${#dates.format(sp.ngayThem, 'dd/MM/yyyy')}">Ngày thêm</p>
 
-                    <!-- Nút xóa -->
-                    <form th:action="@{'/yeu-thich/xoa/' + ${sp.id}}" method="post" class="mt-auto">
-                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
-                            <i class="fas fa-trash-alt"></i> Xóa khỏi yêu thích
-                        </button>
-                    </form>
-                </div>
+                    <!-- ✅ Dùng temporals để format LocalDateTime -->
+                    <!-- ✅ Dùng temporals để format LocalDateTime -->
+                    <p class="card-text small text-muted" th:text="'Ngày thêm: ' + ${#temporals.format(sp.ngayThem, 'dd/MM/yyyy HH:mm')}">Ngày thêm</p>
+
+                    <div class="mt-auto d-flex justify-content-between">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{'/san-pham/chi-tiet/' + ${sp.id}}">
+                            <i class="fas fa-info-circle"></i> Chi tiết
+                        </a>
+                        <form th:action="@{'/yeu-thich/xoa/' + ${sp.id}}" method="post" onsubmit="return confirm('Bạn chắc chắn muốn xoá sản phẩm này khỏi yêu thích?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i> Xoá
+                            </button>
+                        </form>
+                    </div>
+                </div> <!-- end card-body -->
             </div>
         </div>
-    </div>
+    </div> <!-- end each -->
 </div>
 </body>
 </html>
+

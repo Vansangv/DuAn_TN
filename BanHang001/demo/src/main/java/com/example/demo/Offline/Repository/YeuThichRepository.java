@@ -26,7 +26,7 @@ public interface YeuThichRepository extends JpaRepository<YeuThichSanPham,Intege
             nativeQuery = true
     )
     List<YeuThichView> findAllByNguoiDungId(@Param("nguoiDungId") Integer nguoiDungId);
-
+    void deleteByNguoiDungIdAndSanPhamId(Integer nguoiDungId, Integer sanPhamId);
 
 
 }
