@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Xác nhận đơn hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <script>
+        function updateGiamGia() {
+            const select = document.getElementById("maGiamGia");
+            const selectedOption = select.options[select.selectedIndex];
+            const giamGiaText = document.getElementById("giamGiaText");
+            const tongTienHang = parseInt(document.getElementById("tongTienHangHidden").value);
+            const phiVanChuyen = parseInt(document.getElementById("phiVanChuyenHidden").value);
+            let giam = 0;
+
+            if (selectedOption.dataset.loai === 'phantram') {
+                giam = tongTienHang * parseInt(selectedOption.dataset.value) / 100;
+            } else if (selectedOption.dataset.loai === 'tien') {
+                giam = parseInt(selectedOption.dataset.value);
+            }
+
+            giamGiaText.innerText = giam.toLocaleString('vi-VN') + ' đ';
+            document.getElementById("tongThanhToanText").innerText = (tongTienHang + phiVanChuyen - giam).toLocaleString('vi-VN') + ' đ';
+        }
+    </script>
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">Xác nhận đơn hàng</h2>
+
+    <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Tên khách hàng:</strong>
+                <span th:text="${nguoiDung.hoTen}"></span> <br>
+                <strong>Địa chỉ giao hàng:</strong>
+                <span th:if="${diaChiMacDinh != null}" th:text="${diaChiMacDinh.diaChi} + ', ' + ${diaChiMacDinh.phuongXa} + ', ' + ${diaChiMacDinh.quanHuyen} + ', ' + ${diaChiMacDinh.tinhThanh}"></span>
+                <span th:if="${diaChiMacDinh == null}" class="text-danger">Chưa có địa chỉ giao hàng mặc định!</span>
+            </div>
+            <div>
+                <a href="/dia-chi-giao-hang" class="btn btn-outline-primary btn-sm" title="Thêm/Thay đổi địa chỉ">+</a>
+            </div>
+        </div>
+    </div>
+
+    <form th:action="@{/mua-hang}" method="post">
+        <input type="hidden" id="tongTienHangHidden" th:value="${tongTienHang}" />
+        <input type="hidden" id="phiVanChuyenHidden" th:value="${phiVanChuyen}" />
+
+        <!-- Mã giảm giá -->
+        <div class="mb-3">
+            <label for="maGiamGia" class="form-label">Mã giảm giá:</label>
+            <select name="maGiamGia" id="maGiamGia" class="form-select" onchange="updateGiamGia()">
+                <option value="">-- Không chọn --</option>
+                <option th:each="mg : ${danhSachMaGiamGia}"
+                        th:value="${mg.id}"
+                        th:data-loai="${mg.loaiGiam == 'phan_tram' ? 'phantram' : 'tien'}"
+                        th:data-value="${mg.loaiGiam == 'phan_tram' ? mg.phanTramGiam : mg.soTienGiam}"
+                        th:text="${mg.ma} + ' - ' + ${mg.moTa}">
+                </option>
+            </select>
+        </div>
+
+        <table class="table table-bordered">
+            <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Sản phẩm</th>
+                <th>Màu</th>
+                <th>Kích cỡ</th>
+                <th>Ảnh</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="sp, stat : ${danhSachSanPham}">
+                <td th:text="${stat.index + 1}"></td>
+                <td th:text="${sp.sanPhamChiTiet.sanPham.tenSanPham}"></td>
+                <td th:text="${sp.sanPhamChiTiet.mauSac.tenMau}"></td>
+                <td th:text="${sp.sanPhamChiTiet.kichCo.tenKichCo}"></td>
+                <td><img th:src="@{'/images/' + ${sp.sanPhamChiTiet.sanPham.anhDaiDien}}" style="height: 50px;"></td>
+                <td th:text="${sp.sanPhamChiTiet.gia} + ' đ'"></td>
+                <td th:text="${sp.soLuong}"></td>
+                <td th:text="${sp.soLuong * sp.sanPhamChiTiet.gia} + ' đ'"></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="7" class="text-end fw-bold">Tổng tiền hàng:</td>
+                <td th:text="${tongTienHang} + ' đ'" class="fw-bold"></td>
+            </tr>
+            <tr>
+                <td colspan="7" class="text-end fw-bold">Phí vận chuyển:</td>
+                <td th:text="${phiVanChuyen} + ' đ'" class="fw-bold"></td>
+            </tr>
+            <tr>
+                <td colspan="7" class="text-end fw-bold">Giảm giá:</td>
+                <td><span id="giamGiaText">--</span></td>
+            </tr>
+            <tr>
+                <td colspan="7" class="text-end fw-bold text-danger">Tổng thanh toán:</td>
+                <td><span id="tongThanhToanText" th:text="${tongThanhToan} + ' đ'" class="fw-bold text-danger"></span></td>
+            </tr>
+            </tfoot>
+        </table>
+        <!-- Hình thức thanh toán -->
+        <div class="mb-3">
+            <label class="form-label">Hình thức thanh toán:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt1" value="Thanh toán khi nhận hàng" onclick="toggleVnpay(this)">
+                <label class="form-check-label" for="tt1">Thanh toán khi nhận hàng</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt2" value="Chuyển khoản ngân hàng" onclick="toggleVnpay(this)">
+                <label class="form-check-label" for="tt2">Chuyển khoản ngân hàng</label>
+            </div>
+            <br>
+            <!-- Giao diện VNPay -->
+            <div id="vnpayInfo" class="p-3 border rounded bg-light" style="display: none;">
+                <h5>Thông tin chuyển khoản VNPay</h5>
+                <p><strong>Ngân hàng:</strong> Vietcombank</p>
+                <p><strong>Số tài khoản:</strong> 123456789</p>
+                <p><strong>Chủ tài khoản:</strong> Công ty ABC</p>
+                <p><strong>Nội dung chuyển khoản:</strong> [Tên khách hàng] - Thanh toán đơn hàng</p>
+                <p class="text-danger">Vui lòng chuyển khoản chính xác nội dung để hệ thống xác nhận.</p>
+            </div>
+            <br>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt3" value="Ví điện tử" onclick="toggleVnpay(this)">
+                <label class="form-check-label" for="tt3">Ví điện tử</label>
+            </div>
+        </div>
+
+
+
+
+        <br>
+        <button type="submit" class="btn btn-success">Xác nhận mua hàng</button>
+        <a href="/gio-hang" class="btn btn-secondary">Quay lại giỏ hàng</a>
+    </form>
+</div>
+<script>
+    function toggleVnpay(radio) {
+        const vnpayDiv = document.getElementById("vnpayInfo");
+        if (radio.value === "Chuyển khoản ngân hàng") {
+            vnpayDiv.style.display = "block";
+        } else {
+            vnpayDiv.style.display = "none";
+        }
+    }
+</script>
+</body>
+</html>

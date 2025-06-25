@@ -2,7 +2,9 @@ package com.example.demo.Login;
 
 import com.example.demo.Entity.NguoiDung;
 import com.example.demo.Entity.PasswordReset;
+import com.example.demo.Offline.Repository.OnlineGioHangRepository;
 import com.example.demo.Offline.Repository.OnlineSanPhamChiTietRepository;
+import com.example.demo.Offline.Repository.OnlineSanPhamTrongGioHangRepository;
 import com.example.demo.Repository.SanPhamChiTietRepository;
 import com.example.demo.Repository.SanPhamRepository;
 import com.example.demo.Service.EmailService;
@@ -29,6 +31,8 @@ public class AuthController {
 
     @Autowired
     private OnlineSanPhamChiTietRepository sanPhamChiTietRepository;
+    @Autowired
+    private OnlineSanPhamTrongGioHangRepository sanPhamTrongGioHangRepository;
 
 
     private final NguoiDungService nguoiDungService;
@@ -76,18 +80,26 @@ public class AuthController {
 
     @GetMapping("/online-home")
     public String onlineHome(Model model, Authentication authentication) {
-        // Lấy người dùng
-        if (authentication != null) {
+        int soLuongTrongGio = 0;
+        if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
-            model.addAttribute("tenNguoiDung", nguoiDung != null ? nguoiDung.getHoTen() : "Khách");
+
+            if (nguoiDung != null) {
+                model.addAttribute("tenNguoiDung", nguoiDung.getHoTen());
+                soLuongTrongGio = sanPhamTrongGioHangRepository.demSoLuongSanPhamTrongGio(nguoiDung.getId());
+            } else {
+                model.addAttribute("tenNguoiDung", "Khách");
+            }
+        } else {
+            model.addAttribute("tenNguoiDung", "Khách");
         }
 
-        // Lấy danh sách sản phẩm
-        model.addAttribute("danhSachSanPham",sanPhamChiTietRepository.findAll());
-
+        model.addAttribute("soLuongTrongGio", soLuongTrongGio);
+        model.addAttribute("danhSachSanPham", sanPhamChiTietRepository.findAll());
         return "index";
     }
+
 
 
     /// đăng ký

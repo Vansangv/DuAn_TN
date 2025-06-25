@@ -25,4 +25,5 @@ public class LogHeThongController {
         model.addAttribute("logs", logs);
         return "lichsuhoatdong/log-he-thong";  // Giao diện hiển thị danh sách log
     }
+
 }

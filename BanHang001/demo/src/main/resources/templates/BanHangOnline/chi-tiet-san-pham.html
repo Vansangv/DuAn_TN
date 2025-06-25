@@ -14,19 +14,72 @@
             justify-content: start;
             cursor: pointer;
         }
+        footer {
+            margin-top: 50px;
+        }
 
+        .muasam{
+            margin-top: 50px;
+        }
         .star {
             color: lightgray;
             transition: color 0.2s;
         }
-
         .star.selected,
         .star.hovered {
             color: gold;
         }
+        @keyframes doiMauChu {
+            0%   { color: #ff5733; }   /* cam */
+            25%  { color: #33c4ff; }   /* xanh dương */
+            50%  { color: #28a745; }   /* xanh lá */
+            75%  { color: #e83e8c; }   /* hồng */
+            100% { color: #ff5733; }   /* quay lại cam */
+        }
+
+        .chu-doi-mau {
+            animation: doiMauChu 5s infinite linear;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .chu-song-mau {
+            font-weight: bold;
+            font-size: 1.3rem;
+            background: linear-gradient(
+                    270deg,
+                    #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee
+            );
+            background-size: 1400% 1400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: songMau 10s ease infinite;
+        }
+
+        @keyframes songMau {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        .img-dong-bo {
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+
     </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
@@ -37,7 +90,7 @@
 
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link active" href="/home">Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/online-home">Trang chủ</a></li>
             <li class="nav-item"><a class="nav-link" href="/san-pham">Sản phẩm</a></li>
             <li class="nav-item"><a class="nav-link" href="/khuyen-mai">Khuyến mãi</a></li>
             <li class="nav-item"><a class="nav-link" href="/lien-he">Liên hệ</a></li>
@@ -67,104 +120,142 @@
     </div>
 </nav>
 
-<!-- Nội dung -->
-<div class="container mt-5">
-    <h2 class="text-center mb-4" th:text="${sanPham.tenSanPham}">Tên sản phẩm</h2>
-    <div class="row">
-        <!-- Ảnh sản phẩm -->
-        <div class="col-md-6">
-            <img th:src="@{'/images/' + ${sanPham.anhDaiDien}}" class="img-fluid rounded shadow" alt="Ảnh sản phẩm">
-        </div>
-
-        <!-- Thông tin và form -->
-        <div class="col-md-6">
-            <p th:text="${sanPham.moTa}" class="lead"></p>
-
-            <div class="mt-3">
-                <h5>Màu sắc:</h5>
-                <ul class="list-inline">
-                    <li class="list-inline-item badge bg-secondary me-1" th:each="mau : ${danhSachMauSac}" th:text="${mau}"></li>
-                </ul>
+<!-- Main content -->
+<main class="flex-fill">
+    <div class="container mt-5">
+        <h2 class="text-center mb-4" th:text="${sanPham.tenSanPham}">Tên sản phẩm</h2>
+        <div class="row">
+            <!-- Ảnh sản phẩm -->
+            <div class="col-md-6">
+                <img th:src="@{'/images/' + ${sanPham.anhDaiDien}}" class="img-dong-bo" alt="Ảnh sản phẩm">
             </div>
 
-            <div class="mt-3">
-                <h5>Kích cỡ:</h5>
-                <ul class="list-inline">
-                    <li class="list-inline-item badge bg-info text-dark me-1" th:each="size : ${danhSachKichCo}" th:text="${size}"></li>
-                </ul>
-            </div>
+            <!-- Thông tin và form -->
+            <div class="col-md-6">
+                <p th:text="${sanPham.moTa}" class="chu-song-mau"></p>
 
-            <!-- Giá sản phẩm -->
-            <div class="mt-3">
-                <h5>Giá:</h5>
-                <p class="fw-bold text-danger" th:text="${gia} + ' đ'"></p>
-            </div>
-
-            <div class="mt-3">
-                <h5>Số lượng:</h5>
-                <p th:if="${tongSoLuong > 0}" class="text-success">Còn hàng: <strong th:text="${tongSoLuong}"></strong></p>
-                <p th:if="${tongSoLuong == 0}" class="text-danger">Hết hàng</p>
-            </div>
+                <!-- Màu sắc -->
+                <label for="mauSac">Chọn màu sắc:</label>
+                <select name="mauSacId" id="mauSac" class="form-select">
+                    <option th:each="mau : ${danhSachMauSac}"
+                            th:value="${mau.id}"
+                            th:text="${mau.tenMau}"
+                            th:selected="${mau.selected}">
+                    </option>
+                </select>
 
 
 
-            <!-- Form thêm vào giỏ hàng -->
-            <form th:action="@{'/them-vao-gio-hang/' + ${sanPham.id}}" method="post">
-                <button type="submit" class="btn btn-success w-100" th:disabled="${tongSoLuong == 0}">
-                    <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
-                </button>
-            </form>
-        </div>
-    </div>
+                <!-- Kích cỡ -->
+                <div class="mt-3">
+                    <h5>Kích cỡ:</h5>
+                    <select class="form-select" name="kichCo">
+                        <option th:each="size : ${danhSachKichCo}"
+                                th:value="${size.id}"
+                                th:text="${size.tenKichCo}"
+                                th:selected="${size.selected}">
+                        </option>
+                    </select>
+                </div>
 
-    <!-- Đánh giá sản phẩm -->
-    <hr class="my-5">
-    <div class="row">
-        <div class="col-md-6">
-            <h4>📝 Viết đánh giá</h4>
-            <form method="post" action="/danh-gia-san-pham">
-                <input type="hidden" name="sanPhamId" th:value="${sanPham.id}"/>
 
-                <div class="mb-3">
-                    <label class="form-label">Đánh giá sản phẩm:</label>
-                    <div class="star-rating" id="starRating">
-                        <span class="star" data-value="5">&#9733;</span>
-                        <span class="star" data-value="4">&#9733;</span>
-                        <span class="star" data-value="3">&#9733;</span>
-                        <span class="star" data-value="2">&#9733;</span>
-                        <span class="star" data-value="1">&#9733;</span>
+                <!-- Giá sản phẩm -->
+                <div class="mt-3">
+                    <h5>Giá: <span class="fw-bold text-danger" th:text="${gia} + ' đ'">0 đ</span></h5>
+                </div>
+
+                <div class="mt-3">
+                    <h5>
+                        Số lượng còn:
+                        <span th:if="${tongSoLuong > 0}" class="text-success"> <strong th:text="${tongSoLuong}">0</strong></span>
+                        <span th:if="${tongSoLuong == 0}" class="text-danger">Hết hàng</span>
+                    </h5>
+                </div>
+
+                <div class="mt-2">
+                    <h5>Đã bán: <span class="text-info fw-bold" th:text="${soLuongDaBan}"></span> sản phẩm</h5>
+                </div>
+
+
+                <div class="muasam">
+                    <div class="d-flex gap-2">
+                        <!-- Thêm vào giỏ hàng -->
+                        <form th:action="@{'/them-vao-gio-hang/' + ${sanPham.id}}" method="post">
+                            <button type="submit" class="btn btn-success w-100" th:disabled="${tongSoLuong == 0}">
+                                <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                            </button>
+                        </form>
+
+                        <!-- Mua ngay -->
+                        <form th:action="@{'/mua-ngay/' + ${sanPham.id}}" method="post">
+                            <button type="submit" class="btn btn-danger w-100" th:disabled="${tongSoLuong == 0}">
+                                <i class="fas fa-bolt"></i> Mua ngay
+                            </button>
+                        </form>
                     </div>
-                    <input type="hidden" name="diem" id="diemInput" required>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Nhận xét:</label>
-                    <textarea name="nhanXet" class="form-control" rows="3"></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-            </form>
+            </div>
         </div>
 
+        <!-- Đánh giá sản phẩm -->
+        <hr class="my-5">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>📝 Viết đánh giá</h4>
+                <form th:action="@{/danh-gia-san-pham}" method="post">
+                    <input type="hidden" name="sanPhamId" th:value="${sanPham.id}" />
 
-        <div class="col-md-6">
-            <h4>⭐ Đánh giá của người dùng</h4>
-            <p><strong>Trung bình:</strong> <span th:text="${#numbers.formatDecimal(diemTrungBinh, 1, 1)} + '/5'"></span></p>
-            <p><strong>Tổng số nhận xét:</strong> <span th:text="${tongNhanXet}">0</span></p>
-            <ul class="list-group">
-                <li class="list-group-item" th:each="dg : ${danhGiaList}">
-                    <strong th:text="${dg.nguoiDung.hoTen}">Tên người dùng</strong>
-                    <span class="badge bg-warning text-dark ms-2" th:text="${dg.diem} + '⭐'"></span><br/>
-                    <small class="text-muted" th:text="${#temporals.format(dg.ngayDanhGia, 'dd/MM/yyyy HH:mm')}"></small><br/>
-                    <span th:text="${dg.nhanXet}">Nhận xét...</span>
-                </li>
-            </ul>
+                    <!-- Hidden input để lưu điểm khi người dùng chọn sao -->
+                    <input type="hidden" name="diem" id="diemInput" value="0">
+
+                    <div class="mb-3">
+                        <label>Đánh giá sản phẩm :</label>
+                        <div id="starContainer" style="font-size: 1.8rem; cursor: pointer;">
+                            <span class="star" data-value="1">&#9733;</span>
+                            <span class="star" data-value="2">&#9733;</span>
+                            <span class="star" data-value="3">&#9733;</span>
+                            <span class="star" data-value="4">&#9733;</span>
+                            <span class="star" data-value="5">&#9733;</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nhanXet">Nhận xét:</label>
+                        <textarea name="nhanXet" class="form-control" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <h4>⭐ Đánh giá của người dùng</h4>
+                <p><strong>Trung bình:</strong> <span th:text="${#numbers.formatDecimal(diemTrungBinh, 1, 1)} + '/5'"></span></p>
+                <p><strong>Tổng số nhận xét:</strong> <span th:text="${tongNhanXet}">0</span></p>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="dg : ${danhGiaList}">
+                        <strong th:text="${dg.nguoiDung.hoTen}">Tên người dùng</strong>
+                        <span class="badge bg-warning text-dark ms-2" th:text="${dg.diem} + '⭐'"></span><br/>
+                        <small class="text-muted" th:text="${#temporals.format(dg.ngayDanhGia, 'dd/MM/yyyy HH:mm')}"></small><br/>
+                        <span th:text="${dg.nhanXet}">Nhận xét...</span>
+                    </li>
+                </ul>
+
+                <!-- Nút xem thêm -->
+                <div class="mt-3" th:if="${!daHienThiHet}">
+                    <a th:href="@{'/chi-tiet/' + ${sanPham.id} + '?full=true'}" class="btn btn-primary">Xem thêm đánh giá</a>
+                    <!-- Nếu ĐANG FULL thì hiện nút Thu gọn -->
+
+                </div>
+
+            </div>
+
         </div>
     </div>
-</div>
+</main>
 
 <!-- Footer -->
-<footer class="bg-dark text-white text-center p-4 mt-5">
+<footer class="bg-dark text-white text-center p-4">
     © 2025 Bán Hàng Online | Địa chỉ: 243 Khuất Duy Tiến, Nhân Chính, Thanh Xuân, Hà Nội
 </footer>
 
@@ -188,7 +279,6 @@
         star.addEventListener("click", () => {
             const val = parseInt(star.getAttribute("data-value"));
             if (val === selectedValue) {
-                // Nếu click lại -> bỏ chọn
                 selectedValue = 0;
                 diemInput.value = "";
             } else {
@@ -210,6 +300,5 @@
         });
     }
 </script>
-
 </body>
 </html>

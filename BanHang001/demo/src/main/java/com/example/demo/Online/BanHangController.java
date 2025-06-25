@@ -421,7 +421,7 @@ public class BanHangController {
             ct.setDonHang(donHang);
             ct.setSanPhamChiTiet(sp.getSanPhamChiTiet());
             ct.setSoLuong(sp.getSoLuong());
-            ct.setGiaDonVi(sp.getSanPhamChiTiet().getGia().doubleValue());
+            ct.setGiaDonVi(sp.getSanPhamChiTiet().getGia().intValue());
             chiTietDonHangRepository.save(ct);
         }
 

@@ -1,5 +1,6 @@
 package com.example.demo.Entity;
 
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,10 +25,10 @@ public class ChiTietDonHang {
     private Integer soLuong;
 
     @Column(name = "gia_don_vi")
-    private Double giaDonVi;
+    private Integer giaDonVi;
 
     @Transient
-    public Double getTongGia() {
+    public Integer getTongGia() {
         return soLuong * giaDonVi;
     }
 

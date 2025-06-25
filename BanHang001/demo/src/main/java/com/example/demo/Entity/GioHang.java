@@ -22,6 +22,6 @@ public class GioHang {
     private LocalDateTime ngayTao;
 
     @Column(name = "trang_thai")
-    private int trangThai = 1;
+    private int trangThai;
 
 }

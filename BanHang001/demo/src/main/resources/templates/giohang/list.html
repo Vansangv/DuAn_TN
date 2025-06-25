@@ -35,11 +35,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="gioHang : ${gioHangs}" th:if="${gioHang.trangThai == 1}">
+    <tr th:each="gioHang : ${gioHangs}" th:if="${gioHang.trangThai == 1 || gioHang.trangThai == 3}">
         <td th:text="${gioHang.id}"></td>
         <td th:text="${gioHang.nguoiDung.hoTen}"></td>
         <td th:text="${gioHang.ngayTao}"></td>
-        <td th:text="'Chờ xác nhận'"></td>
+        <td th:text="${gioHang.trangThai == 1 ? 'Chờ xác nhận' : (gioHang.trangThai == 3 ? 'Chờ xử lý' : '')}"></td>
         <td>
             <a th:href="@{'/gio-hang-off/xoa/' + ${gioHang.id}}"
                onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>

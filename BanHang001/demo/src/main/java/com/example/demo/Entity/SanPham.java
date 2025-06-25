@@ -34,6 +34,9 @@ public class SanPham {
     private LocalDateTime ngayTao ;
 
 
+    @Column(name = "noi_bat")
+    private Integer noibat ;
+
 
 
 }
