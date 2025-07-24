@@ -71,6 +71,7 @@ public class LoaiSanPhamController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("list", repository.findAll());
+        model.addAttribute("page", "loai-san-pham'");
         return "loaisanpham/list";
     }
 
@@ -78,6 +79,8 @@ public class LoaiSanPhamController {
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("loai", new LoaiSanPham());
+        model.addAttribute("pageGroup", "san-pham");
+        model.addAttribute("page", "loai-san-pham");
         return "loaisanpham/form";
     }
 

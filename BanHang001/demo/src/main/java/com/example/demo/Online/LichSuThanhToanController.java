@@ -67,6 +67,8 @@ public class LichSuThanhToanController {
         model.addAttribute("currentPageChiTiet", pageChiTiet);
         model.addAttribute("totalPagesChiTiet", chiTietPage.getTotalPages());
 
+        model.addAttribute("page", "lich-su-thanh-toan");
+
         return "lichsuthanhtoan/lich_su_thanh_toan";
     }
 }

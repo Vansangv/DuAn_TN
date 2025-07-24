@@ -49,4 +49,9 @@ public class DonHang {
     @OneToMany(mappedBy = "donHang", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<ChiTietDonHang> chiTietDonHangs;
 
+    @Column(name = "hoan_tien")
+    private Integer hoantien;
+
+
+
 }

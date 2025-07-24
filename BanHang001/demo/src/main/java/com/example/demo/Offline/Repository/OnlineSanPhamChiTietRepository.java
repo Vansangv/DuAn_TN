@@ -23,4 +23,9 @@ public interface OnlineSanPhamChiTietRepository extends JpaRepository<SanPhamChi
     @Query("SELECT spct FROM SanPhamChiTiet spct " +
             "WHERE LOWER(spct.sanPham.tenSanPham) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<SanPhamChiTiet> searchByTenSanPham(@Param("keyword") String keyword);
+
+
+    Optional<SanPhamChiTiet> findBySanPham_IdAndMauSac_IdAndKichCo_Id(Long sanPhamId, Long mauSacId, Long kichCoId);
+
+
 }

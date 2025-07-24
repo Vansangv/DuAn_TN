@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Danh sách màu sắc</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<div layout:fragment="content">
+<div class="container mt-4">
+    <h2>Danh sách màu sắc</h2>
+    <a class="btn btn-primary mb-2" th:href="@{/mau-sac/create}">Thêm màu</a>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên màu</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="mau , iterStat: ${listMauSac}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${mau.tenMau}"></td>
+            <td>
+                <a th:href="@{/mau-sac/edit/{id}(id=${mau.id})}" class="btn btn-warning btn-sm">Sửa</a>
+                <a th:href="@{/mau-sac/delete/{id}(id=${mau.id})}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+</body>
+</html>

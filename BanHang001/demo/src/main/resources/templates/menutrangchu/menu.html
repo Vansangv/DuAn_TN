@@ -388,12 +388,7 @@
             <li>
                 <button class="menu-item" type="button" data-menu="magiamgia">
                     <span class="menu-label">
-                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4"
-                                                                                                               y="4"
-                                                                                                               width="14"
-                                                                                                               height="14"
-                                                                                                               rx="3"/><path
-                                d="M8 8l6 6M14 8l-6 6"/></svg>
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="14" height="14" rx="3"/><path d="M8 8l6 6M14 8l-6 6"/></svg>
                         <span>Mã giảm giá</span>
                     </span>
                     <span class="arrow">&#9654;</span>
@@ -403,45 +398,63 @@
                         giá</a></li>
                 </ul>
             </li>
+
+            <!-- 🧧 Vận chuyển -->
+            <li>
+                <button class="menu-item" type="button" data-menu="vanchuyen">
+                    <span class="menu-label">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="14" height="14" rx="3"/><path d="M8 8l6 6M14 8l-6 6"/></svg>
+                        <span>Quản lý Vận chuyển</span>
+                    </span>
+                    <span class="arrow">&#9654;</span>
+                </button>
+                <ul class="submenu" id="submenu-vanchuyen">
+                    <li><a th:href="@{/van-chuyen/danh-sach}" th:classappend="${page=='van-chuyen'} ? 'active'">Vận chuyển</a></li>
+                </ul>
+            </li>
+
+            <!-- 🧧 Trả Hàng  -->
+            <li>
+                <button class="menu-item" type="button" data-menu="trahang">
+                    <span class="menu-label">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="14" height="14" rx="3"/><path d="M8 8l6 6M14 8l-6 6"/></svg>
+                        <span>Quản lý Trà hàng</span>
+                    </span>
+                    <span class="arrow">&#9654;</span>
+                </button>
+                <ul class="submenu" id="submenu-trahang">
+                    <li><a th:href="@{/admin/tra-hang/cho-xu-ly}" th:classappend="${page=='tra-hang'} ? 'active'">Trả hàng</a></li>
+                </ul>
+            </li>
+
             <!-- 🛒 GIỎ HÀNG & YÊU THÍCH -->
             <li>
                 <button class="menu-item" type="button" data-menu="giohang">
                     <span class="menu-label">
-                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><circle
-                                cx="8.5" cy="18" r="1"/><circle cx="16.5" cy="18" r="1"/><path
-                                d="M3 4h2l2 12h10l2-7H6"/></svg>
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8.5" cy="18" r="1"/><circle cx="16.5" cy="18" r="1"/><path d="M3 4h2l2 12h10l2-7H6"/></svg>
                         <span>Giỏ hàng & Yêu thích</span>
                     </span>
                     <span class="arrow">&#9654;</span>
                 </button>
                 <ul class="submenu" id="submenu-giohang">
-                    <li><a th:href="@{/gio-hang/chon-nguoi-dung}" th:classappend="${page=='gio-hang'} ? 'active'">Quản lý giỏ hàng</a>
-                    </li>
-                    <li><a th:href="@{/gio-hang-off}" th:classappend="${page=='gio-hang-off'} ? 'active'">Giỏ
-                        hàng</a></li>
+                    <li><a th:href="@{/gio-hang/chon-nguoi-dung}" th:classappend="${page=='gio-hang'} ? 'active'">Quản lý giỏ hàng</a></li>
+                    <li><a th:href="@{/gio-hang-off}" th:classappend="${page=='gio-hang-off'} ? 'active'">Giỏ hàng</a></li>
                 </ul>
             </li>
             <!-- 🧾 ĐƠN HÀNG & THANH TOÁN -->
             <li>
                 <button class="menu-item" type="button" data-menu="donhang">
                     <span class="menu-label">
-                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3"
-                                                                                                               y="7"
-                                                                                                               width="16"
-                                                                                                               height="10"
-                                                                                                               rx="2"/><path
-                                d="M7 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M6 13h4M6 16h7"/></svg>
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="16" height="10" rx="2"/><path d="M7 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M6 13h4M6 16h7"/></svg>
                         <span>Đơn hàng & Thanh toán</span>
                     </span>
                     <span class="arrow">&#9654;</span>
                 </button>
                 <ul class="submenu" id="submenu-donhang">
-                    <li><a th:href="@{/don-hang}" th:classappend="${page=='don-hang'} ? 'active'">Quản lý đơn hàng</a>
-                    </li>
-                    <li><a th:href="@{/chi-tiet-don-hang}" th:classappend="${page=='chi-tiet-don-hang'} ? 'active'">Chi
-                        tiết đơn hàng</a></li>
-                    <li><a th:href="@{/lich-su-thanh-toan}" th:classappend="${page=='lich-su-thanh-toan'} ? 'active'">Lịch
-                        sử thanh toán</a></li>
+                    <li><a th:href="@{/don-hang}" th:classappend="${page=='don-hang'} ? 'active'">Quản lý đơn hàng</a></li>
+                    <li><a th:href="@{/chi-tiet-don-hang}" th:classappend="${page=='chi-tiet-don-hang'} ? 'active'">Chi tiết đơn hàng</a></li>
+                    <li><a th:href="@{/don-hang/cho-xac-nhan}" th:classappend="${page=='chi-tiet-don-hang'} ? 'active'">Xác nhận đơn hàng</a></li>
+                    <li><a th:href="@{/lich-su-thanh-toan}" th:classappend="${page=='lich-su-thanh-toan'} ? 'active'">Lịch sử thanh toán</a></li>
                 </ul>
             </li>
 

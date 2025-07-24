@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -35,16 +36,7 @@ public class GioHangOnlineController {
     private OnlineSanPhamChiTietRepository sanPhamChiTietRepository;
 
     @Autowired
-    private OnlineNguoiDungRepository nguoiDungRepository; // Nếu có
-
-    @Autowired
     private NguoiDungService nguoiDungService;
-
-    @Autowired
-    private OnlineDonHangRepository donHangRepository;
-
-    @Autowired
-    private OnlineChiTietDonHangRepository chiTietDonHangRepository;
 
     @Autowired
     private OnlineMaGiamGiaRepository maGiamGiaRepository;
@@ -53,17 +45,20 @@ public class GioHangOnlineController {
     private DiaChiGiaoHangRepository diaChiGiaoHangRepository;
 
     @Autowired
-    private LichSuThanhToanRepository lichSuThanhToanRepository;
-
-    @Autowired
     private OnlineDonHangRepository onlineDonHangRepository;
-
-    @Autowired
-    private VanChuyenRepository vanChuyenRepository;
 
     @Autowired
     private OnlineChiTietDonHangRepository onlineChiTietDonHangRepository;
 
+    @Autowired
+    private PhiVanChuyenRepository phiVanChuyenRepository;
+
+
+    @Autowired
+    private ThongBaoRepository thongBaoRepository;
+
+    @Autowired
+    private SuDungMaGiamGiaRepository suDungMaGiamGiaRepository;
 
     @PostMapping("/them-vao-gio-hang/{id}")
     public String themVaoGioHang(@PathVariable("id") Long sanPhamChiTietId,
@@ -204,42 +199,36 @@ public class GioHangOnlineController {
     @GetMapping("/xac-nhan-don-hang")
     public String xacNhanDonHang(Authentication authentication, Model model) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login-online";
+            return "redirect:/login";
         }
 
         String username = authentication.getName();
         NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
-        if (nguoiDung == null) {
-            return "redirect:/login-online";
-        }
+        if (nguoiDung == null) return "redirect:/login";
 
-        // Sửa: dùng findFirstByNguoiDungAndTrangThai với trạng thái = 3
-        Optional<GioHang> gioHangOpt = gioHangRepository.findFirstByNguoiDungAndTrangThai(nguoiDung, 3);
-        if (gioHangOpt.isEmpty()) {
-            return "redirect:/gio-hang";
-        }
-        GioHang gioHang = gioHangOpt.get();
+        GioHang gioHang = gioHangRepository.findByNguoiDung(nguoiDung);
+        if (gioHang == null) return "redirect:/gio-hang";
 
         List<SanPhamTrongGioHang> dsSanPham = sanPhamTrongGioHangRepository.findByGioHang(gioHang);
-        if (dsSanPham.isEmpty()) {
-            return "redirect:/gio-hang";
-        }
+        if (dsSanPham.isEmpty()) return "redirect:/gio-hang";
 
         int tongTienHang = dsSanPham.stream()
                 .mapToInt(sp -> sp.getSoLuong() * sp.getSanPhamChiTiet().getGia())
                 .sum();
-
         int phiVanChuyen = 30000;
 
         DiaChiGiaoHang diaChiMacDinh = diaChiGiaoHangRepository.findByNguoiDungAndMacDinhTrue(nguoiDung);
 
-        List<MaGiamGia> danhSachMaGiamGia = maGiamGiaRepository.findAllActiveAndValid();
+        // Lọc các mã giảm giá chưa sử dụng
+        List<Long> idsDaSuDung = suDungMaGiamGiaRepository.findByNguoiDung(nguoiDung).stream()
+                .map(s -> s.getMaGiamGia().getId())
+                .collect(Collectors.toList());
 
-        List<String> danhSachPhuongThucThanhToan = List.of(
-                "Thanh toán khi nhận hàng",
-                "Chuyển khoản ngân hàng",
-                "Ví điện tử"
-        );
+        List<MaGiamGia> danhSachMaGiamGia = maGiamGiaRepository.findAllActiveAndValid().stream()
+                .filter(mg -> !idsDaSuDung.contains(mg.getId()))
+                .collect(Collectors.toList());
+
+        List<String> danhSachPhuongThucThanhToan = List.of("Thanh toán khi nhận hàng", "Chuyển khoản ngân hàng", "Ví điện tử","Chuyển khoản ngân hàng qua VNPay");
 
         model.addAttribute("nguoiDung", nguoiDung);
         model.addAttribute("diaChiMacDinh", diaChiMacDinh);
@@ -253,45 +242,33 @@ public class GioHangOnlineController {
         return "BanHangOnline/xac-nhan-don-hang";
     }
 
-
-    // Controller Method: /mua-hang
     @PostMapping("/mua-hang")
     public String muaHang(@RequestParam(name = "maGiamGia", required = false) Long maGiamGiaId,
                           @RequestParam(name = "phuongThucThanhToan") String phuongThucThanhToan,
                           Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login-online";
-        }
+        if (authentication == null || !authentication.isAuthenticated()) return "redirect:/login";
 
         String username = authentication.getName();
         NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
-        if (nguoiDung == null) {
-            return "redirect:/login-online";
-        }
+        if (nguoiDung == null) return "redirect:/login";
 
-        Optional<GioHang> gioHangOpt = gioHangRepository.findFirstByNguoiDungAndTrangThai(nguoiDung, 3);
-        if (gioHangOpt.isEmpty()) {
-            return "redirect:/gio-hang";
-        }
-        GioHang gioHang = gioHangOpt.get();
-
+        GioHang gioHang = gioHangRepository.findByNguoiDung(nguoiDung);
+        if (gioHang == null) return "redirect:/gio-hang";
 
         List<SanPhamTrongGioHang> dsSanPham = sanPhamTrongGioHangRepository.findByGioHang(gioHang);
-        if (dsSanPham.isEmpty()) {
-            return "redirect:/gio-hang";
-        }
+        if (dsSanPham.isEmpty()) return "redirect:/gio-hang";
 
         int tongTienHang = dsSanPham.stream()
                 .mapToInt(sp -> sp.getSoLuong() * sp.getSanPhamChiTiet().getGia())
                 .sum();
-
         int phiVanChuyen = 30000;
         int giamGia = 0;
         MaGiamGia maGiamGia = null;
 
         if (maGiamGiaId != null) {
-            maGiamGia = maGiamGiaRepository.findById(maGiamGiaId).orElse(null);
-            if (maGiamGia != null) {
+            MaGiamGia tempMa = maGiamGiaRepository.findById(maGiamGiaId).orElse(null);
+            if (tempMa != null && !suDungMaGiamGiaRepository.existsByNguoiDungAndMaGiamGia(nguoiDung, tempMa)) {
+                maGiamGia = tempMa;
                 if ("phan_tram".equals(maGiamGia.getLoaiGiam())) {
                     giamGia = tongTienHang * maGiamGia.getPhanTramGiam() / 100;
                 } else {
@@ -301,7 +278,6 @@ public class GioHangOnlineController {
         }
 
         int tongThanhToan = tongTienHang + phiVanChuyen - giamGia;
-
         DiaChiGiaoHang diaChiMacDinh = diaChiGiaoHangRepository.findByNguoiDungAndMacDinhTrue(nguoiDung);
 
         DonHang donHang = DonHang.builder()
@@ -316,16 +292,12 @@ public class GioHangOnlineController {
                 .build();
         donHang = onlineDonHangRepository.save(donHang);
 
-
-        // Ghi lịch sử thanh toán
-        LichSuThanhToan lichSu = new LichSuThanhToan();
-        lichSu.setNguoiDung(nguoiDung);
-        lichSu.setDonHang(donHang);
-        lichSu.setSoTien(tongThanhToan);
-        lichSu.setPhuongThuc(phuongThucThanhToan);
-        lichSu.setThoiGian(LocalDateTime.now());
-        lichSuThanhToanRepository.save(lichSu);
-
+        PhiVanChuyen phi = new PhiVanChuyen();
+        phi.setDonHang(donHang);
+        phi.setSoTien(phiVanChuyen);
+        phi.setMoTa("Phí vận chuyển tiêu chuẩn");
+        phi.setNguoiTra("Khách hàng");
+        phiVanChuyenRepository.save(phi);
 
         for (SanPhamTrongGioHang sp : dsSanPham) {
             ChiTietDonHang chiTiet = new ChiTietDonHang();
@@ -340,24 +312,27 @@ public class GioHangOnlineController {
             sanPhamChiTietRepository.save(chiTietSanPham);
         }
 
-        sanPhamTrongGioHangRepository.deleteAll(dsSanPham);
+        // Lưu lịch sử sử dụng mã giảm giá nếu có
+        if (maGiamGia != null) {
+            SuDungMaGiamGia suDung = new SuDungMaGiamGia();
+            suDung.setNguoiDung(nguoiDung);
+            suDung.setMaGiamGia(maGiamGia);
+            suDung.setThoiGianSuDung(LocalDateTime.now());
+            suDungMaGiamGiaRepository.save(suDung);
+        }
 
-        // Tạo thông tin vận chuyển
-        VanChuyen vanChuyen = new VanChuyen();
-        vanChuyen.setDonHang(donHang);
-        vanChuyen.setDiaChiGiao(diaChiMacDinh != null ? diaChiMacDinh.getDiaChi() : "");
-        vanChuyen.setTrangThai("0"); // 0 = Đang vận chuyển
-        vanChuyen.setNgayGiaoDuKien(LocalDateTime.now().plusDays(3));
-        vanChuyenRepository.save(vanChuyen);
+        // Gửi thông báo
+        ThongBao thongBao = ThongBao.builder()
+                .nguoiDung(nguoiDung)
+                .tieuDe("Đặt hàng thành công")
+                .noiDung("Cảm ơn bạn đã đặt hàng. Đơn hàng #" + donHang.getId() + " đã được tạo thành công và đang chờ xác nhận.")
+                .build();
+        thongBaoRepository.save(thongBao);
+
+        sanPhamTrongGioHangRepository.deleteAll(dsSanPham);
 
         return "redirect:/xac-nhan-don-hang";
     }
-
-
-
-
-
-
 
 
 }

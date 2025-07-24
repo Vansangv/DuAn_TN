@@ -1,79 +1,197 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
+    <meta charset="UTF-8">
     <title>Danh sách Vai trò người dùng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9f9f9;
+            margin: 20px;
+        }
+
+        h2, h3 {
+            color: #2c3e50;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        select, input[type="text"], button {
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        button i {
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .pagination {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #3498db;
+        }
+
+        .pagination a:hover {
+            text-decoration: underline;
+        }
+
+        .update-form {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        select[name="vaiTroId"] {
+            min-width: 150px;
+        }
+    </style>
 </head>
 <body>
-<h2>Danh sách Vai trò người dùng</h2>
+<div layout:fragment="content">
+    <h2><i class="fas fa-users-cog"></i> Danh sách Vai trò người dùng</h2>
 
-<!-- Form lọc theo vai trò -->
-<form th:action="@{/vai-tro-nguoi-dung}" method="get">
-    <label for="searchVaiTro">Lọc theo vai trò:</label>
-    <select name="searchVaiTro" id="searchVaiTro">
-        <option value="">Tất cả vai trò</option>
-        <option th:each="vaiTro : ${vaiTros}"
-                th:value="${vaiTro.tenVaiTro}"
-                th:text="${vaiTro.tenVaiTro}"
-                th:selected="${vaiTro.tenVaiTro == searchVaiTro}">
-        </option>
-    </select>
+    <!-- Bao ngoài chứa form lọc và form thêm vai trò -->
+    <div style="display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 20px;">
 
-    <label for="searchNguoiDung">Tìm người dùng:</label>
-    <input type="text" name="searchNguoiDung" placeholder="Nhập tên người dùng" th:value="${searchNguoiDung}" />
+        <!-- Form lọc -->
+        <form th:action="@{/vai-tro-nguoi-dung}" method="get"
+              style="flex: 1 1 45%; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <label for="searchVaiTro" style="min-width: 70px;">Vai trò:</label>
+            <select name="searchVaiTro" id="searchVaiTro" style="flex: 1 1 auto; min-width: 150px;">
+                <option value="">Tất cả</option>
+                <option th:each="vaiTro : ${vaiTros}"
+                        th:value="${vaiTro.tenVaiTro}"
+                        th:text="${vaiTro.tenVaiTro}"
+                        th:selected="${vaiTro.tenVaiTro == searchVaiTro}">
+                </option>
+            </select>
 
-    <button type="submit">Lọc</button>
-</form>
-<a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/vai-tro-nguoi-dung/add}">
-    <button type="button">+ Thêm vai trò</button>
-</a>
-<table border="1">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Người dùng</th>
-        <th>Vai trò</th>
-        <th>Thao tác</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="vaiTroNguoiDung : ${vaiTroNguoiDungs.content}">
-        <td th:text="${vaiTroNguoiDung.id}">ID</td>
-        <td th:text="${vaiTroNguoiDung.nguoiDung.hoTen}">Tên người dùng</td>
-        <td th:text="${vaiTroNguoiDung.vaiTro.tenVaiTro}">Tên vai trò</td>
-        <td>
-            <!-- Form để cập nhật vai trò -->
-            <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
-                  th:action="@{|/vai-tro-nguoi-dung/update/${vaiTroNguoiDung.id}|}" method="post">
-                <select name="vaiTroId">
-                    <option value="" disabled selected>Chọn vai trò</option>
-                    <option th:each="vaiTro : ${vaiTros}"
-                            th:value="${vaiTro.id}"
-                            th:text="${vaiTro.tenVaiTro}"></option>
-                </select>
-                <button type="submit">Cập nhật</button>
+            <label for="searchNguoiDung" style="min-width: 90px;">Người dùng:</label>
+            <input type="text" name="searchNguoiDung" placeholder="Nhập tên người dùng"
+                   th:value="${searchNguoiDung}"
+                   style="flex: 1 1 auto; min-width: 150px;" />
+
+            <button type="submit" style="white-space: nowrap;"><i class="fas fa-filter"></i> Lọc</button>
+        </form>
+
+        <!-- Thêm vai trò mới -->
+        <div class="form-them-moi" th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+             style="flex: 1 1 45%; background: #f0f0f0; padding: 15px; border-radius: 6px;">
+            <h3><i class="fas fa-plus-circle"></i> Thêm Vai Trò Mới</h3>
+            <form th:action="@{/vai-tro-nguoi-dung/save}" method="post"
+                  style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="tenVaiTro" name="tenVaiTro" required placeholder="Nhập tên vai trò..."
+                       style="flex: 1 1 auto; min-width: 150px;" />
+                <button type="submit"
+                        style="white-space: nowrap; background-color: #2ecc71; border: none; color: white; padding: 6px 15px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
             </form>
-
-
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<!-- Phân trang -->
-<div>
-    <span>Trang: </span>
-    <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">1</span>
-    <div>
-        <span th:if="${currentPage > 0}">
-            <a th:href="@{/vai-tro-nguoi-dung(page=0, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">Đầu</a> |
-            <a th:href="@{/vai-tro-nguoi-dung(page=${currentPage - 1}, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">Trước</a> |
-        </span>
-        <span th:if="${currentPage < totalPages - 1}">
-            <a th:href="@{/vai-tro-nguoi-dung(page=${currentPage + 1}, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">Sau</a> |
-            <a th:href="@{/vai-tro-nguoi-dung(page=${totalPages - 1}, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">Cuối</a>
-        </span>
+        </div>
     </div>
-</div>
 
+    <!-- Bảng dữ liệu -->
+    <table>
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th><i class="fas fa-user"></i> Người dùng</th>
+            <th><i class="fas fa-shield-alt"></i> Vai trò</th>
+            <th>Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="vaiTroNguoiDung, iterStat  : ${vaiTroNguoiDungs.content}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${vaiTroNguoiDung.nguoiDung.hoTen}">Người dùng</td>
+            <td th:text="${vaiTroNguoiDung.vaiTro.tenVaiTro}">Vai trò</td>
+            <td>
+                <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                      th:action="@{|/vai-tro-nguoi-dung/update/${vaiTroNguoiDung.id}|}"
+                      method="post"
+                      class="update-form">
+                    <select name="vaiTroId">
+                        <option value="" disabled selected>Chọn vai trò</option>
+                        <option th:each="vaiTro : ${vaiTros}"
+                                th:value="${vaiTro.id}"
+                                th:text="${vaiTro.tenVaiTro}"></option>
+                    </select>
+                    <button type="submit"><i class="fas fa-edit"></i> Cập nhật</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <div class="pagination">
+        <span>Trang: <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">1</span></span>
+        <div>
+            <span th:if="${currentPage > 0}">
+                <a th:href="@{/vai-tro-nguoi-dung(page=0, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">
+                    <i class="fas fa-angle-double-left"></i> Đầu
+                </a>
+                <a th:href="@{/vai-tro-nguoi-dung(page=${currentPage - 1}, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">
+                    <i class="fas fa-angle-left"></i> Trước
+                </a>
+            </span>
+            <span th:if="${currentPage < totalPages - 1}">
+                <a th:href="@{/vai-tro-nguoi-dung(page=${currentPage + 1}, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">
+                    Sau <i class="fas fa-angle-right"></i>
+                </a>
+                <a th:href="@{/vai-tro-nguoi-dung(page=${totalPages - 1}, searchNguoiDung=${searchNguoiDung}, searchVaiTro=${searchVaiTro})}">
+                    Cuối <i class="fas fa-angle-double-right"></i>
+                </a>
+            </span>
+        </div>
+    </div>
+
+</div>
 </body>
 </html>

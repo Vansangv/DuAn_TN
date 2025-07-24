@@ -22,8 +22,14 @@ public class CustomUserDetails implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+
+
     public Long getId() {
         return nguoiDung.getId();
+    }
+
+    public NguoiDung getNguoiDung() {
+        return nguoiDung;
     }
 
     @Override

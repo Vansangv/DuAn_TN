@@ -3,132 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <title>SH-Shop - Đăng nhập</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="..." crossorigin="anonymous" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FontAwesome 6.5 for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
     <style>
         body {
-            background-color: #f0f4f8;
-        }
-
-        .login-container {
-            max-width: 400px;
-            margin: 80px auto;
-            background: linear-gradient(135deg, #6f42c1, #007bff);
-            border-radius: 20px;
-            padding: 40px 30px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-            color: #ffffff;
-        }
-
-        .login-logo {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            background: linear-gradient(120deg, #2B2D42 0%, #EF476F 100%);
             display: flex;
             justify-content: center;
-            margin-bottom: 30px;
+            align-items: center;
         }
-
-        .login-logo img {
-            width: 120px;
+        .login-main-container {
+            width: 720px;
+            max-width: 98vw;
+            min-height: 420px;
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 8px 28px 0 rgba(44,62,80,0.19);
+            border-radius: 22px;
+            display: flex;
+            overflow: hidden;
         }
-
-        .btn-login {
-            background-color: #ffc107;
-            color: #212529;
-            font-weight: bold;
-            transition: background-color 0.3s;
+        .login-left {
+            background: rgba(32,24,64,0.92);
+            width: 44%;
+            min-width: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            padding: 30px 10px;
         }
-
-        .btn-login:hover {
-            background-color: #e0a800;
+        .planet {
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle at 60% 40%, #ff686b 0%, #ffb199 80%);
+            border-radius: 50%;
+            position: relative;
+            margin-bottom: 16px;
         }
-
-        .divider {
-            text-align: center;
-            margin: 20px 0;
-            color: #ffffff;
-        }
-
-        .divider::before, .divider::after {
+        .planet::before, .planet::after {
             content: "";
-            display: inline-block;
-            width: 40%;
-            height: 1px;
-            background-color: rgba(255, 255, 255, 0.5);
-            vertical-align: middle;
-        }
-
-        .divider span {
-            padding: 0 10px;
-        }
-
-        .toggle-password {
             position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: blueviolet;
-            font-size: 1.2rem;
+            border-radius: 50%;
+            background: #a94d6b;
+            opacity: 0.28;
         }
-
+        .planet::before {
+            width: 52px;
+            height: 18px;
+            left: 16px;
+            top: 32px;
+        }
+        .planet::after {
+            width: 34px;
+            height: 13px;
+            left: 60px;
+            top: 75px;
+        }
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .star.s1 { width: 5px; height: 5px; left: 18px; top: 30px;}
+        .star.s2 { width: 3px; height: 3px; left: 100px; top: 90px;}
+        .star.s3 { width: 4px; height: 4px; left: 70px; top: 10px;}
+        .star.s4 { width: 2px; height: 2px; left: 120px; top: 60px;}
+        .brand {
+            color: #ffb199;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 7px;
+            text-align: center;
+            margin-top: 10px;
+            user-select: none;
+        }
+        .login-right {
+            width: 56%;
+            background: rgba(255,255,255,0.10);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px 42px 32px 34px;
+        }
+        .login-title {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .login-input {
+            width: 100%;
+            padding: 12px 42px 12px 14px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.17);
+            color: #fff;
+            margin-bottom: 5px;
+            box-sizing: border-box;
+        }
+        .login-input:focus {
+            background: rgba(255,255,255,0.22);
+        }
         .position-relative {
             position: relative;
         }
-
-        a {
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 53%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #b390e1;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+        .btn-login {
+            width: 100%;
+            background: none;
+            border: 1.5px solid #ffb199;
+            color: #ffb199;
+            font-weight: 600;
+            padding: 12px 0;
+            border-radius: 7px;
+            margin-top: 4px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+        .btn-login:hover {
+            background: #ffb199;
+            color: #2B2D42;
+        }
+        .btn-register {
+            width: 100%;
+            background: none;
+            border: 1.5px solid #fff;
+            color: #fff;
+            font-weight: 500;
+            padding: 12px 0;
+            border-radius: 7px;
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+        .btn-register:hover {
+            background: #fff;
+            color: #2B2D42;
+        }
+        .forgot-link {
+            text-align: right;
+            margin-bottom: 18px;
+        }
+        .forgot-link a {
+            color: #ffb199;
             text-decoration: none;
-            color: #ffc107;
+            font-size: 1rem;
+            transition: color 0.2s;
         }
-
-        a:hover {
+        .forgot-link a:hover {
+            color: #fff;
             text-decoration: underline;
-            color: #e0a800;
         }
-
+        .or-divider {
+            text-align: center;
+            margin: 18px 0;
+            color: #fff;
+            opacity: 0.65;
+            font-size: 1rem;
+            position: relative;
+        }
+        .or-divider:before, .or-divider:after {
+            content: "";
+            display: inline-block;
+            vertical-align: middle;
+            width: 32%;
+            height: 1px;
+            background: rgba(255,255,255,0.36);
+            margin: 0 8px;
+        }
+        /* Responsive */
+        @media (max-width: 900px) {
+            .login-main-container {
+                width: 99vw;
+            }
+        }
+        @media (max-width: 650px) {
+            .login-main-container {
+                flex-direction: column;
+                min-height: 80vh;
+                width: 98vw;
+            }
+            .login-left,
+            .login-right {
+                width: 100%;
+                padding: 30px 10vw;
+                min-width: unset;
+            }
+            .planet {
+                width: 90px;
+                height: 90px;
+            }
+        }
+        @media (max-width: 450px) {
+            .login-left,
+            .login-right {
+                padding: 18px 6vw;
+            }
+        }
     </style>
 </head>
 <body>
-
-<div class="login-container">
-    <div class="login-logo">
-        <img src="/images/shshop-logo.png" alt="SH-Shop Logo"> <!-- Replace with your SH logo -->
+<div class="login-main-container">
+    <div class="login-left">
+        <div class="planet"></div>
+        <div class="stars">
+            <div class="star s1"></div>
+            <div class="star s2"></div>
+            <div class="star s3"></div>
+            <div class="star s4"></div>
+        </div>
+        <div class="brand">SH SHOP</div>
     </div>
-    <form th:action="@{/login}" method="post">
-        <div class="mb-3">
-            <input type="text" class="form-control" name="username" placeholder="Email hoặc số điện thoại" required>
-        </div>
-        <div class="mb-3 position-relative">
-            <input type="password" class="form-control" id="password" name="password" placeholder="Mật khẩu" required>
-            <i class="fa-solid fa-eye toggle-password" id="togglePassword" title="Hiển thị mật khẩu"></i>
-
-        </div>
-        <div class="d-grid">
-            <button type="submit" class="btn btn-login">Đăng nhập</button>
-        </div>
-    </form>
-
-    <div class="text-center mt-3">
-        <a th:href="@{/forgot-password}">Gặp sự cố khi đăng nhập?</a>
-    </div>
-
-    <div class="divider"><span>hoặc</span></div>
-
-    <div class="d-grid">
-        <a th:href="@{/register}" class="btn btn-secondary">Đăng ký</a>
+    <div class="login-right">
+        <div class="login-title">Đăng nhập</div>
+        <form th:action="@{/login}" method="post" autocomplete="off">
+            <div class="form-group">
+                <input type="text" class="login-input" name="username" placeholder="Email hoặc SĐT" required>
+            </div>
+            <div class="form-group position-relative">
+                <input type="password" class="login-input" id="password" name="password" placeholder="Mật khẩu" required>
+                <i class="fa-solid fa-eye toggle-password" id="togglePassword" title="Hiện mật khẩu"></i>
+            </div>
+            <div class="forgot-link">
+                <a th:href="@{/quen-mat-khau}">Quên mật khẩu?</a>
+            </div>
+            <button type="submit" class="btn-login">Đăng nhập</button>
+        </form>
+        <div class="or-divider">hoặc</div>
+        <a th:href="@{/register}">
+            <button class="btn-register">Đăng ký tài khoản</button>
+        </a>
     </div>
 </div>
-
-<!-- JavaScript -->
 <script>
     const togglePassword = document.getElementById("togglePassword");
     const passwordInput = document.getElementById("password");
-
     togglePassword.addEventListener("click", function () {
         const isPasswordHidden = passwordInput.type === "password";
         passwordInput.type = isPasswordHidden ? "text" : "password";
-
-        // Đổi biểu tượng mắt
         if (isPasswordHidden) {
             togglePassword.classList.remove("fa-eye");
             togglePassword.classList.add("fa-eye-slash");
@@ -136,10 +279,10 @@
         } else {
             togglePassword.classList.remove("fa-eye-slash");
             togglePassword.classList.add("fa-eye");
-            togglePassword.setAttribute("title", "Hiển thị mật khẩu");
+            togglePassword.setAttribute("title", "Hiện mật khẩu");
         }
     });
 </script>
-
 </body>
 </html>
+

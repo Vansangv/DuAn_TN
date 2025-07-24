@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Vận chuyển đơn hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div layout:fragment="content">
+<div class="container mt-4">
+    <h2>Danh sách vận chuyển</h2>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Mã vận chuyển</th>
+            <th>Đơn hàng</th>
+            <th>Khách hàng</th>
+            <th>SĐT</th>
+            <th>Địa chỉ giao</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="vc : ${vanchuyens}">
+            <td th:text="${vc.id}"></td>
+            <td th:text="${vc.donHang.id}"></td>
+            <td th:text="${vc.donHang.nguoiDung.hoTen}"></td>
+            <td th:text="${vc.donHang.nguoiDung.soDienThoai}"></td>
+            <td th:text="${vc.diaChiGiao}"></td>
+            <td th:text="${vc.trangThai}"></td>
+            <td>
+                <!-- Nếu trạng thái KHÔNG phải "Vận chuyển thành công" hoặc "Đã hủy vận chuyển" -->
+                <div th:if="${vc.trangThai != 'Vận chuyển thành công' and vc.trangThai != 'Đã hủy vận chuyển'}">
+                    <!-- Nút Giao Thành Công -->
+                    <form th:action="@{'/van-chuyen/giao-thanh-cong/' + ${vc.id}}" method="post" style="display:inline;">
+                        <button class="btn btn-primary btn-sm">Giao thành công</button>
+                    </form>
+
+                    <!-- Nút Hủy vận chuyển mở modal -->
+                    <button class="btn btn-danger btn-sm"
+                            th:attr="data-id=${vc.id}"
+                            onclick="moFormHuy(this)">Hủy vận chuyển</button>
+                </div>
+                <!-- Nếu đã giao hoặc đã hủy thì không hiển thị gì -->
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Ghi chú hủy vận chuyển -->
+<div class="modal fade" id="huyModal" tabindex="-1" aria-labelledby="huyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="huyForm" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Lý do hủy vận chuyển</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="hiddenId">
+                    <div class="mb-3">
+                        <label for="ghiChu" class="form-label">Ghi chú:</label>
+                        <textarea name="ghiChu" class="form-control" id="ghiChu" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Xác nhận hủy</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function moFormHuy(button) {
+        const id = button.getAttribute("data-id");
+        document.getElementById("hiddenId").value = id;
+        document.getElementById("huyForm").action = "/van-chuyen/huy-van-chuyen/" + id;
+        const modal = new bootstrap.Modal(document.getElementById("huyModal"));
+        modal.show();
+    }
+</script>
+</div>
+</body>
+</html>

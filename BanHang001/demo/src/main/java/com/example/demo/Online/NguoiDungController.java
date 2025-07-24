@@ -52,6 +52,7 @@ public class NguoiDungController {
         model.addAttribute("search", search);  // Thêm tham số search vào model
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", nguoiDungs.getTotalPages());
+        model.addAttribute("page", "nguoi-dung");
         return "nguoidung/index";
     }
 
@@ -62,6 +63,8 @@ public class NguoiDungController {
     @GetMapping("/them")
     public String hienThiFormThem(Model model) {
         model.addAttribute("nguoiDung", new NguoiDung());
+        model.addAttribute("pageGroup", "nguoi-dung");
+        model.addAttribute("page", "nguoi-dung");
         return "nguoidung/them";
     }
 
@@ -90,6 +93,8 @@ public class NguoiDungController {
             model.addAttribute("nguoiDung", optional.get());
             return "nguoidung/sua";
         }
+        model.addAttribute("pageGroup", "nguoi-dung");
+        model.addAttribute("page", "nguoi-dung");
         return "redirect:/nguoi-dung";
     }
 

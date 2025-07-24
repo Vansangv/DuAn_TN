@@ -51,6 +51,4 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             "ORDER BY tongSoLuong DESC")
     List<Map<String, Object>> findTopSellingProducts();
 
-
-
 }

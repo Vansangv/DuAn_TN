@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form th:action="@{/dat-lai-mat-khau}" method="post">
+    <input type="hidden" name="token" th:value="${token}">
+    <label>Mật khẩu mới:</label>
+    <input type="password" name="matKhauMoi" required>
+    <button type="submit">Xác nhận</button>
+</form>
+<p th:if="${error}" th:text="${error}"></p>
+
+</body>
+</html>

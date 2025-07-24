@@ -52,6 +52,7 @@ public class SanPhamController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", sanPhamPage.getTotalPages());
         model.addAttribute("searchTerm", searchTerm);
+        model.addAttribute("page", "san-pham");
         return "sanpham/list";
     }
 
@@ -59,6 +60,8 @@ public class SanPhamController {
     public String showAddForm(Model model) {
         model.addAttribute("sanPham", new SanPham());
         model.addAttribute("loaiSanPhams", loaiSanPhamRepository.findAll());
+        model.addAttribute("pageGroup", "'san-pham");
+        model.addAttribute("page", "'san-pham");
         return "sanpham/add";
     }
 
@@ -96,6 +99,8 @@ public class SanPhamController {
             model.addAttribute("loaiSanPhams", loaiSanPhamRepository.findAll());
             return "sanpham/edit";
         }
+        model.addAttribute("pageGroup", "'san-pham");
+        model.addAttribute("page", "'san-pham");
         return "redirect:/sanpham";
     }
 

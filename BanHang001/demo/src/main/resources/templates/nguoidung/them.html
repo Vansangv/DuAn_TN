@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <title>Thêm người dùng</title>
     <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .error-message {
             color: red;
@@ -22,35 +26,30 @@
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const phoneRegex = /^[0-9]{9,15}$/;
 
-            // Xóa thông báo lỗi cũ
             document.getElementById("tenDangNhapError").innerText = "";
             document.getElementById("matKhauError").innerText = "";
             document.getElementById("hoTenError").innerText = "";
             document.getElementById("emailError").innerText = "";
             document.getElementById("soDienThoaiError").innerText = "";
 
-            // Kiểm tra tên đăng nhập
             if (tenDangNhap === "") {
                 document.getElementById("tenDangNhapError").innerText = "Vui lòng nhập tên đăng nhập.";
                 isValid = false;
                 hideErrorAfterDelay("tenDangNhapError");
             }
 
-            // Kiểm tra mật khẩu
             if (matKhau === "") {
                 document.getElementById("matKhauError").innerText = "Vui lòng nhập mật khẩu.";
                 isValid = false;
                 hideErrorAfterDelay("matKhauError");
             }
 
-            // Kiểm tra họ tên
             if (hoTen === "") {
                 document.getElementById("hoTenError").innerText = "Vui lòng nhập họ tên.";
                 isValid = false;
                 hideErrorAfterDelay("hoTenError");
             }
 
-            // Kiểm tra email
             if (email === "") {
                 document.getElementById("emailError").innerText = "Vui lòng nhập email.";
                 isValid = false;
@@ -61,7 +60,6 @@
                 hideErrorAfterDelay("emailError");
             }
 
-            // Kiểm tra số điện thoại
             if (soDienThoai === "") {
                 document.getElementById("soDienThoaiError").innerText = "Vui lòng nhập số điện thoại.";
                 isValid = false;
@@ -75,47 +73,64 @@
             return isValid;
         }
 
-        // Hàm để ẩn thông báo lỗi sau 2 giây
         function hideErrorAfterDelay(errorId) {
-            setTimeout(function() {
+            setTimeout(function () {
                 document.getElementById(errorId).innerText = "";
             }, 2000);
         }
     </script>
-
 </head>
 <body>
-<h2>Thêm người dùng</h2>
-<form th:action="@{/nguoi-dung/them}" th:object="${nguoiDung}" method="post" onsubmit="return validateForm();">
+<div layout:fragment="content" class="container mt-5">
+    <h2 class="text-primary mb-4">Thêm người dùng</h2>
+    <form th:action="@{/nguoi-dung/them}" th:object="${nguoiDung}" method="post" onsubmit="return validateForm();" class="row g-3">
 
-    <label>Tên đăng nhập:</label>
-    <input type="text" th:field="*{tenDangNhap}" id="tenDangNhap"/>
-    <div id="tenDangNhapError" class="error-message"></div><br/>
+        <div class="col-md-6">
+            <label class="form-label">Tên đăng nhập:</label>
+            <input type="text" th:field="*{tenDangNhap}" id="tenDangNhap" class="form-control" />
+            <div id="tenDangNhapError" class="error-message"></div>
+        </div>
 
-    <label>Mật khẩu:</label>
-    <input type="password" th:field="*{matKhau}" id="matKhau"/>
-    <div id="matKhauError" class="error-message"></div><br/>
+        <div class="col-md-6">
+            <label class="form-label">Mật khẩu:</label>
+            <input type="password" th:field="*{matKhau}" id="matKhau" class="form-control" />
+            <div id="matKhauError" class="error-message"></div>
+        </div>
 
-    <label>Họ tên:</label>
-    <input type="text" th:field="*{hoTen}" id="hoTen"/>
-    <div id="hoTenError" class="error-message"></div><br/>
+        <div class="col-md-6">
+            <label class="form-label">Họ tên:</label>
+            <input type="text" th:field="*{hoTen}" id="hoTen" class="form-control" />
+            <div id="hoTenError" class="error-message"></div>
+        </div>
 
-    <label>Email:</label>
-    <input type="email" th:field="*{email}" id="email"/>
-    <div id="emailError" class="error-message"></div><br/>
+        <div class="col-md-6">
+            <label class="form-label">Email:</label>
+            <input type="email" th:field="*{email}" id="email" class="form-control" />
+            <div id="emailError" class="error-message"></div>
+        </div>
 
-    <label>Số điện thoại:</label>
-    <input type="text" th:field="*{soDienThoai}" id="soDienThoai"/>
-    <div id="soDienThoaiError" class="error-message"></div><br/>
+        <div class="col-md-6">
+            <label class="form-label">Số điện thoại:</label>
+            <input type="text" th:field="*{soDienThoai}" id="soDienThoai" class="form-control" />
+            <div id="soDienThoaiError" class="error-message"></div>
+        </div>
 
-    <label>Địa chỉ:</label>
-    <input type="text" th:field="*{diaChi}"/><br/>
+        <div class="col-md-6">
+            <label class="form-label">Địa chỉ:</label>
+            <input type="text" th:field="*{diaChi}" class="form-control" />
+        </div>
 
-    <label>Trạng thái:</label>
-    <input type="checkbox" th:field="*{trangThai}" checked/><br/>
+        <div class="col-md-12 d-flex align-items-center">
+            <label class="form-label me-2 mb-0">Trạng thái:</label>
+            <input type="checkbox" th:field="*{trangThai}" class="form-check-input" checked />
+            <span class="ms-2" th:text="${nguoiDung.trangThai ? 'Hoạt động' : 'Đã khóa'}"></span>
+        </div>
 
-    <button type="submit">Thêm mới</button>
-    <a th:href="@{/nguoi-dung}">Quay lại</a>
-</form>
+        <div class="col-12 mt-3">
+            <button type="submit" class="btn btn-success">Thêm mới</button>
+            <a th:href="@{/nguoi-dung}" class="btn btn-secondary ms-2">Quay lại</a>
+        </div>
+    </form>
+</div>
 </body>
 </html>

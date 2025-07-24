@@ -1,33 +1,84 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <title>Lịch sử đăng nhập</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-</head>
-<body class="container mt-5">
-<h2 class="mb-4">Lịch sử đăng nhập</h2>
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<table class="table table-bordered table-hover">
-    <thead class="table-dark">
-    <tr>
-        <th>Thời gian</th>
-        <th>Địa chỉ IP</th>
-        <th>Thiết bị</th>
-        <th>Trạng thái</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="item : ${lichSuDangNhap}">
-        <td th:text="${#dates.format(item.thoiGianDangNhap, 'dd/MM/yyyy HH:mm:ss')}">Thời gian</td>
-        <td th:text="${item.diaChiIp}">IP</td>
-        <td th:text="${item.thietBi}">Thiết bị</td>
-        <td>
-            <span th:if="${item.thanhCong}" class="text-success">Thành công</span>
-            <span th:unless="${item.thanhCong}" class="text-danger">Thất bại</span>
-        </td>
-    </tr>
-    </tbody>
-</table>
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        h2 {
+            font-weight: 600;
+        }
+
+        .status-success {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .status-fail {
+            font-weight: bold;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card p-4">
+                <h2 class="text-center mb-4">📜 Lịch sử đăng nhập</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center align-middle">
+                        <thead>
+                        <tr>
+                            <th>🕒 Thời gian</th>
+                            <th>🌐 Địa chỉ IP</th>
+                            <th>💻 Thiết bị</th>
+                            <th>📶 Trạng thái</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${lichSuDangNhap}">
+                            <td th:text="${#dates.format(item.thoiGianDangNhap, 'dd/MM/yyyy HH:mm:ss')}">Thời gian</td>
+                            <td th:text="${item.diaChiIp}">IP</td>
+                            <td th:text="${item.thietBi}">Thiết bị</td>
+                            <td>
+                                <span th:if="${item.thanhCong}" class="status-success">Thành công</span>
+                                <span th:unless="${item.thanhCong}" class="status-fail">Thất bại</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(lichSuDangNhap)}">
+                            <td colspan="4" class="text-muted">Không có dữ liệu đăng nhập.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

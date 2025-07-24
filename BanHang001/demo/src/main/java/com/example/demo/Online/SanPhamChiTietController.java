@@ -44,6 +44,7 @@ public class SanPhamChiTietController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", sanPhamChiTiets.getTotalPages());
         model.addAttribute("keyword", keyword);
+        model.addAttribute("page", "san-pham-chi-tiet");
 
         return "sanphamchitiet/list";
     }
@@ -56,6 +57,8 @@ public class SanPhamChiTietController {
         model.addAttribute("sanPhams", sanPhamRepository.findAll());
         model.addAttribute("mauSacs", mauSacRepository.findAll());
         model.addAttribute("kichCos", kichCoRepository.findAll());
+        model.addAttribute("pageGroup", "san-pham");
+        model.addAttribute("page", "san-pham-chi-tiet");
         return "sanphamchitiet/add";
     }
 
@@ -74,6 +77,8 @@ public class SanPhamChiTietController {
         model.addAttribute("sanPhams", sanPhamRepository.findAll());
         model.addAttribute("mauSacs", mauSacRepository.findAll());
         model.addAttribute("kichCos", kichCoRepository.findAll());
+        model.addAttribute("pageGroup", "san-pham");
+        model.addAttribute("page", "san-pham-chi-tiet");
         return "sanphamchitiet/edit";
     }
 
@@ -100,6 +105,8 @@ public class SanPhamChiTietController {
         model.addAttribute("sanPhams", sanPhamRepository.findAll());
         model.addAttribute("mauSacs", mauSacRepository.findAll());
         model.addAttribute("kichCos", kichCoRepository.findAll());
+        model.addAttribute("pageGroup", "san-pham");
+        model.addAttribute("page", "san-pham-chi-tiet");
         return "sanphamchitiet/view";
     }
 

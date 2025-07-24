@@ -23,6 +23,7 @@ public class LichSuDangNhapController {
         String tenDangNhap = userDetails.getUsername();
         List<LoginHistory> lichSu = lichSuDangNhapService.layLichSuTheoTenDangNhap(tenDangNhap);
         model.addAttribute("lichSuDangNhap", lichSu);
+        model.addAttribute("page", "lich-su-dang-nhap");
         return "lichsudangnhap/lich-su-dang-nhap";
     }
 }

@@ -89,20 +89,30 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav me-auto">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item"><a class="nav-link active" href="/online-home">Trang chủ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/san-pham">Sản phẩm</a></li>
+            <li class="nav-item"><a class="nav-link" href="/san-pham-online">Sản phẩm</a></li>
             <li class="nav-item"><a class="nav-link" href="/khuyen-mai">Khuyến mãi</a></li>
+            <li class="nav-item"><a class="nav-link" href="/don-hang-huy/danh-sach-don-hang">Đơn hàng</a></li>
+            <li class="nav-item"><a class="nav-link" href="/tra-hang">Trả hàng </a></li>
+            <li class="nav-item"><a class="nav-link" href="/chi-dan/hh1">Địa chỉ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/loc-theo-trangthai">Trạng thái</a></li>
+            <li class="nav-item"><a class="nav-link" href="/nap-tien">Nạp tiền</a></li>
+            <!--            <li class="nav-item"><a class="nav-link" href="/xac-nhan-nap">XÁc nhận nạp</a></li>-->
             <li class="nav-item"><a class="nav-link" href="/lien-he">Liên hệ</a></li>
         </ul>
-
         <form class="d-flex me-2" th:action="@{/tim-kiem}" method="get">
             <input class="form-control me-2" name="keyword" type="search" placeholder="Tìm kiếm...">
             <button class="btn btn-outline-light" type="submit">Tìm</button>
         </form>
 
-        <a href="/gio-hang" class="btn btn-warning me-2">
+        <a href="/gio-hang" class="btn btn-warning me-2 position-relative">
             <i class="fas fa-shopping-cart"></i> Giỏ hàng
+            <span th:if="${soLuongTrongGio > 0}"
+                  th:text="'(' + ${soLuongTrongGio} + ')'"
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="font-size: 0.9em;">
+            </span>
         </a>
 
         <div class="dropdown">
@@ -134,74 +144,79 @@
             <div class="col-md-6">
                 <p th:text="${sanPham.moTa}" class="chu-song-mau"></p>
 
-                <!-- Màu sắc -->
-                <label for="mauSac">Chọn màu sắc:</label>
-                <select name="mauSacId" id="mauSac" class="form-select">
-                    <option th:each="mau : ${danhSachMauSac}"
-                            th:value="${mau.id}"
-                            th:text="${mau.tenMau}"
-                            th:selected="${mau.selected}">
-                    </option>
-                </select>
+                <!-- Form gộp màu, size và hai nút -->
+                <form th:action="@{/them-vao-gio-hang-chi-tiet}" method="post">
+                    <input type="hidden" name="sanPhamId" th:value="${sanPham.id}" />
 
-
-
-                <!-- Kích cỡ -->
-                <div class="mt-3">
-                    <h5>Kích cỡ:</h5>
-                    <select class="form-select" name="kichCo">
-                        <option th:each="size : ${danhSachKichCo}"
-                                th:value="${size.id}"
-                                th:text="${size.tenKichCo}"
-                                th:selected="${size.selected}">
+                    <!-- Màu sắc -->
+                    <label for="mauSac">Chọn màu sắc:</label>
+                    <select name="mauSacId" id="mauSac" class="form-select" required>
+                        <option th:each="mau : ${danhSachMauSac}"
+                                th:value="${mau.id}"
+                                th:text="${mau.tenMau}"
+                                th:selected="${mau.selected}">
                         </option>
                     </select>
-                </div>
 
+                    <!-- Kích cỡ -->
+                    <div class="mt-3">
+                        <label for="kichCoId">Kích cỡ:</label>
+                        <select class="form-select" name="kichCoId" id="kichCoId" required>
+                            <option th:each="size : ${danhSachKichCo}"
+                                    th:value="${size.id}"
+                                    th:text="${size.tenKichCo}"
+                                    th:selected="${size.selected}">
+                            </option>
+                        </select>
+                    </div>
 
-                <!-- Giá sản phẩm -->
-                <div class="mt-3">
-                    <h5>Giá: <span class="fw-bold text-danger" th:text="${gia} + ' đ'">0 đ</span></h5>
-                </div>
+                    <!-- Giá sản phẩm -->
+                    <div class="mt-3">
+                        <h5>Giá: <span class="fw-bold text-danger" th:text="${gia} + ' đ'">0 đ</span></h5>
+                    </div>
 
-                <div class="mt-3">
-                    <h5>
-                        Số lượng còn:
-                        <span th:if="${tongSoLuong > 0}" class="text-success"> <strong th:text="${tongSoLuong}">0</strong></span>
-                        <span th:if="${tongSoLuong == 0}" class="text-danger">Hết hàng</span>
-                    </h5>
-                </div>
+                    <!-- Số lượng còn -->
+                    <div class="mt-3">
+                        <h5>
+                            Số lượng còn:
+                            <span th:if="${tongSoLuong > 0}" class="text-success"> <strong th:text="${tongSoLuong}">0</strong></span>
+                            <span th:if="${tongSoLuong == 0}" class="text-danger">Hết hàng</span>
+                        </h5>
+                    </div>
 
-                <div class="mt-2">
-                    <h5>Đã bán: <span class="text-info fw-bold" th:text="${soLuongDaBan}"></span> sản phẩm</h5>
-                </div>
+                    <!-- Đã bán -->
+                    <div class="mt-2">
+                        <h5>Đã bán: <span class="text-info fw-bold" th:text="${soLuongDaBan}"></span> sản phẩm</h5>
+                    </div>
 
-
-                <div class="muasam">
-                    <div class="d-flex gap-2">
-                        <!-- Thêm vào giỏ hàng -->
-                        <form th:action="@{'/them-vao-gio-hang/' + ${sanPham.id}}" method="post">
+                    <!-- Nút mua -->
+                    <div class="muasam">
+                        <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-success w-100" th:disabled="${tongSoLuong == 0}">
                                 <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
                             </button>
-                        </form>
-
-                        <!-- Mua ngay -->
-                        <form th:action="@{'/mua-ngay/' + ${sanPham.id}}" method="post">
-                            <button type="submit" class="btn btn-danger w-100" th:disabled="${tongSoLuong == 0}">
+                            <button type="submit" formaction="/mua-ngay-chi-tiet" class="btn btn-danger w-100" th:disabled="${tongSoLuong == 0}">
                                 <i class="fas fa-bolt"></i> Mua ngay
                             </button>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
+
 
         <!-- Đánh giá sản phẩm -->
         <hr class="my-5">
         <div class="row">
             <div class="col-md-6">
                 <h4>📝 Viết đánh giá</h4>
+                <!-- Hiển thị thông báo lỗi -->
+                <div id="errorAlert" th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
+
+                <!-- Hiển thị thông báo thành công -->
+                <div id="successAlert" th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
+
+
                 <form th:action="@{/danh-gia-san-pham}" method="post">
                     <input type="hidden" name="sanPhamId" th:value="${sanPham.id}" />
 
@@ -299,6 +314,23 @@
             }
         });
     }
+
+    // Ẩn thông báo sau 3 giây
+    setTimeout(function () {
+        const errorAlert = document.getElementById("errorAlert");
+        const successAlert = document.getElementById("successAlert");
+
+        if (errorAlert) {
+            errorAlert.classList.remove("show");
+            errorAlert.classList.add("hide");
+        }
+
+        if (successAlert) {
+            successAlert.classList.remove("show");
+            successAlert.classList.add("hide");
+        }
+    }, 3000);
+
 </script>
 </body>
 </html>

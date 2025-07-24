@@ -46,21 +46,22 @@ public class BanHangController {
 
     // Xác nhận người dùng và hiển thị danh sách giỏ hàng trạng thái = 0
     @PostMapping("/xac-nhan")
-    public String xacNhanNguoiDung(@RequestParam(value = "nguoiDungId", required = false) Long nguoiDungId, Model model) {
+    public String xacNhanNguoiDung(@RequestParam(value = "nguoiDungId", required = false) Long nguoiDungId,
+                                   RedirectAttributes redirectAttributes) {
         NguoiDung nguoiDung;
 
         if (nguoiDungId == null || nguoiDungId == 0) {
-            // Tìm hoặc tạo mới Khách lẻ
+            // Tìm hoặc tạo mới "Khách lẻ"
             nguoiDung = nguoiDungRepository.findByHoTen("Khách lẻ");
             if (nguoiDung == null) {
                 NguoiDung khachLe = new NguoiDung();
                 khachLe.setHoTen("Khách lẻ");
                 khachLe.setEmail("khachle@example.com");
                 khachLe.setSoDienThoai("0000000000");
-                khachLe.setTenDangNhap("khachle" + System.currentTimeMillis()); // duy nhất
-                khachLe.setMatKhau("123456"); // hoặc mã hóa nếu hệ thống có mã hóa
-// set thêm ngày tạo/ngày cập nhật nếu không tự động
+                khachLe.setTenDangNhap("khachle" + System.currentTimeMillis());
+                khachLe.setMatKhau("123456");
                 nguoiDungRepository.save(khachLe);
+                nguoiDung = khachLe;
             }
         } else {
             nguoiDung = nguoiDungRepository.findById(nguoiDungId).orElse(null);
@@ -68,13 +69,31 @@ public class BanHangController {
 
         if (nguoiDung != null) {
             List<GioHang> danhSachGioHang = gioHangRepository.findByNguoiDungIdAndTrangThai(nguoiDung.getId(), (byte) 1);
-            model.addAttribute("hoTenNguoiDung", nguoiDung.getHoTen());
-            model.addAttribute("danhSachGioHang", danhSachGioHang);
-            model.addAttribute("selectedNguoiDungId", nguoiDung.getId());
+            if (!danhSachGioHang.isEmpty()) {
+                // Lấy giỏ hàng mới nhất
+                GioHang gioHangMoiNhat = danhSachGioHang.stream()
+                        .max(Comparator.comparing(GioHang::getNgayTao))
+                        .orElse(danhSachGioHang.get(0));
+
+                return "redirect:/gio-hang/xem-san-pham?gioHangId=" + gioHangMoiNhat.getId()
+                        + "&nguoiDungId=" + nguoiDung.getId()
+                        + "&page=0&size=5";
+            } else {
+                // Nếu chưa có giỏ hàng => tạo mới rồi redirect
+                GioHang gioHangMoi = new GioHang();
+                gioHangMoi.setNguoiDung(nguoiDung);
+                gioHangMoi.setNgayTao(LocalDateTime.now());
+                gioHangMoi.setTrangThai((byte) 1); // Trạng thái "đang chờ"
+                gioHangRepository.save(gioHangMoi);
+
+                return "redirect:/gio-hang/xem-san-pham?gioHangId=" + gioHangMoi.getId()
+                        + "&nguoiDungId=" + nguoiDung.getId()
+                        + "&page=0&size=5";
+            }
         }
 
-        model.addAttribute("danhSachNguoiDung", nguoiDungRepository.findAll());
-        return "banhang/gio_hang";
+        redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy người dùng.");
+        return "redirect:/gio-hang/chon-nguoi-dung";
     }
 
 
@@ -413,7 +432,7 @@ public class BanHangController {
                 donHang.setPhuongThucThanhToan("Không xác định");
         }
 
-        donHang.setTrangThai("Xác nhận");
+        donHang.setTrangThai("Đã thanh toán");
         donHang = donHangRepository.save(donHang);
 
         for (SanPhamTrongGioHang sp : danhSachSanPham) {
@@ -441,8 +460,5 @@ public class BanHangController {
         return "redirect:/gio-hang/xem-san-pham?gioHangId=0&nguoiDungId=" + gioHang.getNguoiDung().getId() + "&page=0&size=5";
     }
 
-
-
-    /// //////////aaaaaaaaaaaaaaaaaaaaaaa
 
 }

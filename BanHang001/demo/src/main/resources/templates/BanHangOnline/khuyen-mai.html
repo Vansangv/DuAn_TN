@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách khuyến mãi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f6f7fb;
+        }
+        .voucher-row {
+            background: linear-gradient(90deg, #fff7e6 65%, #ffe0b2 100%);
+            border: 2px solid #ff9800;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(255,152,0,0.06);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            padding: 18px 16px;
+            position: relative;
+            min-height: 110px;
+            transition: box-shadow 0.2s;
+        }
+        .voucher-row:hover {
+            box-shadow: 0 6px 24px rgba(255,152,0,0.10);
+        }
+        .voucher-type {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ff5722;
+        }
+        .voucher-code {
+            background: #ff5722;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.10rem;
+            border-radius: 8px;
+            padding: 6px 17px;
+            margin-left: 8px;
+            letter-spacing: 1px;
+            border: 2px solid #fff3e0;
+            box-shadow: 0 1px 4px rgba(255,87,34,0.05);
+        }
+        .voucher-desc {
+            font-size: 1rem;
+            color: #393939;
+        }
+        .voucher-time {
+            font-size: 0.98rem;
+            color: #616161;
+        }
+        .voucher-qty {
+            font-size: 1.04rem;
+            color: #d84315;
+            font-weight: 600;
+        }
+        .voucher-btn {
+            background: #43a047;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 18px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.2s;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+        .voucher-btn:disabled {
+            background: #ccc !important;
+            color: #888 !important;
+        }
+        .voucher-status {
+            position: absolute;
+            top: 8px;
+            left: -2px;
+            background: #ff9800;
+            color: #fff;
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 2px 12px 2px 16px;
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 2;
+            box-shadow: 0 1px 5px rgba(255,152,0,0.13);
+        }
+        @media (max-width: 991.98px) {
+            .voucher-row {
+                flex-wrap: wrap;
+                padding: 14px 8px;
+            }
+            .voucher-col {
+                margin-bottom: 6px;
+            }
+        }
+        @media (max-width: 767.98px) {
+            .voucher-row {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: left;
+                padding: 15px 4px;
+            }
+            .voucher-col {
+                width: 100% !important;
+                margin-bottom: 7px;
+            }
+            .voucher-btn {
+                width: 100%;
+                margin-left: 0;
+            }
+            .voucher-status {
+                top: 2px;
+                left: -4px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <h2 class="text-center mb-4 fw-bold" style="color: #ff9800;">
+        🎁 Danh Sách Mã Khuyến Mãi Hot!
+    </h2>
+    <!-- Danh sách voucher -->
+    <div th:each="km : ${danhSachKhuyenMai}">
+        <div class="voucher-row">
+            <span class="voucher-status" th:if="${km.trangThai}">ĐANG ÁP DỤNG</span>
+            <span class="voucher-status bg-secondary" th:if="${!km.trangThai}">HẾT HẠN</span>
+
+            <!-- Loại giảm & mã -->
+            <div class="voucher-col me-3" style="min-width:170px;">
+                <span class="voucher-type" th:if="${km.loaiGiam == 'PERCENT'}" th:text="'Giảm ' + ${km.phanTramGiam} + '%'"></span>
+                <span class="voucher-type" th:if="${km.loaiGiam == 'AMOUNT'}" th:text="'Giảm ' + ${#numbers.formatDecimal(km.soTienGiam, 0, 'POINT', '.', ',')} + 'đ'"></span>
+                <span class="voucher-code" th:text="${km.ma}"></span>
+            </div>
+
+            <!-- Mô tả -->
+            <div class="voucher-col flex-grow-1 me-3 voucher-desc" th:text="${km.moTa}">Mô tả khuyến mãi</div>
+
+            <!-- Thời gian -->
+            <div class="voucher-col me-3 voucher-time" style="min-width:175px;">
+                <span>
+                    <i class="bi bi-clock"></i>
+                    <span th:text="${#dates.format(km.ngayBatDau, 'dd/MM/yyyy HH:mm')}"></span>
+                    -
+                    <span th:text="${#dates.format(km.ngayKetThuc, 'dd/MM/yyyy HH:mm')}"></span>
+                </span>
+            </div>
+
+            <!-- Số lượng còn -->
+            <div class="voucher-col me-3 voucher-qty" style="min-width:110px;">
+                <i class="bi bi-box"></i>
+                <!--                //<span th:text="${km.soLuong}"></span> mã-->
+            </div>
+
+            <!-- Nút sử dụng -->
+            <div class="voucher-col" style="min-width:120px;">
+                <button class="voucher-btn"
+                        th:if="${km.trangThai and km.soLuong > 0}"
+                        th:onclick="'copyToClipboard(\\'' + ${km.ma} + '\\')'">
+                    Sử dụng mã
+                </button>
+                <button class="voucher-btn" disabled
+                        th:if="${!km.trangThai or km.soLuong == 0}">
+                    Hết mã
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+
+</body>
+</html>

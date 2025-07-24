@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <title>Sửa Mã Giảm Giá</title>
     <meta charset="UTF-8">
@@ -135,8 +138,7 @@
     </style>
 </head>
 <body>
-
-<div class="container">
+<div layout:fragment="content">
     <h1><i class="fa-solid fa-tag form-icon"></i> Sửa Mã Giảm Giá</h1>
 
     <!-- Hiển thị lỗi nếu có -->

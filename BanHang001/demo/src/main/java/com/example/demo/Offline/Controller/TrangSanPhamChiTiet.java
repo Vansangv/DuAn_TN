@@ -5,9 +5,7 @@ import com.example.demo.Entity.*;
 
 import com.example.demo.Offline.DTO.KichCoDTO;
 import com.example.demo.Offline.DTO.MauSacDTO;
-import com.example.demo.Offline.Repository.OnlineChiTietDonHangRepository;
-import com.example.demo.Offline.Repository.OnlineDanhGiaSanPhamRepository;
-import com.example.demo.Offline.Repository.OnlineSanPhamChiTietRepository;
+import com.example.demo.Offline.Repository.*;
 import com.example.demo.Repository.KichCoRepository;
 import com.example.demo.Repository.MauSacRepository;
 import com.example.demo.Repository.SanPhamRepository;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.time.LocalDateTime;
@@ -44,7 +43,11 @@ public class TrangSanPhamChiTiet {
     @Autowired
     private OnlineChiTietDonHangRepository chiTietDonHangRepository;
 
+    @Autowired
+    private OnlineSanPhamTrongGioHangRepository sanPhamTrongGioHangRepository;
 
+    @Autowired
+    private OnlineGioHangRepository gioHangRepository;
 
     @GetMapping("/chi-tiet/{id}")
     public String hienThiChiTietSanPham(@PathVariable("id") Long id,
@@ -52,12 +55,22 @@ public class TrangSanPhamChiTiet {
                                         Model model, Authentication authentication) {
 
 
-        // Lấy người dùng
-        if (authentication != null) {
+        int soLuongTrongGio = 0;
+        if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
-            model.addAttribute("tenNguoiDung", nguoiDung != null ? nguoiDung.getHoTen() : "Khách");
+
+            if (nguoiDung != null) {
+                model.addAttribute("tenNguoiDung", nguoiDung.getHoTen());
+                soLuongTrongGio = sanPhamTrongGioHangRepository.demSoLuongSanPhamTrongGio(nguoiDung.getId());
+            } else {
+                model.addAttribute("tenNguoiDung", "Khách");
+            }
+        } else {
+            model.addAttribute("tenNguoiDung", "Khách");
         }
+
+        model.addAttribute("soLuongTrongGio", soLuongTrongGio);
 
 
         // Lấy thông tin sản phẩm
@@ -143,23 +156,32 @@ public class TrangSanPhamChiTiet {
     public String danhGiaSanPham(@RequestParam Long sanPhamId,
                                  @RequestParam int diem,
                                  @RequestParam String nhanXet,
-                                 Authentication authentication) {
-        // Nếu chưa đăng nhập, chuyển hướng về trang login
+                                 Authentication authentication,
+                                 RedirectAttributes redirectAttributes) {
+
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/login";
         }
 
-        // Lấy tên đăng nhập từ Authentication
         String username = authentication.getName();
-
-        // Lấy đối tượng người dùng từ tên đăng nhập
         NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
 
-        // Lấy sản phẩm cần đánh giá
+        if (nguoiDung == null) {
+            redirectAttributes.addFlashAttribute("error", "Vui lòng đăng nhập để đánh giá.");
+            return "redirect:/chi-tiet/" + sanPhamId;
+        }
+
+        // ✅ Kiểm tra đã mua hàng chưa
+        long soLuong = chiTietDonHangRepository.countDonMuaSanPham(nguoiDung.getId(), sanPhamId);
+        if (soLuong <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Bạn cần mua sản phẩm trước khi đánh giá.");
+            return "redirect:/chi-tiet/" + sanPhamId;
+        }
+
+        // ✅ Đã mua → Lưu đánh giá
         SanPham sanPham = sanPhamRepository.findById(sanPhamId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
-        // Tạo đối tượng đánh giá mới
         DanhGiaSanPham danhGia = new DanhGiaSanPham();
         danhGia.setNguoiDung(nguoiDung);
         danhGia.setSanPham(sanPham);
@@ -167,13 +189,75 @@ public class TrangSanPhamChiTiet {
         danhGia.setNhanXet(nhanXet);
         danhGia.setNgayDanhGia(LocalDateTime.now());
 
-        // Lưu vào DB
         danhGiaSanPhamRepository.save(danhGia);
 
-        // Chuyển về trang chi tiết sản phẩm
+        redirectAttributes.addFlashAttribute("success", "Cảm ơn bạn đã đánh giá sản phẩm!");
         return "redirect:/chi-tiet/" + sanPhamId;
-
-
     }
+
+
+
+
+    @PostMapping("/them-vao-gio-hang-chi-tiet")
+    public String themVaoGioHangChiTiet(@RequestParam("sanPhamId") Long sanPhamId,
+                                        @RequestParam("kichCoId") Long kichCoId,
+                                        @RequestParam("mauSacId") Long mauSacId,
+                                        Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login-online";
+        }
+
+        String username = authentication.getName();
+        NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
+        if (nguoiDung == null) {
+            return "redirect:/login-online";
+        }
+
+        // Tìm giỏ hàng trạng thái = 3
+        GioHang gioHang = gioHangRepository.findByNguoiDung_IdAndTrangThai(nguoiDung.getId(), 3)
+                .orElse(null);
+
+        if (gioHang == null) {
+            gioHang = new GioHang();
+            gioHang.setNguoiDung(nguoiDung);
+            gioHang.setNgayTao(LocalDateTime.now());
+            gioHang.setTrangThai(3);
+            gioHang = gioHangRepository.save(gioHang);
+        }
+
+        // Tìm sản phẩm chi tiết theo sản phẩm, màu và kích cỡ
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository
+                .findBySanPham_IdAndMauSac_IdAndKichCo_Id(sanPhamId, mauSacId, kichCoId)
+                .orElse(null);
+
+        if (sanPhamChiTiet == null || sanPhamChiTiet.getSoLuong() <= 0) {
+            return "redirect:/chi-tiet/" + sanPhamId;
+        }
+
+        // Kiểm tra đã có trong giỏ chưa
+        SanPhamTrongGioHang spTrongGio = sanPhamTrongGioHangRepository
+                .findByGioHangAndSanPhamChiTiet(gioHang, sanPhamChiTiet)
+                .orElse(null);
+
+        if (spTrongGio != null) {
+            if (sanPhamChiTiet.getSoLuong() > 0) {
+                spTrongGio.setSoLuong(spTrongGio.getSoLuong() + 1);
+                sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - 1);
+            }
+        } else {
+            spTrongGio = new SanPhamTrongGioHang();
+            spTrongGio.setGioHang(gioHang);
+            spTrongGio.setSanPhamChiTiet(sanPhamChiTiet);
+            spTrongGio.setSoLuong(1);
+            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - 1);
+        }
+
+        sanPhamChiTietRepository.save(sanPhamChiTiet);
+        sanPhamTrongGioHangRepository.save(spTrongGio);
+
+        return "redirect:/chi-tiet/" + sanPhamId;
+    }
+
+
 
 }

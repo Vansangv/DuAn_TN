@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký Online</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .registration-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .registration-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .form-group input {
+            border-radius: 5px;
+            padding: 10px;
+            padding-left: 35px; /* Space for icon */
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 10px;
+            top: 65%;
+            transform: translateY(-50%);
+            color: #007bff;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .text-center a {
+            color: #007bff;
+        }
+
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="registration-container">
+    <h1>Đăng ký tài khoản online</h1>
+    <form th:action="@{/register-online}" method="post" th:object="${nguoiDung}">
+        <!-- Tên đăng nhập -->
+        <div class="form-group mb-3">
+            <label for="tenDangNhap">Tên đăng nhập:</label>
+            <i class="fas fa-user"></i>
+            <input type="text" id="tenDangNhap" th:field="*{tenDangNhap}" class="form-control" required />
+            <p th:if="${usernameError != null}" th:text="${usernameError}" class="error-message"></p>
+        </div>
+
+        <!-- Mật khẩu -->
+        <div class="form-group mb-3">
+            <label for="matKhau">Mật khẩu:</label>
+            <i class="fas fa-lock"></i>
+            <input type="password" id="matKhau" th:field="*{matKhau}" class="form-control" required />
+        </div>
+
+        <!-- Họ và tên -->
+        <div class="form-group mb-3">
+            <label for="hoTen">Họ và tên:</label>
+            <i class="fas fa-user-tag"></i>
+            <input type="text" id="hoTen" th:field="*{hoTen}" class="form-control" required />
+        </div>
+
+        <!-- Email -->
+        <div class="form-group mb-3">
+            <label for="email">Email:</label>
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" th:field="*{email}" class="form-control" required />
+            <p th:if="${emailError != null}" th:text="${emailError}" class="error-message"></p>
+        </div>
+
+        <!-- Số điện thoại -->
+        <div class="form-group mb-3">
+            <label for="soDienThoai">Số điện thoại:</label>
+            <i class="fas fa-phone"></i>
+            <input type="text" id="soDienThoai" th:field="*{soDienThoai}" class="form-control" />
+        </div>
+
+        <!-- Địa chỉ -->
+        <div class="form-group mb-3">
+            <label for="diaChi">Địa chỉ:</label>
+            <i class="fas fa-home"></i>
+            <input type="text" id="diaChi" th:field="*{diaChi}" class="form-control" />
+        </div>
+
+        <!-- Nút đăng ký -->
+        <div class="form-group mb-3">
+            <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
+        </div>
+    </form>
+
+    <!-- Liên kết đến trang đăng nhập -->
+    <div class="text-center mt-3">
+        <p>Đã có tài khoản? <a th:href="@{/login-online}">Đăng nhập</a></p>
+    </div>
+</div>
+
+<!-- Bootstrap JS (cần để các thành phần như dropdown, modal hoạt động) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

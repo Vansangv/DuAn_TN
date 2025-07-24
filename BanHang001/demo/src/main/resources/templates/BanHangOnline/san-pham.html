@@ -62,8 +62,14 @@
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item"><a class="nav-link active" href="/online-home">Trang chủ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/san-pham">Sản phẩm</a></li>
+            <li class="nav-item"><a class="nav-link" href="/san-pham-online">Sản phẩm</a></li>
             <li class="nav-item"><a class="nav-link" href="/khuyen-mai">Khuyến mãi</a></li>
+            <li class="nav-item"><a class="nav-link" href="/don-hang-huy/danh-sach-don-hang">Đơn hàng</a></li>
+            <li class="nav-item"><a class="nav-link" href="/tra-hang">Trả hàng </a></li>
+            <li class="nav-item"><a class="nav-link" href="/chi-dan/hh1">Địa chỉ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/loc-theo-trangthai">Trạng thái</a></li>
+            <li class="nav-item"><a class="nav-link" href="/nap-tien">Nạp tiền</a></li>
+            <!--            <li class="nav-item"><a class="nav-link" href="/xac-nhan-nap">XÁc nhận nạp</a></li>-->
             <li class="nav-item"><a class="nav-link" href="/lien-he">Liên hệ</a></li>
         </ul>
 
@@ -72,9 +78,15 @@
             <button class="btn btn-outline-light" type="submit">Tìm</button>
         </form>
 
-        <a href="/gio-hang" class="btn btn-warning me-2">
+        <a href="/gio-hang" class="btn btn-warning me-2 position-relative">
             <i class="fas fa-shopping-cart"></i> Giỏ hàng
+            <span th:if="${soLuongTrongGio > 0}"
+                  th:text="'(' + ${soLuongTrongGio} + ')'"
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="font-size: 0.9em;">
+            </span>
         </a>
+
         <a href="/yeu-thich" class="btn btn-outline-danger me-2">
             <i class="fas fa-heart"></i> Yêu thích
         </a>
@@ -149,7 +161,7 @@
                             </a>
                             <div class="d-flex gap-2 mt-2">
                                 <!-- Thêm vào giỏ hàng -->
-                                <form th:action="@{'/them-vao-gio-hang/' + ${sp.id}}" method="post" class="w-50">
+                                <form th:action="@{'/them-vao-gio-hangg/' + ${sp.id}}" method="post" class="w-50">
                                     <button type="submit" class="btn btn-warning btn-sm w-100">
                                         <i class="fas fa-cart-plus"></i> Giỏ hàng
                                     </button>

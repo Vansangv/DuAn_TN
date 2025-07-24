@@ -50,6 +50,7 @@ public class VaiTroNguoiDungController {
         model.addAttribute("searchNguoiDung", searchNguoiDung);
         model.addAttribute("searchVaiTro", searchVaiTro);
         model.addAttribute("currentPage", page);
+        model.addAttribute("page", "vai-tro");
         model.addAttribute("totalPages", vaiTroNguoiDungs.getTotalPages());
 
         return "vaiTroNguoiDung/index";
@@ -75,15 +76,19 @@ public class VaiTroNguoiDungController {
         return "redirect:/vai-tro-nguoi-dung";
     }
 
-    @GetMapping("/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("vaiTro", new VaiTro());
-        return "vaiTroNguoiDung/add";
-    }
+//    @GetMapping("/add")
+//    public String showAddForm(Model model) {
+//        model.addAttribute("vaiTro", new VaiTro());
+//        return "vaiTroNguoiDung/add";
+//    }
 
     @PostMapping("/save")
-    public String saveVaiTro(@ModelAttribute VaiTro vaiTro) {
-        vaiTroRepository.save(vaiTro);
+    public String saveVaiTro(@RequestParam("tenVaiTro") String tenVaiTro) {
+        if (tenVaiTro != null && !tenVaiTro.trim().isEmpty()) {
+            VaiTro vaiTro = new VaiTro();
+            vaiTro.setTenVaiTro(tenVaiTro.trim());
+            vaiTroRepository.save(vaiTro);
+        }
         return "redirect:/vai-tro-nguoi-dung";
     }
 

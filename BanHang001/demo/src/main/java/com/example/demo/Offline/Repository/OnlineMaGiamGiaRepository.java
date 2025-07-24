@@ -10,4 +10,6 @@ public interface OnlineMaGiamGiaRepository extends JpaRepository<MaGiamGia, Long
 
     @Query("SELECT m FROM MaGiamGia m WHERE m.trangThai = true AND m.soLuong > 0 AND CURRENT_DATE BETWEEN m.ngayBatDau AND m.ngayKetThuc")
     List<MaGiamGia> findAllActiveAndValid();
+
+    List<MaGiamGia> findAllByTrangThaiTrueAndSoLuongGreaterThan(int soLuong);
 }

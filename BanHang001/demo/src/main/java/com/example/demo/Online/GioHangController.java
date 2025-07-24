@@ -27,6 +27,7 @@ public class GioHangController {
         model.addAttribute("gioHangs", gioHangRepository.findAll());
         model.addAttribute("gioHang", new GioHang());
         model.addAttribute("nguoiDungs", nguoiDungRepository.findAll());
+        model.addAttribute("page", "gio-hang");
         return "giohang/list";
     }
 

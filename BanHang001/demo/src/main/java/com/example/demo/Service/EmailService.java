@@ -12,13 +12,11 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendPasswordResetEmail(String email, String token) {
-        String resetLink = "http://localhost:8080/reset-password?token=" + token;
+    public void sendVerificationEmail(String to, String maXacThuc) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Yêu cầu đặt lại mật khẩu");
-        message.setText("Để đặt lại mật khẩu, vui lòng nhấn vào liên kết sau: " + resetLink);
-
+        message.setTo(to);
+        message.setSubject("Xác nhận đăng ký tài khoản");
+        message.setText("Mã xác thực của bạn là: " + maXacThuc + "\nMã có hiệu lực trong 10 phút.");
         mailSender.send(message);
     }
 }

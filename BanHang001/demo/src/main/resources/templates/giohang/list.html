@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <title>Quản lý giỏ hàng</title>
     <meta charset="UTF-8">
 </head>
 <body>
+<div layout:fragment="content">
 <h1>Thêm giỏ hàng</h1>
 
 <form th:action="@{/gio-hang-off/them}" method="post" th:object="${gioHang}">
@@ -47,5 +51,6 @@
     </tr>
     </tbody>
 </table>
+</div>
 </body>
 </html>

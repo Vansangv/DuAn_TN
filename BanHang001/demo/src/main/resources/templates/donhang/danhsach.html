@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách Đơn Hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<div layout:fragment="content">
+<div class="container mt-4">
+    <h2 class="mb-3">Danh sách Đơn Hàng</h2>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Người dùng</th>
+            <th>Địa chỉ giao hàng</th>
+            <th>Mã giảm giá</th>
+            <th>Tổng tiền</th>
+            <th>Hình thức mua</th>
+            <th>Phương thức thanh toán</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+            <th>Hoàn tiền</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="dh : ${donHangs}">
+            <td th:text="${dh.id}"></td>
+            <td th:text="${dh.nguoiDung != null ? dh.nguoiDung.hoTen : 'Chưa có người dùng'}"></td>
+            <td th:text="${dh.diaChiGiaoHang != null ? dh.diaChiGiaoHang.diaChi : 'Chưa có địa chỉ'}"></td>
+            <td th:text="${dh.maGiamGia != null ? dh.maGiamGia.ma : 'Không có mã giảm giá'}"></td>
+            <td th:text="${dh.tongTien}"></td>
+            <td th:text="${dh.hinhThucMua}"></td>
+            <td th:text="${dh.phuongThucThanhToan}"></td>
+            <td th:text="${dh.trangThai}"></td>
+            <td th:text="${dh.ngayTao}"></td>
+            <td th:text="${dh.hoantien}"></td>
+            <td>
+                <a th:href="@{'/don-hang/chi-tiet/' + ${dh.id}}" class="btn btn-info btn-sm">Xem chi tiết</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+</body>
+</html>

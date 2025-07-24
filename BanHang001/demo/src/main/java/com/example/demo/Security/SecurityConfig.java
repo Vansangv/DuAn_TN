@@ -33,41 +33,13 @@ public class SecurityConfig {
         return provider;
     }
 
-    //offline
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationSuccessHandler successHandler) throws Exception {
-//        http
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/login", "/register", "/forgot-password", "/reset-password/**", "/css/**", "/js/**").permitAll()
-//                        // Quản lý người dùng
-//                        .requestMatchers("/nguoi-dung/them", "/nguoi-dung/sua/**", "/nguoi-dung/xoa/**").hasRole("ADMIN")
-//                        .requestMatchers("/nguoi-dung/**").hasAnyRole("ADMIN", "NHANVIEN")
-//                        // Quản lý vai trò người dùng
-//                        .requestMatchers("/vai-tro-nguoi-dung/add", "/vai-tro-nguoi-dung/update/**").hasRole("ADMIN")
-//                        .requestMatchers("/vai-tro-nguoi-dung/**").hasAnyRole("ADMIN", "NHANVIEN")
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin(form -> form
-//                        .loginPage("/login")
-//                        .successHandler(successHandler)
-//                        .permitAll()
-//                )
-//                .logout(logout -> logout
-//                        .logoutSuccessUrl("/login")
-//                        .permitAll()
-//                );
-//        return http.build();
-//    }
-
-
-    // online
     @Bean
     @Order(1)
     public SecurityFilterChain onlineSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/login-online", "/online-home", "/css/**", "/js/**") // áp dụng cho các URL này
+                .securityMatcher("/login-online", "/online-home", "/register-online", "/verify-email-online", "/resend-verification-code-online", "/css/**", "/js/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login-online", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login-online", "/register-online", "/verify-email-online", "/resend-verification-code-online", "/xac-nhan-nap/**","/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -80,8 +52,10 @@ public class SecurityConfig {
                         .logoutUrl("/logout-online")
                         .logoutSuccessUrl("/login-online")
                         .permitAll()
-                );
-
+                )
+                 .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/yeu-thich/them") // bỏ qua kiểm tra CSRF cho URL này
+        );
         return http.build();
     }
 
@@ -91,7 +65,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationSuccessHandler successHandler) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/forgot-password", "/reset-password/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login", "/register" ,"/verify-email","/resend-verification-code", "/verify-email/**","/quen-mat-khau","/dat-lai-mat-khau/**", "/css/**", "/js/**").permitAll()
+                        //.requestMatchers("/home", "/**").hasAnyAuthority("ADMIN", "NHÂN VIÊN")
                         .requestMatchers("/nguoi-dung/them", "/nguoi-dung/sua/**", "/nguoi-dung/xoa/**").hasRole("ADMIN")
                         .requestMatchers("/nguoi-dung/**").hasAnyRole("ADMIN", "NHANVIEN")
                         .requestMatchers("/vai-tro-nguoi-dung/add", "/vai-tro-nguoi-dung/update/**").hasRole("ADMIN")
@@ -109,7 +84,6 @@ public class SecurityConfig {
                 );
         return http.build();
     }
-
 
     @Bean
     public AuthenticationSuccessHandler successHandler(LoginHistoryService loginHistoryService, LogHeThongService logHeThongService) {

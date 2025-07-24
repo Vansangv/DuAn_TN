@@ -19,7 +19,34 @@
             }
 
             giamGiaText.innerText = giam.toLocaleString('vi-VN') + ' đ';
-            document.getElementById("tongThanhToanText").innerText = (tongTienHang + phiVanChuyen - giam).toLocaleString('vi-VN') + ' đ';
+            const tongThanhToan = tongTienHang + phiVanChuyen - giam;
+            document.getElementById("tongThanhToanText").innerText = tongThanhToan.toLocaleString('vi-VN') + ' đ';
+            document.getElementById("tongThanhToanHiddenField").value = tongThanhToan;
+        }
+
+        function toggleVnpay(radio) {
+            const vnpayDiv = document.getElementById("vnpayInfo");
+            const form = document.getElementById("xacNhanMuaHangForm");
+
+            if (radio.id === "tt4") {
+                vnpayDiv.style.display = "block";
+                form.action = "/thanh-toan-vnpay";
+            } else {
+                vnpayDiv.style.display = "none";
+                form.action = "/mua-hang";
+            }
+
+            console.log("🔁 Form action set to:", form.action); // ✅ Debug log
+        }
+
+        window.onload = function () {
+            updateGiamGia();
+
+            // ✅ Gán lại form action đúng nếu radio đã chọn
+            const selectedRadio = document.querySelector('input[name="phuongThucThanhToan"]:checked');
+            if (selectedRadio) {
+                toggleVnpay(selectedRadio);
+            }
         }
     </script>
 </head>
@@ -33,7 +60,8 @@
                 <strong>Tên khách hàng:</strong>
                 <span th:text="${nguoiDung.hoTen}"></span> <br>
                 <strong>Địa chỉ giao hàng:</strong>
-                <span th:if="${diaChiMacDinh != null}" th:text="${diaChiMacDinh.diaChi} + ', ' + ${diaChiMacDinh.phuongXa} + ', ' + ${diaChiMacDinh.quanHuyen} + ', ' + ${diaChiMacDinh.tinhThanh}"></span>
+                <span th:if="${diaChiMacDinh != null}"
+                      th:text="${diaChiMacDinh.diaChi} + ', ' + ${diaChiMacDinh.phuongXa} + ', ' + ${diaChiMacDinh.quanHuyen} + ', ' + ${diaChiMacDinh.tinhThanh}"></span>
                 <span th:if="${diaChiMacDinh == null}" class="text-danger">Chưa có địa chỉ giao hàng mặc định!</span>
             </div>
             <div>
@@ -42,9 +70,10 @@
         </div>
     </div>
 
-    <form th:action="@{/mua-hang}" method="post">
-        <input type="hidden" id="tongTienHangHidden" th:value="${tongTienHang}" />
-        <input type="hidden" id="phiVanChuyenHidden" th:value="${phiVanChuyen}" />
+    <form id="xacNhanMuaHangForm" th:action="@{/mua-hang}" method="post">
+        <input type="hidden" id="tongTienHangHidden" th:value="${tongTienHang}"/>
+        <input type="hidden" id="phiVanChuyenHidden" th:value="${phiVanChuyen}"/>
+        <input type="hidden" id="tongThanhToanHiddenField" name="tongThanhToan" th:value="${tongThanhToan}"/>
 
         <!-- Mã giảm giá -->
         <div class="mb-3">
@@ -104,51 +133,40 @@
             </tr>
             </tfoot>
         </table>
+
         <!-- Hình thức thanh toán -->
         <div class="mb-3">
             <label class="form-label">Hình thức thanh toán:</label>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt1" value="Thanh toán khi nhận hàng" onclick="toggleVnpay(this)">
+                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt1"
+                       value="Thanh toán khi nhận hàng" onclick="toggleVnpay(this)">
                 <label class="form-check-label" for="tt1">Thanh toán khi nhận hàng</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt2" value="Chuyển khoản ngân hàng" onclick="toggleVnpay(this)">
+                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt2"
+                       value="Chuyển khoản ngân hàng" onclick="toggleVnpay(this)">
                 <label class="form-check-label" for="tt2">Chuyển khoản ngân hàng</label>
             </div>
-            <br>
-            <!-- Giao diện VNPay -->
-            <div id="vnpayInfo" class="p-3 border rounded bg-light" style="display: none;">
-                <h5>Thông tin chuyển khoản VNPay</h5>
-                <p><strong>Ngân hàng:</strong> Vietcombank</p>
-                <p><strong>Số tài khoản:</strong> 123456789</p>
-                <p><strong>Chủ tài khoản:</strong> Công ty ABC</p>
-                <p><strong>Nội dung chuyển khoản:</strong> [Tên khách hàng] - Thanh toán đơn hàng</p>
-                <p class="text-danger">Vui lòng chuyển khoản chính xác nội dung để hệ thống xác nhận.</p>
-            </div>
-            <br>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt3" value="Ví điện tử" onclick="toggleVnpay(this)">
+                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt3"
+                       value="Ví điện tử" onclick="toggleVnpay(this)">
                 <label class="form-check-label" for="tt3">Ví điện tử</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="phuongThucThanhToan" id="tt4"
+                       value="Chuyển khoản VNPay" onclick="toggleVnpay(this)">
+                <label class="form-check-label" for="tt4">Chuyển khoản ngân hàng qua VNPay</label>
+            </div>
+
+            <div id="vnpayInfo" class="p-3 border rounded bg-light mt-3" style="display: none;">
+                <h5>Thanh toán qua VNPay</h5>
+                <p>Khi bấm xác nhận, bạn sẽ được chuyển sang cổng thanh toán VNPay để hoàn tất giao dịch.</p>
             </div>
         </div>
 
-
-
-
-        <br>
         <button type="submit" class="btn btn-success">Xác nhận mua hàng</button>
         <a href="/gio-hang" class="btn btn-secondary">Quay lại giỏ hàng</a>
     </form>
 </div>
-<script>
-    function toggleVnpay(radio) {
-        const vnpayDiv = document.getElementById("vnpayInfo");
-        if (radio.value === "Chuyển khoản ngân hàng") {
-            vnpayDiv.style.display = "block";
-        } else {
-            vnpayDiv.style.display = "none";
-        }
-    }
-</script>
 </body>
 </html>

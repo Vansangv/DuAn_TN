@@ -62,12 +62,15 @@
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item"><a class="nav-link active" href="/online-home">Trang chủ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/san-pham">Sản phẩm</a></li>
+            <li class="nav-item"><a class="nav-link" href="/san-pham-online">Sản phẩm</a></li>
             <li class="nav-item"><a class="nav-link" href="/khuyen-mai">Khuyến mãi</a></li>
-            <li class="nav-item"><a class="nav-link" href="/don-hang/cua-toi">Đơn hàng</a></li>
+            <li class="nav-item"><a class="nav-link" href="/don-hang-huy/danh-sach-don-hang">Đơn hàng</a></li>
+            <li class="nav-item"><a class="nav-link" href="/tra-hang">Trả hàng </a></li>
+            <li class="nav-item"><a class="nav-link" href="/chi-dan/hh1">Địa chỉ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/loc-theo-trangthai">Trạng thái</a></li>
+            <li class="nav-item"><a class="nav-link" href="/nap-tien">Nạp tiền</a></li>
             <li class="nav-item"><a class="nav-link" href="/lien-he">Liên hệ</a></li>
         </ul>
-
         <form class="d-flex me-2" th:action="@{/tim-kiem}" method="get">
             <input class="form-control me-2" name="keyword" type="search" placeholder="Tìm kiếm...">
             <button class="btn btn-outline-light" type="submit">Tìm</button>
@@ -79,12 +82,18 @@
                   th:text="'(' + ${soLuongTrongGio} + ')'"
                   class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                   style="font-size: 0.9em;">
-    </span>
+            </span>
         </a>
 
-        <a href="/yeu-thich" class="btn btn-outline-danger me-2">
+        <a href="/yeu-thich" class="btn btn-outline-danger me-2 position-relative">
             <i class="fas fa-heart"></i> Yêu thích
+            <span th:if="${soLuongYeuThich > 0}"
+                  th:text="'(' + ${soLuongYeuThich} + ')'"
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="font-size: 0.9em;"></span>
         </a>
+
+
 
         <div class="dropdown">
             <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -95,7 +104,7 @@
                 <li><a class="dropdown-item" href="#"><i class="fas fa-id-card"></i> Thông tin cá nhân</a></li>
                 <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Đổi mật khẩu</a></li>
                 <li><a class="dropdown-item" href="/lich-su-dang-nhap"><i class="fas fa-history"></i> Lịch sử đăng nhập</a></li>
-                <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+                <li><a class="dropdown-item" href="/login-online"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
             </ul>
         </div>
     </div>
@@ -131,34 +140,41 @@
         <div class="row g-4">
             <div class="col-md-3" th:each="sp : ${danhSachSanPham}">
                 <div class="card product-card h-100 shadow-sm position-relative">
-                    <button type="button" class="btn btn-sm btn-light rounded-circle position-absolute top-0 end-0 m-2"
-                            title="Yêu thích" onclick="toggleHeart(this)">
-                        <i class="far fa-heart text-dark"></i>
-                    </button>
+                    <!-- Nhóm icon góc phải -->
+                    <div class="position-absolute top-0 end-0 m-2 d-flex flex-column align-items-end gap-1">
+                        <!-- Icon yêu thích -->
+                        <button type="button" class="btn btn-sm btn-light rounded-circle"
+                                title="Yêu thích" onclick="toggleHeart(this)" th:attr="data-id=${sp.id}">
+                            <i th:classappend="${danhSachIdYeuThich.contains(sp.id)} ? 'fas text-danger' : 'far text-dark'" class="fa-heart"></i>
+                        </button>
+
+
+                        <!-- Icon xem chi tiết -->
+                        <a th:href="@{'/chi-tiet/' + ${sp.id}}"
+                           class="btn btn-sm btn-light rounded-circle"
+                           title="Xem chi tiết">
+                            <i class="fas fa-eye text-primary"></i>
+                        </a>
+                    </div>
+
+                    <!-- Ảnh sản phẩm -->
                     <img th:src="@{'/images/' + ${sp.sanPham.anhDaiDien}}" class="card-img-top product-img" alt="Ảnh sản phẩm">
+
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title" th:text="${sp.sanPham.tenSanPham}"></h5>
                         <h5 class="card-title" th:text="${sp.gia}"></h5>
-                        <a th:href="@{'/chi-tiet/' + ${sp.id}}"
-                           class="btn btn-outline-primary btn-sm w-100 mt-2">
-                            <i class="fas fa-eye"></i> Chi tiết
-                        </a>
                         <div class="d-flex gap-2 mt-2">
-                            <!-- Thêm vào giỏ hàng -->
                             <form th:action="@{'/them-vao-gio-hang/' + ${sp.id}}" method="post" class="w-50">
                                 <button type="submit" class="btn btn-warning btn-sm w-100">
                                     <i class="fas fa-cart-plus"></i> Giỏ hàng
                                 </button>
                             </form>
-
-                            <!-- Mua ngay -->
                             <form th:action="@{'/mua-ngay/' + ${sp.id}}" method="post" class="w-50">
                                 <button type="submit" class="btn btn-danger btn-sm w-100">
                                     <i class="fas fa-bolt"></i> Mua ngay
                                 </button>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -173,12 +189,34 @@
 
 <script>
     function toggleHeart(button) {
+        const sanPhamChiTietId = button.getAttribute("data-id");
         const icon = button.querySelector('i');
-        icon.classList.toggle('far');
-        icon.classList.toggle('fas');
-        icon.classList.toggle('text-dark');
-        icon.classList.toggle('text-danger');
+
+        fetch("/yeu-thich/them", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "sanPhamChiTietId=" + encodeURIComponent(sanPhamChiTietId)
+        })
+            .then(response => response.text())
+            .then(result => {
+                if (result.includes("Đã thêm")) {
+                    icon.classList.remove("far", "text-dark");
+                    icon.classList.add("fas", "text-danger");
+                    alert("Đã thêm yêu thích thành công!");
+                } else if (result.includes("Đã có")) {
+                    alert("Sản phẩm đã có trong danh sách yêu thích!");
+                } else {
+                    alert(result);
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Có lỗi xảy ra. Vui lòng thử lại!");
+            });
     }
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

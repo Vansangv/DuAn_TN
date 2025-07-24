@@ -1,185 +1,170 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <title>Thêm Mới Sản Phẩm Chi Tiết</title>
-    <!-- Thêm link đến FontAwesome để sử dụng các icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-    <style>
-        .error-message {
-            color: red;
-            font-size: 0.9em;
-            display: none;
-            margin-top: 5px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 5px;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
-
-        .container {
-            margin-top: 50px;
-        }
-
-        .form-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .icon-label {
-            margin-right: 8px;
-        }
-    </style>
+    <!-- FontAwesome và Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Thêm Mới Sản Phẩm Chi Tiết</h1>
 
-<div class="container">
-    <h1 class="form-header">Thêm Mới Sản Phẩm Chi Tiết</h1>
+        <form th:action="@{/san-pham-chi-tiet/add}" th:object="${sanPhamChiTiet}" method="post" class="needs-validation" novalidate>
 
-    <form th:action="@{/san-pham-chi-tiet/add}" th:object="${sanPhamChiTiet}" method="post" class="needs-validation" novalidate>
+            <!-- Sản phẩm -->
+            <div class="mb-3 d-flex align-items-center">
+                <label for="sanPham" class="form-label me-2"><i class="fas fa-cogs me-2"></i> Sản phẩm:</label>
+                <div class="d-flex flex-grow-1 align-items-center">
+                    <select id="sanPham" th:field="*{sanPham}" class="form-select me-2" required>
+                        <option value="">Chọn sản phẩm</option>
+                        <option th:each="sp : ${sanPhams}" th:value="${sp.id}" th:text="${sp.tenSanPham}"></option>
+                    </select>
+                    <a th:href="@{/san-pham/add}" class="text-decoration-none">
+                        <i class="fas fa-plus text-primary fs-5" title="Thêm sản phẩm mới" style="cursor: pointer;"></i>
+                    </a>
+                </div>
+                <div id="errorSanPham" class="invalid-feedback">Vui lòng chọn sản phẩm.</div>
+            </div>
 
-        <!-- Sản phẩm -->
-        <div class="form-group">
-            <label for="sanPham"><i class="fas fa-cogs icon-label"></i> Sản phẩm:</label>
-            <select id="sanPham" th:field="*{sanPham}" class="form-control" required>
-                <option value="">Chọn sản phẩm</option>
-                <option th:each="sp : ${sanPhams}" th:value="${sp.id}" th:text="${sp.tenSanPham}"></option>
-            </select>
-            <span id="errorSanPham" class="error-message">Vui lòng chọn sản phẩm.</span>
-        </div>
+            <!-- Màu sắc -->
+            <div class="mb-3 d-flex align-items-center">
+                <label for="mauSac" class="form-label me-2"><i class="fas fa-palette me-2"></i> Màu sắc:</label>
+                <div class="d-flex flex-grow-1 align-items-center">
+                    <select id="mauSac" th:field="*{mauSac}" class="form-select me-2" required>
+                        <option value="">Chọn màu sắc</option>
+                        <option th:each="ms : ${mauSacs}" th:value="${ms.id}" th:text="${ms.tenMau}"></option>
+                    </select>
+                    <a th:href="@{/mau-sac/add}" class="text-decoration-none">
+                        <i class="fas fa-plus text-primary fs-5" title="Thêm màu sắc mới" style="cursor: pointer;"></i>
+                    </a>
+                </div>
+                <div id="errorMauSac" class="invalid-feedback">Vui lòng chọn màu sắc.</div>
+            </div>
 
-        <!-- Màu sắc -->
-        <div class="form-group">
-            <label for="mauSac"><i class="fas fa-palette icon-label"></i> Màu sắc:</label>
-            <select id="mauSac" th:field="*{mauSac}" class="form-control" required>
-                <option value="">Chọn màu sắc</option>
-                <option th:each="ms : ${mauSacs}" th:value="${ms.id}" th:text="${ms.tenMau}"></option>
-            </select>
-            <span id="errorMauSac" class="error-message">Vui lòng chọn màu sắc.</span>
-        </div>
+            <!-- Kích cỡ -->
+            <div class="mb-3 d-flex align-items-center">
+                <label for="kichCo" class="form-label me-2"><i class="fas fa-ruler me-2"></i> Kích cỡ:</label>
+                <div class="d-flex flex-grow-1 align-items-center">
+                    <select id="kichCo" th:field="*{kichCo}" class="form-select me-2" required>
+                        <option value="">Chọn kích cỡ</option>
+                        <option th:each="kc : ${kichCos}" th:value="${kc.id}" th:text="${kc.tenKichCo}"></option>
+                    </select>
+                    <a th:href="@{/kich-co/add}" class="text-decoration-none">
+                        <i class="fas fa-plus text-primary fs-5" title="Thêm kích cỡ mới" style="cursor: pointer;"></i>
+                    </a>
+                </div>
+                <div id="errorKichCo" class="invalid-feedback">Vui lòng chọn kích cỡ.</div>
+            </div>
 
-        <!-- Kích cỡ -->
-        <div class="form-group">
-            <label for="kichCo"><i class="fas fa-ruler icon-label"></i> Kích cỡ:</label>
-            <select id="kichCo" th:field="*{kichCo}" class="form-control" required>
-                <option value="">Chọn kích cỡ</option>
-                <option th:each="kc : ${kichCos}" th:value="${kc.id}" th:text="${kc.tenKichCo}"></option>
-            </select>
-            <span id="errorKichCo" class="error-message">Vui lòng chọn kích cỡ.</span>
-        </div>
+            <!-- Số lượng -->
+            <div class="mb-3">
+                <label for="soLuong" class="form-label"><i class="fas fa-sort-numeric-up me-2"></i> Số lượng:</label>
+                <input type="number" id="soLuong" th:field="*{soLuong}" class="form-control" required min="1" />
+                <div id="errorSoLuong" class="invalid-feedback">Vui lòng nhập số lượng hợp lệ.</div>
+            </div>
 
-        <!-- Số lượng -->
-        <div class="form-group">
-            <label for="soLuong"><i class="fas fa-sort-numeric-up icon-label"></i> Số lượng:</label>
-            <input type="number" id="soLuong" th:field="*{soLuong}" class="form-control" required min="1" />
-            <span id="errorSoLuong" class="error-message">Vui lòng nhập số lượng hợp lệ.</span>
-        </div>
+            <!-- Giá -->
+            <div class="mb-3">
+                <label for="gia" class="form-label"><i class="fas fa-dollar-sign me-2"></i> Giá:</label>
+                <input type="number" id="gia" th:field="*{gia}" class="form-control" required min="1" />
+                <div id="errorGia" class="invalid-feedback">Vui lòng nhập giá hợp lệ.</div>
+            </div>
 
-        <!-- Giá -->
-        <div class="form-group">
-            <label for="gia"><i class="fas fa-sort-numeric-up icon-label"></i> Giá:</label>
-            <input type="number" id="gia" th:field="*{gia}" class="form-control" required min="1" />
-            <span id="errorgia" class="error-message">Vui lòng nhập số lượng hợp lệ.</span>
-        </div>
+            <!-- Nút Lưu -->
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-success me-2">
+                    Thêm mới
+                </button>
+                <a th:href="@{/san-pham-chi-tiet}" class="btn btn-secondary">
+                    Quay lại
+                </a>
+            </div>
 
-        <!-- Nút Lưu -->
-        <button type="submit" class="btn btn-primary">Lưu</button>
-        <div class="form-footer">
-            <a th:href="@{/san-pham-chi-tiet}" class="back-link"><i class="fas fa-arrow-left"></i> Quay lại danh sách</a>
-        </div>
-    </form>
+        </form>
+    </div>
+
+    <!-- JavaScript kiểm tra validate -->
+    <script>
+        (function () {
+            'use strict'
+            window.addEventListener('load', function () {
+                var forms = document.getElementsByClassName('needs-validation');
+                Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        let isValid = true;
+
+                        const sanPham = document.getElementById("sanPham");
+                        const mauSac = document.getElementById("mauSac");
+                        const kichCo = document.getElementById("kichCo");
+                        const soLuong = document.getElementById("soLuong");
+                        const gia = document.getElementById("gia");
+
+                        const errorSanPham = document.getElementById("errorSanPham");
+                        const errorMauSac = document.getElementById("errorMauSac");
+                        const errorKichCo = document.getElementById("errorKichCo");
+                        const errorSoLuong = document.getElementById("errorSoLuong");
+                        const errorGia = document.getElementById("errorGia");
+
+                        // Reset lỗi
+                        errorSanPham.style.display = "none";
+                        errorMauSac.style.display = "none";
+                        errorKichCo.style.display = "none";
+                        errorSoLuong.style.display = "none";
+                        errorGia.style.display = "none";
+
+                        // Kiểm tra sản phẩm
+                        if (!sanPham.value) {
+                            errorSanPham.style.display = "block";
+                            isValid = false;
+                            setTimeout(() => errorSanPham.style.display = "none", 3000);
+                        }
+
+                        // Kiểm tra màu sắc
+                        if (!mauSac.value) {
+                            errorMauSac.style.display = "block";
+                            isValid = false;
+                            setTimeout(() => errorMauSac.style.display = "none", 3000);
+                        }
+
+                        // Kiểm tra kích cỡ
+                        if (!kichCo.value) {
+                            errorKichCo.style.display = "block";
+                            isValid = false;
+                            setTimeout(() => errorKichCo.style.display = "none", 3000);
+                        }
+
+                        // Kiểm tra số lượng
+                        if (!soLuong.value || parseInt(soLuong.value) < 1) {
+                            errorSoLuong.style.display = "block";
+                            isValid = false;
+                            setTimeout(() => errorSoLuong.style.display = "none", 3000);
+                        }
+
+                        // Kiểm tra giá
+                        if (!gia.value || parseInt(gia.value) < 1) {
+                            errorGia.style.display = "block";
+                            isValid = false;
+                            setTimeout(() => errorGia.style.display = "none", 3000);
+                        }
+
+                        if (!isValid) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle (Popper đã kèm sẵn) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>
-
-<!-- JavaScript để kiểm tra tính hợp lệ của form -->
-<script>
-    // Đảm bảo rằng form chỉ submit khi hợp lệ
-    (function () {
-        'use strict'
-        window.addEventListener('load', function () {
-            // Lấy tất cả các form cần kiểm tra tính hợp lệ
-            var forms = document.getElementsByClassName('needs-validation');
-            // Duyệt qua các form và kiểm tra tính hợp lệ của chúng
-            Array.prototype.filter.call(forms, function (form) {
-                form.addEventListener('submit', function (event) {
-                    let isValid = true;
-
-                    // Kiểm tra từng trường và hiển thị thông báo lỗi
-                    const sanPham = document.getElementById("sanPham");
-                    const mauSac = document.getElementById("mauSac");
-                    const kichCo = document.getElementById("kichCo");
-                    const soLuong = document.getElementById("soLuong");
-
-                    const errorSanPham = document.getElementById("errorSanPham");
-                    const errorMauSac = document.getElementById("errorMauSac");
-                    const errorKichCo = document.getElementById("errorKichCo");
-                    const errorSoLuong = document.getElementById("errorSoLuong");
-
-                    // Reset lỗi
-                    errorSanPham.style.display = "none";
-                    errorMauSac.style.display = "none";
-                    errorKichCo.style.display = "none";
-                    errorSoLuong.style.display = "none";
-
-                    // Kiểm tra sản phẩm
-                    if (!sanPham.value) {
-                        errorSanPham.style.display = "inline";
-                        isValid = false;
-                        setTimeout(() => errorSanPham.style.display = "none", 2000);
-                    }
-
-                    // Kiểm tra màu sắc
-                    if (!mauSac.value) {
-                        errorMauSac.style.display = "inline";
-                        isValid = false;
-                        setTimeout(() => errorMauSac.style.display = "none", 2000);
-                    }
-
-                    // Kiểm tra kích cỡ
-                    if (!kichCo.value) {
-                        errorKichCo.style.display = "inline";
-                        isValid = false;
-                        setTimeout(() => errorKichCo.style.display = "none", 2000);
-                    }
-
-                    // Kiểm tra số lượng
-                    if (!soLuong.value || parseInt(soLuong.value) < 1) {
-                        errorSoLuong.style.display = "inline";
-                        isValid = false;
-                        setTimeout(() => errorSoLuong.style.display = "none", 2000);
-                    }
-
-                    if (!isValid) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
-</script>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 </body>
 </html>

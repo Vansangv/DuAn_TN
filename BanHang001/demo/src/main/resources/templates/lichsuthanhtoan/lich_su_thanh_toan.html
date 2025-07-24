@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <title>Lịch Sử Thanh Toán</title>
     <meta charset="UTF-8">
@@ -196,6 +199,7 @@
     </style>
 </head>
 <body>
+<div layout:fragment="content">
 <h2><i class="fa-solid fa-receipt"></i> Danh sách đơn hàng và lịch sử thanh toán</h2>
 <!-- Tìm kiếm -->
 <form method="get" action="/lich-su-thanh-toan">
@@ -207,7 +211,6 @@
     <input type="hidden" name="pageChiTiet" th:value="${currentPageChiTiet}"/>
     <button type="submit"><i class="fa-solid fa-search"></i> Tìm kiếm</button>
 </form>
-<div class="container">
     <!-- Cột trái -->
     <div class="left-column">
         <!-- Đơn hàng -->
@@ -307,7 +310,7 @@
         <table>
             <thead>
             <tr>
-                <th><i class="fa-solid fa-hashtag"></i> ID</th>
+                <th><i class="fa-solid fa-hashtag"></i></th>
                 <th><i class="fa-solid fa-cart-shopping"></i> Đơn hàng</th>
                 <th><i class="fa-solid fa-box"></i> Tên SP</th>
                 <th><i class="fa-solid fa-palette"></i> Màu sắc</th>

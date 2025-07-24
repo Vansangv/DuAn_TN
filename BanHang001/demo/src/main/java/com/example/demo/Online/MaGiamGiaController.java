@@ -34,6 +34,7 @@ public class MaGiamGiaController {
         model.addAttribute("maGiamGiaList", pageResult.getContent());
         model.addAttribute("currentPage", pageResult.getNumber());
         model.addAttribute("totalPages", pageResult.getTotalPages());
+        model.addAttribute("page", "ma-giam-gia");
         model.addAttribute("keyword", keyword);
         return "ma-giam-gia/list";
     }
@@ -54,6 +55,8 @@ public class MaGiamGiaController {
         model.addAttribute("currentPage", pageResult.getNumber());
         model.addAttribute("totalPages", pageResult.getTotalPages());
         model.addAttribute("keyword", keyword);
+        model.addAttribute("pageGroup", "ma-giam-gia");
+        model.addAttribute("page", "ma-giam-gia");
         return "ma-giam-gia/trangthai";
     }
 
@@ -62,6 +65,8 @@ public class MaGiamGiaController {
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("maGiamGia", new MaGiamGia());
+        model.addAttribute("pageGroup", "ma-giam-gia");
+        model.addAttribute("page", "ma-giam-gia");
         return "ma-giam-gia/create";
     }
 
@@ -76,6 +81,8 @@ public class MaGiamGiaController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model) {
         model.addAttribute("maGiamGia", maGiamGiaRepository.findById(id).orElse(new MaGiamGia()));
+        model.addAttribute("pageGroup", "ma-giam-gia");
+        model.addAttribute("page", "ma-giam-gia");
         return "ma-giam-gia/edit";
     }
 

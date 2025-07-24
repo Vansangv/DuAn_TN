@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title layout:title-pattern="$CONTENT_TITLE - Menu Bootstrap">Menu Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- FontAwesome cho icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <style>
+        body {
+            background: #f4f6fb;
+        }
+        #layout {
+            min-height: 100vh;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            transition: all 0.3s cubic-bezier(.63,.09,.32,1.22);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            padding-top: 90px;
+            background: linear-gradient(135deg, #f8faff 70%, #e6eefe 100%);
+            border-right: 1px solid #e0e5ec;
+            box-shadow: 2px 0px 24px 0 rgba(0,0,0,0.06);
+            overflow-y: auto;
+            z-index: 1040;
+        }
+        .sidebar.collapsed {
+            margin-left: -250px;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            font-size: 1.05rem;
+            border-radius: 12px;
+            padding: 12px 18px;
+            color: #26344a;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar .nav-link .fa-fw {
+            min-width: 20px;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link:focus {
+            background: #e6eefc;
+            color: #1555e2;
+            box-shadow: 0 2px 10px 0 rgba(21,85,226,0.07);
+        }
+        .sidebar .nav-link.active,
+        .sidebar .nav-link.collapsed[aria-expanded="true"] {
+            background: linear-gradient(90deg, #1555e2 80%, #51aaff 100%);
+            color: #fff !important;
+            box-shadow: 0 2px 12px 0 rgba(21,85,226,0.09);
+        }
+        .sidebar .nav-link.collapsed {
+            font-weight: bold;
+            color: #1555e2 !important;
+            background: none !important;
+        }
+        .sidebar .nav .collapse .nav-link {
+            font-weight: 400;
+            font-size: 0.98rem;
+            margin-left: 26px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: #41506b;
+        }
+        .sidebar .nav .collapse .nav-link:hover,
+        .sidebar .nav .collapse .nav-link:focus {
+            background: #e6eefc;
+            color: #1555e2;
+        }
+        .sidebar .nav .collapse .nav-link.active {
+            background: linear-gradient(90deg, #1555e2 80%, #51aaff 100%);
+            color: #fff !important;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+            background: transparent;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #e4e9f3;
+            border-radius: 6px;
+        }
+        /* Toggle button đẹp hơn */
+        #toggleSidebarBtn {
+            position: fixed;
+            top: 18px;
+            left: 16px;
+            z-index: 1100;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px 0 rgba(21,85,226,0.08);
+            padding: 10px 14px;
+            font-size: 1.3rem;
+            color: #1555e2;
+            border: none;
+            outline: none;
+            transition: background 0.2s;
+        }
+        #toggleSidebarBtn:hover {
+            background: #e6eefc;
+            color: #0d6efd;
+        }
+        /* Nội dung chính */
+        .content {
+            transition: all 0.3s;
+            flex-grow: 1;
+            padding: 2rem 2.5rem;
+        }
+        /* Responsive cho màn hình nhỏ */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                position: fixed;
+                z-index: 1030;
+                left: 0;
+                top: 0;
+                padding-top: 60px;
+                height: 100vh;
+                box-shadow: 6px 0 24px 0 rgba(21,85,226,0.05);
+                background: #fff;
+            }
+            .sidebar.collapsed {
+                margin-left: -260px;
+            }
+            .content {
+                margin-left: 0 !important;
+                padding: 1.1rem 0.8rem;
+            }
+        }
+        @media (max-width: 575.98px) {
+            #toggleSidebarBtn {
+                top: 12px;
+                left: 8px;
+                padding: 8px 11px;
+                font-size: 1.1rem;
+            }
+        }
+        /* Tăng độ rõ tiêu đề nhóm */
+        .sidebar .nav-link.collapsed:after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            float: right;
+            margin-left: auto;
+            transition: transform 0.2s;
+        }
+        .sidebar .nav-link.collapsed[aria-expanded="true"]:after {
+            transform: rotate(-180deg);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nút Toggle menu -->
+<button class="btn" id="toggleSidebarBtn" title="Mở menu"><i class="fas fa-bars"></i></button>
+
+<div class="d-flex" id="layout">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <nav class="nav flex-column">
+            <!-- Quản lý người dùng -->
+            <a class="nav-link collapsed"
+               data-bs-toggle="collapse"
+               href="#collapse-user"
+               role="button"
+               aria-expanded="false"
+               aria-controls="collapse-user"
+               th:classappend="${pageGroup == 'nguoi-dung'} ? '' : 'collapsed'">
+                <i class="fa-solid fa-users-cog fa-fw"></i>
+                Quản lý người dùng
+            </a>
+            <div class="collapse" id="collapse-user"
+                 th:classappend="${pageGroup == 'nguoi-dung'} ? ' show'">
+                <a class="nav-link" th:href="@{/nguoi-dung}" th:classappend="${page == 'nguoi-dung'} ? ' active'"><i class="fa-solid fa-user fa-fw"></i> Người dùng</a>
+                <a class="nav-link" th:href="@{/vai-tro-nguoi-dung}" th:classappend="${page == 'vai-tro'} ? ' active'"><i class="fa-solid fa-user-shield fa-fw"></i> Vai trò người dùng</a>
+                <a class="nav-link" th:href="@{/lich-su-dang-nhap}" th:classappend="${page == 'lich-su-dang-nhap'} ? ' active'"><i class="fa-solid fa-clock-rotate-left fa-fw"></i> Lịch sử đăng nhập</a>
+            </div>
+
+            <!-- Sản phẩm & Phân loại -->
+            <a class="nav-link collapsed"
+               data-bs-toggle="collapse"
+               href="#collapse-product"
+               role="button"
+               aria-expanded="false"
+               aria-controls="collapse-product"
+               th:classappend="${pageGroup == 'san-pham'} ? '' : 'collapsed'">
+                <i class="fa-solid fa-boxes-stacked fa-fw"></i>
+                Sản phẩm &amp; Phân loại
+            </a>
+            <div class="collapse" id="collapse-product"
+                 th:classappend="${pageGroup == 'san-pham'} ? ' show'">
+                <a class="nav-link" th:href="@{/loai-san-pham}" th:classappend="${page == 'loai-san-pham'} ? ' active'"><i class="fa-solid fa-layer-group fa-fw"></i> Loại sản phẩm</a>
+                <a class="nav-link" th:href="@{/sanpham}" th:classappend="${page == 'san-pham'} ? ' active'"><i class="fa-solid fa-box fa-fw"></i> Sản phẩm</a>
+                <a class="nav-link" th:href="@{/mau-sac}" th:classappend="${page == 'mau-sac'} ? ' active'"><i class="fa-solid fa-palette fa-fw"></i> Màu sắc</a>
+                <a class="nav-link" th:href="@{/kich-co}" th:classappend="${page == 'kich-co'} ? ' active'"><i class="fa-solid fa-ruler fa-fw"></i> Kích cỡ</a>
+                <a class="nav-link" th:href="@{/san-pham-chi-tiet}" th:classappend="${page == 'san-pham-chi-tiet'} ? ' active'"><i class="fa-solid fa-info-circle fa-fw"></i> Sản phẩm chi tiết</a>
+            </div>
+
+            <!-- Mã giảm giá -->
+            <a class="nav-link collapsed"
+               data-bs-toggle="collapse"
+               href="#collapse-voucher"
+               role="button"
+               aria-expanded="false"
+               aria-controls="collapse-voucher"
+               th:classappend="${pageGroup == 'ma-giam-gia'} ? '' : 'collapsed'">
+                <i class="fa-solid fa-ticket-alt fa-fw"></i>
+                Khuyến mãi
+            </a>
+            <div class="collapse" id="collapse-voucher"
+                 th:classappend="${pageGroup == 'ma-giam-gia'} ? ' show'">
+                <a class="nav-link" th:href="@{/ma-giam-gia}" th:classappend="${page == 'ma-giam-gia'} ? ' active'"><i class="fa-solid fa-tags fa-fw"></i> Mã giảm giá</a>
+            </div>
+
+            <!-- Giỏ hàng & Yêu thích -->
+            <a class="nav-link collapsed"
+               data-bs-toggle="collapse"
+               href="#collapse-cart"
+               role="button"
+               aria-expanded="false"
+               aria-controls="collapse-cart"
+               th:classappend="${pageGroup == 'gio-hang'} ? '' : 'collapsed'">
+                <i class="fa-solid fa-cart-shopping fa-fw"></i>
+                Giỏ hàng &amp; Yêu thích
+            </a>
+            <div class="collapse" id="collapse-cart"
+                 th:classappend="${pageGroup == 'gio-hang'} ? ' show'">
+                <a class="nav-link" th:href="@{/gio-hang-off}" th:classappend="${page == 'gio-hang'} ? ' active'"><i class="fa-solid fa-shopping-basket fa-fw"></i> Giỏ hàng</a>
+                <a class="nav-link" th:href="@{/san-pham-trong-gio-hang}" th:classappend="${page == 'san-pham-trong-gio-hang'} ? ' active'"><i class="fa-solid fa-clipboard-list fa-fw"></i> Sản phẩm trong giỏ</a>
+            </div>
+
+            <!-- Đơn hàng & Thanh toán -->
+            <a class="nav-link collapsed"
+               data-bs-toggle="collapse"
+               href="#collapse-order"
+               role="button"
+               aria-expanded="false"
+               aria-controls="collapse-order"
+               th:classappend="${pageGroup == 'don-hang'} ? '' : 'collapsed'">
+                <i class="fa-solid fa-receipt fa-fw"></i>
+                Đơn hàng &amp; Thanh toán
+            </a>
+            <div class="collapse" id="collapse-order"
+                 th:classappend="${pageGroup == 'don-hang'} ? ' show'">
+                <a class="nav-link" th:href="@{/gio-hang/chon-nguoi-dung}" th:classappend="${page == 'don-hang'} ? ' active'"><i class="fa-solid fa-file-invoice-dollar fa-fw"></i> Đơn hàng</a>
+                <a class="nav-link" th:href="@{/danh-sach-don-hang}" th:classappend="${page == 'danh-sach-don-hang'} ? ' active'"><i class="fa-solid fa-list-ul fa-fw"></i> Chi tiết đơn hàng</a>
+                <a class="nav-link" th:href="@{/lich-su-thanh-toan}" th:classappend="${page == 'lich-su-thanh-toan'} ? ' active'"><i class="fa-solid fa-history fa-fw"></i> Lịch sử thanh toán</a>
+            </div>
+
+            <!-- Vận chuyển & Trả hàng -->
+            <a class="nav-link collapsed"
+               data-bs-toggle="collapse"
+               href="#collapse-shipping"
+               role="button"
+               aria-expanded="false"
+               aria-controls="collapse-shipping"
+               th:classappend="${pageGroup == 'van-chuyen'} ? '' : 'collapsed'">
+                <i class="fa-solid fa-truck-fast fa-fw"></i>
+                Vận chuyển &amp; Trả hàng
+            </a>
+            <div class="collapse" id="collapse-shipping"
+                 th:classappend="${pageGroup == 'van-chuyen'} ? ' show'">
+                <a class="nav-link" th:href="@{/van-chuyen/danh-sach}" th:classappend="${page == 'van-chuyen'} ? ' active'"><i class="fa-solid fa-truck fa-fw"></i> Vận chuyển</a>
+                <a class="nav-link" th:href="@{/admin/tra-hang/cho-xu-ly}" th:classappend="${page == 'tra-hang'} ? ' active'"><i class="fa-solid fa-undo fa-fw"></i> Trả hàng</a>
+                <a class="nav-link" th:href="@{/don-hang/cho-xac-nhan}" th:classappend="${page == 'don-hang-cho-xac-nhan'} ? ' active'"><i class="fa-solid fa-undo fa-fw"></i>Xác nhận đơn hàng</a>
+            </div>
+
+            <!-- Khác -->
+            <a class="nav-link collapsed"
+               data-bs-toggle="collapse"
+               href="#collapse-other"
+               role="button"
+               aria-expanded="false"
+               aria-controls="collapse-other"
+               th:classappend="${pageGroup == 'khac'} ? '' : 'collapsed'">
+                <i class="fa-solid fa-ellipsis-h fa-fw"></i>
+                Khác
+            </a>
+            <div class="collapse" id="collapse-other"
+                 th:classappend="${pageGroup == 'khac'} ? ' show'">
+                <a class="nav-link" th:href="@{/xem-danh-gia}" th:classappend="${page == 'danh-gia-san-pham'} ? ' active'"><i class="fa-solid fa-star fa-fw"></i> Đánh giá sản phẩm</a>
+                <a class="nav-link" th:href="@{/thong-bao-nguoi-dung}" th:classappend="${page == 'thong-bao-nguoi-dung'} ? ' active'"><i class="fa-solid fa-bell fa-fw"></i> Thông báo người dùng</a>
+                <a class="nav-link" th:href="@{/log-he-thong}" th:classappend="${page == 'log-he-thong'} ? ' active'"><i class="fa-solid fa-database fa-fw"></i> Log hệ thống</a>
+                <a class="nav-link" th:href="@{/admin/thong-ke}" th:classappend="${page == 'thong ke'} ? ' active'"><i class="fa-solid fa-database fa-fw"></i>Thống kê</a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Nội dung chính -->
+    <div class="content mt-4" layout:fragment="content">
+        <!-- Nội dung động sẽ được Thymeleaf render tại đây -->
+    </div>
+</div>
+
+<!-- Script -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const toggleBtn = document.getElementById('toggleSidebarBtn');
+    const sidebar = document.getElementById('sidebar');
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+    });
+</script>
+</body>
+</html>

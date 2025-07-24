@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Chủ - Bán Hàng Online</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease-in-out;
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .product-card {
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #fff;
+            border: none;
+        }
+        .banner-img {
+            height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            margin-top: 50px;
+        }
+        .card {
+            position: relative;
+        }
+        .btn-light i {
+            font-size: 1.1rem;
+        }
+        .status-btn {
+            margin: 5px;
+            padding: 8px 14px;
+            border: none;
+            background: #e0e0e0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #000;
+            display: inline-block;
+        }
+        .status-btn.active {
+            background: #1976d2;
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand" href="#">🛍️ Bán Hàng</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link active" href="/online-home">Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/san-pham-online">Sản phẩm</a></li>
+            <li class="nav-item"><a class="nav-link" href="/khuyen-mai">Khuyến mãi</a></li>
+            <li class="nav-item"><a class="nav-link" href="/don-hang-huy/danh-sach-don-hang">Đơn hàng</a></li>
+            <li class="nav-item"><a class="nav-link" href="/tra-hang">Trả hàng </a></li>
+            <li class="nav-item"><a class="nav-link" href="/chi-dan/hh1">Địa chỉ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/loc-theo-trangthai">Trạng thái</a></li>
+            <li class="nav-item"><a class="nav-link" href="/lien-he">Liên hệ</a></li>
+        </ul>
+
+        <form class="d-flex me-2" th:action="@{/tim-kiem}" method="get">
+            <input class="form-control me-2" name="keyword" type="search" placeholder="Tìm kiếm...">
+            <button class="btn btn-outline-light" type="submit">Tìm</button>
+        </form>
+
+        <a href="/gio-hang" class="btn btn-warning me-2 position-relative">
+            <i class="fas fa-shopping-cart"></i> Giỏ hàng
+            <span th:if="${soLuongTrongGio > 0}"
+                  th:text="'(' + ${soLuongTrongGio} + ')'"
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="font-size: 0.9em;">
+            </span>
+        </a>
+
+        <a href="/yeu-thich" class="btn btn-outline-danger me-2">
+            <i class="fas fa-heart"></i> Yêu thích
+        </a>
+
+        <div class="dropdown">
+            <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Xin chào, <span th:text="${tenNguoiDung}">Người dùng</span></a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-id-card"></i> Thông tin cá nhân</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Đổi mật khẩu</a></li>
+                <li><a class="dropdown-item" href="/lich-su-dang-nhap"><i class="fas fa-history"></i> Lịch sử đăng nhập</a></li>
+                <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Nội dung chính -->
+<div class="flex-grow-1 py-4 px-3">
+
+    <h2>Danh sách [[${loai == 'donhang'} ? 'đơn hàng' : 'vận chuyển']]: [[${trangThai}]]</h2>
+
+    <div class="status-list mb-3">
+        <a th:href="@{/loc-theo-trangthai(loai='donhang', trangThai='Chờ xác nhận')}"
+           th:classappend="${trangThai == 'Chờ xác nhận'} ? 'active'" class="status-btn">Chờ xác nhận</a>
+<!--        <a th:href="@{/loc-theo-trangthai(loai='donhang', trangThai='Xác nhận')}"-->
+<!--           th:classappend="${trangThai == 'Xác nhận'} ? 'active'" class="status-btn">Xác nhận</a>-->
+        <a th:href="@{/loc-theo-trangthai(loai='vanchuyen', trangThai='Đang vận chuyển')}"
+           th:classappend="${trangThai == 'Đang vận chuyển'} ? 'active'" class="status-btn">Đang vận chuyển</a>
+        <a th:href="@{/loc-theo-trangthai(loai='vanchuyen', trangThai='Vận chuyển thành công')}"
+           th:classappend="${trangThai == 'Vận chuyển thành công'} ? 'active'" class="status-btn">Vận chuyển thành công</a>
+        <a th:href="@{/loc-theo-trangthai(loai='vanchuyen', trangThai='Vận chuyển thất bại')}"
+           th:classappend="${trangThai == 'Vận chuyển thất bại'} ? 'active'" class="status-btn">Vận chuyển thất bại</a>
+    </div>
+
+    <!-- Đơn hàng -->
+    <div th:if="${loai == 'donhang'}">
+        <table class="table table-bordered table-striped bg-white">
+            <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Người dùng</th>
+                <th>Tổng tiền</th>
+                <th>Hình thức mua</th>
+                <th>Thanh toán</th>
+                <th>Ngày tạo</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dh : ${donHangList}">
+                <td th:text="${dh.id}">1</td>
+                <td th:text="${dh.nguoiDung.hoTen}">Tên</td>
+                <td th:text="${#numbers.formatInteger(dh.tongTien, 0, 'COMMA')}">100.000</td>
+                <td th:text="${dh.hinhThucMua}">Online</td>
+                <td th:text="${dh.phuongThucThanhToan}">COD</td>
+                <td th:text="${#temporals.format(dh.ngayTao, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+                <td th:text="${dh.trangThai}">Xác nhận</td>
+                <td>
+                    <th:block th:if="${#strings.equalsIgnoreCase(dh.trangThai, 'Chờ xác nhận')}">
+                        <form th:action="@{'/don-hang-huy/huy-don-hang/' + ${dh.id}}" method="post" style="display:inline;"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+                            <button class="btn btn-danger btn-sm">Hủy</button>
+                        </form>
+                    </th:block>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Vận chuyển -->
+    <div th:if="${loai == 'vanchuyen'}">
+        <table class="table table-bordered table-striped bg-white">
+            <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Đơn hàng ID</th>
+                <th>Địa chỉ giao</th>
+                <th>Trạng thái</th>
+                <th>Ngày dự kiến</th>
+                <th>Ngày thực tế</th>
+                <th>Ghi chú</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="vc : ${vanChuyenList}">
+                <td th:text="${vc.id}">1</td>
+                <td th:text="${vc.donHang.id}">1</td>
+                <td th:text="${vc.diaChiGiao}">123 ABC</td>
+                <td th:text="${vc.trangThai}">Đang vận chuyển</td>
+                <td th:text="${#temporals.format(vc.ngayGiaoDuKien, 'dd/MM/yyyy')}">01/07/2025</td>
+                <td th:text="${#temporals.format(vc.ngayGiaoThucTe, 'dd/MM/yyyy')}">02/07/2025</td>
+                <td th:text="${vc.ghiChu}">Giao nhanh</td>
+                <td>
+                    <th:block th:if="${#strings.equalsIgnoreCase(vc.trangThai, 'Vận chuyển thành công')}">
+                        <a th:href="@{'/tra-hang/yeu-cau/' + ${vc.id}}"
+                           class="btn btn-warning btn-sm"
+                           onclick="return confirm('Bạn có chắc chắn muốn trả lại đơn hàng này không?');">
+                            Trả hàng
+                        </a>
+                    </th:block>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center p-4">
+    © 2025 Bán Hàng Online | Địa chỉ: 243 Khuất Duy Tiến, Nhân Chính, Thanh Xuân, Hà Nội
+</footer>
+
+<script>
+    function toggleHeart(button) {
+        const icon = button.querySelector('i');
+        icon.classList.toggle('far');
+        icon.classList.toggle('fas');
+        icon.classList.toggle('text-dark');
+        icon.classList.toggle('text-danger');
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mã QR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e3f6fc 0%, #fceabb 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qrcode-container {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
+            padding: 2.2rem 2.2rem 2rem 2.2rem;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.7s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px);}
+            to   { opacity: 1; transform: translateY(0);}
+        }
+        h2 {
+            color: #0b5171;
+            margin-bottom: 1.5rem;
+            font-size: 1.35rem;
+            letter-spacing: 0.01em;
+            font-weight: 700;
+        }
+        .qr-img-wrapper {
+            background: #f7fbfd;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(20,146,230,0.08);
+            padding: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.4rem;
+        }
+        img[alt="QR Code"] {
+            width: 175px;
+            height: 175px;
+            object-fit: contain;
+            display: block;
+        }
+        .info-row {
+            margin: 0.8rem 0 0.4rem 0;
+            font-size: 1.08rem;
+            color: #333;
+            font-weight: 500;
+        }
+        .info-label {
+            color: #1492e6;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        .amount {
+            font-size: 1.15rem;
+            color: #0b5171;
+            font-weight: bold;
+            letter-spacing: 0.01em;
+        }
+        .note {
+            margin-top: 1.6rem;
+            color: #888;
+            font-size: 0.98rem;
+            background: #e3f6fc;
+            border-radius: 8px;
+            padding: 0.7rem 0.7rem 0.7rem 1.1rem;
+            box-shadow: 0 2px 10px rgba(20,146,230,0.04);
+        }
+        @media (max-width: 480px) {
+            .qrcode-container {
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+                max-width: 96vw;
+            }
+            img[alt="QR Code"] {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="qrcode-container">
+    <h2>Mã QR để xác nhận thanh toán</h2>
+    <div class="qr-img-wrapper">
+        <img th:src="'data:image/png;base64,' + ${qrCode}" alt="QR Code" />
+    </div>
+    <div class="info-row">
+        <span class="info-label">Mã giao dịch:</span>
+        <span th:text="${maGiaoDich}">ABC123456</span>
+    </div>
+    <div class="info-row">
+        <span class="info-label">Số tiền:</span>
+        <span class="amount" th:text="${soTien}">0</span> <span class="info-label">VNĐ</span>
+    </div>
+    <div class="note">
+        Vui lòng sử dụng ứng dụng ngân hàng hoặc ví điện tử để quét mã QR này.<br>
+        Giao dịch sẽ được xác nhận tự động sau khi thanh toán thành công.
+    </div>
+</div>
+</body>
+</html>

@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <title>Danh sách Sản Phẩm Chi Tiết</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -47,24 +50,29 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div layout:fragment="content">
     <h1 class="my-4 text-center">Danh sách Sản Phẩm Chi Tiết</h1>
 
     <!-- Form tìm kiếm -->
-    <form method="get" th:action="@{/san-pham-chi-tiet}" class="form-inline">
-        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo tên sản phẩm" class="form-control mr-2">
-        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-    </form>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <form method="get" th:action="@{/san-pham-chi-tiet}" class="form-inline d-flex">
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo tên sản phẩm"
+                   class="form-control mr-2" />
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+        </form>
 
-    <div class="mb-4">
-        <a href="/san-pham-chi-tiet/add" class="btn btn-success"><i class="fas fa-plus-circle"></i> Thêm mới</a>
+        <a href="/san-pham-chi-tiet/add" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Thêm mới
+        </a>
     </div>
 
     <!-- Bảng sản phẩm chi tiết -->
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
         <tr>
-            <th>ID</th>
+            <th>STT</th>
             <th>Sản phẩm</th>
             <th>Màu sắc</th>
             <th>Kích cỡ</th>
@@ -74,8 +82,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="spct : ${sanPhamChiTiets}">
-            <td th:text="${spct.id}"></td>
+        <tr th:each="spct, iterStat : ${sanPhamChiTiets}">
+            <td th:text="${iterStat.index + 1}">1</td>
             <td th:text="${spct.sanPham.tenSanPham}"></td>
             <td th:text="${spct.mauSac.tenMau}"></td>
             <td th:text="${spct.kichCo.tenKichCo}"></td>
@@ -91,7 +99,7 @@
                 <a th:href="@{/san-pham-chi-tiet/delete/{id}(id=${spct.id})}" class="btn btn-danger btn-sm">
                     <i class="fas fa-trash-alt"></i> Xóa
                 </a>
-5
+
             </td>
         </tr>
         </tbody>

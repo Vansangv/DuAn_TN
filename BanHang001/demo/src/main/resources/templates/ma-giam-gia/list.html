@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <title>Danh sách Mã Giảm Giá</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -12,6 +15,7 @@
 
         h1 {
             text-align: center;
+
             color: #333;
         }
 
@@ -155,7 +159,7 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div layout:fragment="content">
     <h1><i class="fa-solid fa-tags"></i> Danh sách Mã Giảm Giá</h1>
 
     <!-- Search + Buttons -->
@@ -175,6 +179,7 @@
     <table>
         <thead>
         <tr>
+            <th>STT</th>
             <th>Mã</th>
             <th>Loại giảm</th>
             <th>% Giảm</th>
@@ -187,7 +192,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="ma : ${maGiamGiaList}">
+
+        <tr th:each="ma , iterStat: ${maGiamGiaList}">
+            <td th:text="${iterStat.index + 1}"></td>
             <td th:text="${ma.ma}"></td>
             <td>
                <span th:switch="${ma.loaiGiam}">

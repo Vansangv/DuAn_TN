@@ -19,8 +19,8 @@ public class YeuThichSanPham {
     private NguoiDung nguoiDung;
 
     @ManyToOne
-    @JoinColumn(name = "san_pham_id", nullable = false)
-    private SanPham sanPham;
+    @JoinColumn(name = "san_pham_chi_tiet_id", nullable = false)
+    private SanPhamChiTiet sanPhamChiTiet;
 
     @Column(name = "ngay_them")
     private LocalDateTime ngayThem;
