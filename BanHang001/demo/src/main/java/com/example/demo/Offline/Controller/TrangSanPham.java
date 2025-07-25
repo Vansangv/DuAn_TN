@@ -5,9 +5,13 @@ import com.example.demo.Entity.*;
 import com.example.demo.Offline.Repository.OnlineGioHangRepository;
 import com.example.demo.Offline.Repository.OnlineSanPhamChiTietRepository;
 import com.example.demo.Offline.Repository.OnlineSanPhamTrongGioHangRepository;
+import com.example.demo.PhanQuyen.BaseController;
 import com.example.demo.Repository.SanPhamRepository;
 import com.example.demo.Service.NguoiDungService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
-public class TrangSanPham {
+public class TrangSanPham extends BaseController {
 
     @Autowired
     private OnlineSanPhamChiTietRepository sanPhamChiTietRepository;
@@ -32,35 +36,33 @@ public class TrangSanPham {
     private OnlineGioHangRepository gioHangRepository;
 
     @GetMapping("/san-pham-online")
-    public String hienThiDanhSachSanPham(Model model, Authentication authentication,
+    public String hienThiDanhSachSanPham(Model model,
                                          @RequestParam(required = false) Integer min,
                                          @RequestParam(required = false) Integer max,
-                                         @RequestParam(required = false) String loai) {
+                                         @RequestParam(required = false) String loai,
+                                         @RequestParam(defaultValue = "1") int page,
+                                         @RequestParam(defaultValue = "8") int size) {
 
-        int soLuongTrongGio = 0;
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
+        int pageIndex = Math.max(page - 1, 0);
+        Pageable pageable = PageRequest.of(pageIndex, size);
 
-            if (nguoiDung != null) {
-                model.addAttribute("tenNguoiDung", nguoiDung.getHoTen());
-                soLuongTrongGio = sanPhamTrongGioHangRepository.demSoLuongSanPhamTrongGio(nguoiDung.getId());
-            } else {
-                model.addAttribute("tenNguoiDung", "Khách");
-            }
+        String loaiTimKiem = (loai != null && !loai.trim().isEmpty()) ? loai : null;
+
+        Page<SanPhamChiTiet> danhSachSanPham;
+
+        if (loaiTimKiem != null || min != null || max != null) {
+            // Tìm theo điều kiện nếu có
+            danhSachSanPham = sanPhamChiTietRepository
+                    .findByLoaiSanPhamAndGia(loaiTimKiem, min, max, pageable);
         } else {
-            model.addAttribute("tenNguoiDung", "Khách");
+            // Không có điều kiện, trả về toàn bộ có phân trang
+            danhSachSanPham = sanPhamChiTietRepository.findAll(pageable);
         }
 
-        model.addAttribute("soLuongTrongGio", soLuongTrongGio);
-
-        // Nếu người dùng không chọn loại thì truyền null
-        String loaiTimKiem = (loai != null && !loai.isEmpty()) ? loai : null;
-
-        List<SanPhamChiTiet> danhSachSanPham = sanPhamChiTietRepository
-                .findByLoaiSanPhamAndGia(loaiTimKiem, min, max);
-
         model.addAttribute("danhSachSanPham", danhSachSanPham);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", danhSachSanPham.getTotalPages());
+        model.addAttribute("loai", loai);
         return "BanHangOnline/san-pham";
     }
 

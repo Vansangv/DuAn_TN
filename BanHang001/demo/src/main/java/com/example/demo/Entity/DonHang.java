@@ -52,6 +52,11 @@ public class DonHang {
     @Column(name = "hoan_tien")
     private Integer hoantien;
 
+    @Column(name = "tien_mat")
+    private Integer tienMat;
+
+    @Column(name = "chuyen_khoan")
+    private Integer chuyenKhoan;
 
 
 }

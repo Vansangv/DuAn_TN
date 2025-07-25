@@ -4,6 +4,7 @@ package com.example.demo.Offline.Controller;
 
 import com.example.demo.Entity.*;
 import com.example.demo.Offline.Repository.*;
+import com.example.demo.PhanQuyen.BaseController;
 import com.example.demo.Repository.LichSuThanhToanRepository;
 import com.example.demo.Service.NguoiDungService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 
 
 @Controller
-public class GioHangOnlineController {
+public class GioHangOnlineController extends BaseController {
 
 
     @Autowired
@@ -62,7 +64,7 @@ public class GioHangOnlineController {
 
     @PostMapping("/them-vao-gio-hang/{id}")
     public String themVaoGioHang(@PathVariable("id") Long sanPhamChiTietId,
-                                 Authentication authentication) {
+                                 Authentication authentication, RedirectAttributes redirectAttributes) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/login-online";
         }
@@ -111,13 +113,14 @@ public class GioHangOnlineController {
             sanPhamTrongGioHang.setSoLuong(1);
             sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - 1); // Trừ kho
         }
-
+        redirectAttributes.addFlashAttribute("successMessage", "Sản phẩm đã được thêm vào Giỏ hàng!");
         // Lưu lại vào DB
         sanPhamChiTietRepository.save(sanPhamChiTiet); // cập nhật tồn kho
         sanPhamTrongGioHangRepository.save(sanPhamTrongGioHang); // cập nhật chi tiết giỏ
 
         return "redirect:/online-home";
     }
+
 
 
 
@@ -245,7 +248,8 @@ public class GioHangOnlineController {
     @PostMapping("/mua-hang")
     public String muaHang(@RequestParam(name = "maGiamGia", required = false) Long maGiamGiaId,
                           @RequestParam(name = "phuongThucThanhToan") String phuongThucThanhToan,
-                          Authentication authentication) {
+                          Authentication authentication,RedirectAttributes redirectAttributes) {
+
         if (authentication == null || !authentication.isAuthenticated()) return "redirect:/login";
 
         String username = authentication.getName();
@@ -328,9 +332,8 @@ public class GioHangOnlineController {
                 .noiDung("Cảm ơn bạn đã đặt hàng. Đơn hàng #" + donHang.getId() + " đã được tạo thành công và đang chờ xác nhận.")
                 .build();
         thongBaoRepository.save(thongBao);
-
         sanPhamTrongGioHangRepository.deleteAll(dsSanPham);
-
+        redirectAttributes.addFlashAttribute("successMessage", "✅ Mua hàng thành công!");
         return "redirect:/xac-nhan-don-hang";
     }
 

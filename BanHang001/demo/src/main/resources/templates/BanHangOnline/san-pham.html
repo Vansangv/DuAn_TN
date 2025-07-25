@@ -1,206 +1,196 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Trang Chủ - Bán Hàng Online</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
+
+<section layout:fragment="content">
     <style>
         body {
             background-color: #f8f9fa;
         }
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-        .card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease-in-out;
-        }
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-        }
+
         .product-card {
             border-radius: 10px;
             overflow: hidden;
             background-color: #fff;
             border: none;
         }
-        .banner-img {
-            height: 400px;
+
+        .card-img-top {
+            height: 200px;
             object-fit: cover;
-            border-radius: 8px;
-        }
-        footer {
-            background-color: #343a40;
-            color: white;
-        }
-        .card {
-            position: relative;
-        }
-        .btn-light i {
-            font-size: 1.1rem;
-        }
-        footer {
-            margin-top: 50px;
         }
 
+        .card-title {
+            font-size: 1rem;
+        }
+
+        .top-0.end-0 {
+            z-index: 10;
+        }
+
+        .filter-sidebar {
+            min-width: 200px;
+        }
+
+        @media (max-width: 768px) {
+            .d-flex.flex-wrap-md {
+                flex-direction: column;
+            }
+
+            .filter-sidebar {
+                width: 100% !important;
+                margin-bottom: 1rem;
+            }
+
+            .products-area {
+                width: 100% !important;
+            }
+        }
     </style>
-</head>
-<body class="d-flex flex-column min-vh-100">
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-    <a class="navbar-brand" href="#">🛍️ Bán Hàng</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link active" href="/online-home">Trang chủ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/san-pham-online">Sản phẩm</a></li>
-            <li class="nav-item"><a class="nav-link" href="/khuyen-mai">Khuyến mãi</a></li>
-            <li class="nav-item"><a class="nav-link" href="/don-hang-huy/danh-sach-don-hang">Đơn hàng</a></li>
-            <li class="nav-item"><a class="nav-link" href="/tra-hang">Trả hàng </a></li>
-            <li class="nav-item"><a class="nav-link" href="/chi-dan/hh1">Địa chỉ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/loc-theo-trangthai">Trạng thái</a></li>
-            <li class="nav-item"><a class="nav-link" href="/nap-tien">Nạp tiền</a></li>
-            <!--            <li class="nav-item"><a class="nav-link" href="/xac-nhan-nap">XÁc nhận nạp</a></li>-->
-            <li class="nav-item"><a class="nav-link" href="/lien-he">Liên hệ</a></li>
-        </ul>
-
-        <form class="d-flex me-2" th:action="@{/tim-kiem}" method="get">
-            <input class="form-control me-2" name="keyword" type="search" placeholder="Tìm kiếm...">
-            <button class="btn btn-outline-light" type="submit">Tìm</button>
-        </form>
-
-        <a href="/gio-hang" class="btn btn-warning me-2 position-relative">
-            <i class="fas fa-shopping-cart"></i> Giỏ hàng
-            <span th:if="${soLuongTrongGio > 0}"
-                  th:text="'(' + ${soLuongTrongGio} + ')'"
-                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                  style="font-size: 0.9em;">
-            </span>
-        </a>
-
-        <a href="/yeu-thich" class="btn btn-outline-danger me-2">
-            <i class="fas fa-heart"></i> Yêu thích
-        </a>
-
-        <div class="dropdown">
-            <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-user-circle"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                <li>
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-user"></i>
-                        Xin chào, <span th:text="${tenNguoiDung}">Người dùng</span>
-                    </a>
-                </li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-id-card"></i> Thông tin cá nhân</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Đổi mật khẩu</a></li>
-                <li><a class="dropdown-item" href="/lich-su-dang-nhap"><i class="fas fa-history"></i> Lịch sử đăng nhập</a></li>
-                <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- Phần chứa bộ lọc và sản phẩm - full màn -->
-<div class="container-fluid mt-5 flex-grow-1">
-    <div class="d-flex w-100 px-4">
-        <!-- Bộ lọc bên trái chiếm 15% -->
-        <div style="width: 15%;" class="me-4">
-            <div class="card p-3">
-                <h5 class="mb-3">Bộ lọc sản phẩm</h5>
-                <form th:action="@{/san-pham}" method="get">
-                    <div class="mb-3">
-                        <label class="form-label">Giá từ:</label>
-                        <input type="number" class="form-control" name="min">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Đến:</label>
-                        <input type="number" class="form-control" name="max">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Loại sản phẩm:</label>
-                        <select class="form-select" name="loai">
-                            <option value="">-- Tất cả --</option>
-                            <option value="Áo nam">Áo nam</option>
-                            <option value="Áo nữ">Áo nữ</option>
-                            <option value="Quần nam">Quần nam</option>
-                            <option value="Quần nữ">Quần nữ</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Lọc</button>
-                </form>
+    <div class="container-fluid mt-4">
+        <div class="d-flex flex-wrap-md px-4">
+            <!-- Bộ lọc -->
+            <div class="filter-sidebar me-4" style="width: 15%;">
+                <div class="card p-3">
+                    <h5 class="mb-3">Bộ lọc sản phẩm</h5>
+                    <form th:action="@{/san-pham-online}" method="get">
+                        <div class="mb-3">
+                            <label class="form-label">Giá từ:</label>
+                            <input type="number" class="form-control" name="min"
+                                   th:value="${param.min}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Đến:</label>
+                            <input type="number" class="form-control" name="max"
+                                   th:value="${param.max}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Loại sản phẩm:</label>
+                            <select class="form-select" name="loai">
+                                <option value="" th:selected="${param.loai == null or param.loai == ''}">-- Tất cả --</option>
+                                <option value="Áo nam" th:selected="${param.loai != null and param.loai == 'Áo nam'}">Áo nam</option>
+                                <option value="Áo nữ" th:selected="${param.loai != null and param.loai == 'Áo nữ'}">Áo nữ</option>
+                                <option value="Quần nam" th:selected="${param.loai != null and param.loai == 'Quần nam'}">Quần nam</option>
+                                <option value="Quần nữ" th:selected="${param.loai != null and param.loai == 'Quần nữ'}">Quần nữ</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <!-- Danh sách sản phẩm bên phải chiếm 85% -->
-        <div style="width: 75%;">
-            <div class="row g-4">
-                <div class="col-md-3" th:each="sp : ${danhSachSanPham}">
-                    <div class="card product-card h-100 shadow-sm position-relative">
-                        <button type="button" class="btn btn-sm btn-light rounded-circle position-absolute top-0 end-0 m-2"
-                                title="Yêu thích" onclick="toggleHeart(this)">
-                            <i class="far fa-heart text-dark"></i>
-                        </button>
-                        <img th:src="@{'/images/' + ${sp.sanPham.anhDaiDien}}" class="card-img-top product-img" alt="Ảnh sản phẩm">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title" th:text="${sp.sanPham.tenSanPham}"></h5>
-                            <h5 class="card-title" th:text="${sp.gia}"></h5>
-                            <a th:href="@{'/chi-tiet/' + ${sp.id}}"
-                               class="btn btn-outline-primary btn-sm w-100 mt-2">
-                                <i class="fas fa-eye"></i> Chi tiết
-                            </a>
-                            <div class="d-flex gap-2 mt-2">
-                                <!-- Thêm vào giỏ hàng -->
-                                <form th:action="@{'/them-vao-gio-hangg/' + ${sp.id}}" method="post" class="w-50">
-                                    <button type="submit" class="btn btn-warning btn-sm w-100">
-                                        <i class="fas fa-cart-plus"></i> Giỏ hàng
-                                    </button>
-                                </form>
 
-                                <!-- Mua ngay -->
-                                <form th:action="@{'/mua-ngay/' + ${sp.id}}" method="post" class="w-50">
-                                    <button type="submit" class="btn btn-danger btn-sm w-100">
-                                        <i class="fas fa-bolt"></i> Mua ngay
-                                    </button>
-                                </form>
+            <!-- Danh sách sản phẩm -->
+            <div class="products-area" style="width: 75%;">
+                <div class="row g-4">
+                    <div class="col-12 col-md-6 col-lg-3" th:each="sp : ${danhSachSanPham.content}">
+                        <div class="card product-card h-100 shadow-sm position-relative"
+                             style="border-radius:14px;background:#fff;box-shadow:0 2px 12px rgba(30,144,255,0.06);transition:.2s;">
+                            <!-- Nhóm icon góc phải -->
+                            <div class="position-absolute top-0 end-0 m-2 d-flex flex-column align-items-end gap-2" style="z-index:2;">
+                                <!-- Icon yêu thích -->
+                                <button type="button" class="btn btn-light btn-sm btn-heart border-0 shadow-sm mb-1"
+                                        title="Yêu thích" onclick="toggleHeart(this)" th:attr="data-id=${sp.id}">
+                                    <i th:classappend="${danhSachIdYeuThich.contains(sp.id)} ? 'fas text-danger' : 'far text-secondary'"
+                                       class="fa-heart"></i>
+                                </button>
+                                <!-- Icon xem chi tiết -->
+                                <a th:href="@{'/chi-tiet/' + ${sp.id}}"
+                                   class="btn btn-light btn-sm border-0 shadow-sm"
+                                   title="Xem chi tiết">
+                                    <i class="fas fa-eye text-primary"></i>
+                                </a>
+                            </div>
+                            <!-- Ảnh sản phẩm -->
+                            <img th:src="@{'/images/' + ${sp.sanPham.anhDaiDien}}"
+                                 class="card-img-top bg-white"
+                                 style="height:180px; width:100%; object-fit:contain; padding:10px;"
+                                 alt="Ảnh sản phẩm">
+
+                            <div class="card-body d-flex flex-column justify-content-between product-card-body" style="padding:1rem 1.1rem;">
+                                <div>
+                                    <h5 class="product-title mb-1" th:text="${sp.sanPham.tenSanPham}"
+                                        style="font-size:1.05rem;font-weight:600;min-height:2.3em;color:#222;"></h5>
+                                    <div class="product-price mb-1"
+                                         th:text="${#numbers.formatDecimal(sp.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"
+                                         style="font-size:1.13rem;font-weight:700;color:#1e90ff;"></div>
+                                </div>
+                                <div class="d-flex gap-2 mt-3">
+                                    <form th:action="@{'/them-vao-gio-hangg/' + ${sp.id}}" method="post" class="w-50">
+                                        <button type="submit" class="btn btn-warning btn-sm w-100 rounded-3 shadow-sm">
+                                            <i class="fas fa-cart-plus"></i> <span class="d-none d-md-inline">Giỏ hàng</span>
+                                        </button>
+                                    </form>
+                                    <form th:action="@{'/mua-ngay/' + ${sp.id}}" method="post" class="w-50">
+                                        <button type="submit" class="btn btn-danger btn-sm w-100 rounded-3 shadow-sm">
+                                            <i class="fas fa-bolt"></i> <span class="d-none d-md-inline">Mua ngay</span>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- end sản phẩm -->
             </div>
+
         </div>
     </div>
-</div>
+    <!-- PHÂN TRANG -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- Nút 'Trước' -->
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/san-pham-online(
+                    page=${currentPage - 1},
+                    size=${pageSize},
+                    loai=${param.loai},
+                    min=${param.min},
+                    max=${param.max}
+               )}">Trước</a>
+            </li>
 
-<!-- Footer -->
-<footer class="bg-dark text-white text-center p-4">
-    © <span id="currentYear"></span> Bán Hàng Online | Địa chỉ: 243 Khuất Duy Tiến, Nhân Chính, Thanh Xuân, Hà Nội
-</footer>
+            <!-- Các số trang -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/san-pham-online(
+                    page=${i},
+                    size=${pageSize},
+                    loai=${param.loai},
+                    min=${param.min},
+                    max=${param.max}
+               )}"
+                   th:text="${i}">1</a>
+            </li>
 
-<script>
-    function toggleHeart(button) {
-        const icon = button.querySelector('i');
-        icon.classList.toggle('far');
-        icon.classList.toggle('fas');
-        icon.classList.toggle('text-dark');
-        icon.classList.toggle('text-danger');
-    }
+            <!-- Nút 'Sau' -->
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/san-pham-online(
+                    page=${currentPage + 1},
+                    size=${pageSize},
+                    loai=${param.loai},
+                    min=${param.min},
+                    max=${param.max}
+               )}">Sau</a>
+            </li>
+        </ul>
+    </nav>
 
-    // Hiển thị năm hiện tại
-    document.getElementById("currentYear").textContent = new Date().getFullYear();
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <script>
+        function toggleHeart(button) {
+            const icon = button.querySelector('i');
+            icon.classList.toggle('far');
+            icon.classList.toggle('fas');
+            icon.classList.toggle('text-dark');
+            icon.classList.toggle('text-danger');
+        }
+    </script>
+</section>
 </html>

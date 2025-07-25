@@ -421,15 +421,23 @@ public class BanHangController {
         switch (hinhThuc) {
             case "TIEN_MAT":
                 donHang.setPhuongThucThanhToan("Tiền mặt");
+                donHang.setTienMat(tongTien);
+                donHang.setChuyenKhoan(0);
                 break;
             case "CHUYEN_KHOAN":
                 donHang.setPhuongThucThanhToan("Chuyển khoản");
+                donHang.setTienMat(0);
+                donHang.setChuyenKhoan(tongTien);
                 break;
             case "KET_HOP":
                 donHang.setPhuongThucThanhToan("Tiền mặt + Chuyển khoản");
+                donHang.setTienMat(tienMat);
+                donHang.setChuyenKhoan(chuyenKhoan);
                 break;
             default:
                 donHang.setPhuongThucThanhToan("Không xác định");
+                donHang.setTienMat(0);
+                donHang.setChuyenKhoan(0);
         }
 
         donHang.setTrangThai("Đã thanh toán");

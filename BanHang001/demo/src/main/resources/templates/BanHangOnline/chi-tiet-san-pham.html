@@ -1,72 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
 <head>
     <meta charset="UTF-8">
     <title>Chi Tiết Sản Phẩm</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        .star-rating {
-            display: flex;
-            flex-direction: row-reverse;
-            font-size: 2rem;
-            justify-content: start;
-            cursor: pointer;
-        }
-        footer {
-            margin-top: 50px;
-        }
-
-        .muasam{
-            margin-top: 50px;
-        }
-        .star {
-            color: lightgray;
-            transition: color 0.2s;
-        }
-        .star.selected,
-        .star.hovered {
-            color: gold;
-        }
-        @keyframes doiMauChu {
-            0%   { color: #ff5733; }   /* cam */
-            25%  { color: #33c4ff; }   /* xanh dương */
-            50%  { color: #28a745; }   /* xanh lá */
-            75%  { color: #e83e8c; }   /* hồng */
-            100% { color: #ff5733; }   /* quay lại cam */
-        }
-
-        .chu-doi-mau {
-            animation: doiMauChu 5s infinite linear;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .chu-song-mau {
-            font-weight: bold;
-            font-size: 1.3rem;
-            background: linear-gradient(
-                    270deg,
-                    #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee
-            );
-            background-size: 1400% 1400%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: songMau 10s ease infinite;
-        }
-
-        @keyframes songMau {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
         .img-dong-bo {
             width: 100%;
             max-width: 500px;
@@ -75,262 +15,195 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-
-
+        .muasam {
+            margin-top: 50px;
+        }
+        .chu-song-mau {
+            font-weight: bold;
+            font-size: 1.3rem;
+            background: linear-gradient(270deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee);
+            background-size: 1400% 1400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: songMau 10s ease infinite;
+        }
+        @keyframes songMau {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .star {
+            color: lightgray;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .star.selected {
+            color: gold;
+        }
     </style>
 </head>
-<body class="d-flex flex-column min-vh-100">
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-    <a class="navbar-brand" href="#">🛍️ Bán Hàng</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link active" href="/online-home">Trang chủ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/san-pham-online">Sản phẩm</a></li>
-            <li class="nav-item"><a class="nav-link" href="/khuyen-mai">Khuyến mãi</a></li>
-            <li class="nav-item"><a class="nav-link" href="/don-hang-huy/danh-sach-don-hang">Đơn hàng</a></li>
-            <li class="nav-item"><a class="nav-link" href="/tra-hang">Trả hàng </a></li>
-            <li class="nav-item"><a class="nav-link" href="/chi-dan/hh1">Địa chỉ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/loc-theo-trangthai">Trạng thái</a></li>
-            <li class="nav-item"><a class="nav-link" href="/nap-tien">Nạp tiền</a></li>
-            <!--            <li class="nav-item"><a class="nav-link" href="/xac-nhan-nap">XÁc nhận nạp</a></li>-->
-            <li class="nav-item"><a class="nav-link" href="/lien-he">Liên hệ</a></li>
-        </ul>
-        <form class="d-flex me-2" th:action="@{/tim-kiem}" method="get">
-            <input class="form-control me-2" name="keyword" type="search" placeholder="Tìm kiếm...">
-            <button class="btn btn-outline-light" type="submit">Tìm</button>
-        </form>
-
-        <a href="/gio-hang" class="btn btn-warning me-2 position-relative">
-            <i class="fas fa-shopping-cart"></i> Giỏ hàng
-            <span th:if="${soLuongTrongGio > 0}"
-                  th:text="'(' + ${soLuongTrongGio} + ')'"
-                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                  style="font-size: 0.9em;">
-            </span>
-        </a>
-
-        <div class="dropdown">
-            <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                <i class="fas fa-user-circle"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li class="dropdown-item"><i class="fas fa-user"></i> Xin chào, <span th:text="${tenNguoiDung}">Người dùng</span></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-id-card"></i> Thông tin cá nhân</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Đổi mật khẩu</a></li>
-                <li><a class="dropdown-item" href="/lich-su-dang-nhap"><i class="fas fa-history"></i> Lịch sử đăng nhập</a></li>
-                <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- Main content -->
-<main class="flex-fill">
-    <div class="container mt-5">
-        <h2 class="text-center mb-4" th:text="${sanPham.tenSanPham}">Tên sản phẩm</h2>
-        <div class="row">
-            <!-- Ảnh sản phẩm -->
-            <div class="col-md-6">
-                <img th:src="@{'/images/' + ${sanPham.anhDaiDien}}" class="img-dong-bo" alt="Ảnh sản phẩm">
-            </div>
-
-            <!-- Thông tin và form -->
-            <div class="col-md-6">
-                <p th:text="${sanPham.moTa}" class="chu-song-mau"></p>
-
-                <!-- Form gộp màu, size và hai nút -->
-                <form th:action="@{/them-vao-gio-hang-chi-tiet}" method="post">
-                    <input type="hidden" name="sanPhamId" th:value="${sanPham.id}" />
-
-                    <!-- Màu sắc -->
-                    <label for="mauSac">Chọn màu sắc:</label>
-                    <select name="mauSacId" id="mauSac" class="form-select" required>
-                        <option th:each="mau : ${danhSachMauSac}"
-                                th:value="${mau.id}"
-                                th:text="${mau.tenMau}"
-                                th:selected="${mau.selected}">
-                        </option>
-                    </select>
-
-                    <!-- Kích cỡ -->
-                    <div class="mt-3">
-                        <label for="kichCoId">Kích cỡ:</label>
-                        <select class="form-select" name="kichCoId" id="kichCoId" required>
-                            <option th:each="size : ${danhSachKichCo}"
-                                    th:value="${size.id}"
-                                    th:text="${size.tenKichCo}"
-                                    th:selected="${size.selected}">
-                            </option>
-                        </select>
-                    </div>
-
-                    <!-- Giá sản phẩm -->
-                    <div class="mt-3">
-                        <h5>Giá: <span class="fw-bold text-danger" th:text="${gia} + ' đ'">0 đ</span></h5>
-                    </div>
-
-                    <!-- Số lượng còn -->
-                    <div class="mt-3">
-                        <h5>
-                            Số lượng còn:
-                            <span th:if="${tongSoLuong > 0}" class="text-success"> <strong th:text="${tongSoLuong}">0</strong></span>
-                            <span th:if="${tongSoLuong == 0}" class="text-danger">Hết hàng</span>
-                        </h5>
-                    </div>
-
-                    <!-- Đã bán -->
-                    <div class="mt-2">
-                        <h5>Đã bán: <span class="text-info fw-bold" th:text="${soLuongDaBan}"></span> sản phẩm</h5>
-                    </div>
-
-                    <!-- Nút mua -->
-                    <div class="muasam">
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-success w-100" th:disabled="${tongSoLuong == 0}">
-                                <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
-                            </button>
-                            <button type="submit" formaction="/mua-ngay-chi-tiet" class="btn btn-danger w-100" th:disabled="${tongSoLuong == 0}">
-                                <i class="fas fa-bolt"></i> Mua ngay
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-
-        <!-- Đánh giá sản phẩm -->
-        <hr class="my-5">
-        <div class="row">
-            <div class="col-md-6">
-                <h4>📝 Viết đánh giá</h4>
-                <!-- Hiển thị thông báo lỗi -->
-                <div id="errorAlert" th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
-
-                <!-- Hiển thị thông báo thành công -->
-                <div id="successAlert" th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
-
-
-                <form th:action="@{/danh-gia-san-pham}" method="post">
-                    <input type="hidden" name="sanPhamId" th:value="${sanPham.id}" />
-
-                    <!-- Hidden input để lưu điểm khi người dùng chọn sao -->
-                    <input type="hidden" name="diem" id="diemInput" value="0">
-
-                    <div class="mb-3">
-                        <label>Đánh giá sản phẩm :</label>
-                        <div id="starContainer" style="font-size: 1.8rem; cursor: pointer;">
-                            <span class="star" data-value="1">&#9733;</span>
-                            <span class="star" data-value="2">&#9733;</span>
-                            <span class="star" data-value="3">&#9733;</span>
-                            <span class="star" data-value="4">&#9733;</span>
-                            <span class="star" data-value="5">&#9733;</span>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="nhanXet">Nhận xét:</label>
-                        <textarea name="nhanXet" class="form-control" required></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-                </form>
-            </div>
-
-            <div class="col-md-6">
-                <h4>⭐ Đánh giá của người dùng</h4>
-                <p><strong>Trung bình:</strong> <span th:text="${#numbers.formatDecimal(diemTrungBinh, 1, 1)} + '/5'"></span></p>
-                <p><strong>Tổng số nhận xét:</strong> <span th:text="${tongNhanXet}">0</span></p>
-                <ul class="list-group">
-                    <li class="list-group-item" th:each="dg : ${danhGiaList}">
-                        <strong th:text="${dg.nguoiDung.hoTen}">Tên người dùng</strong>
-                        <span class="badge bg-warning text-dark ms-2" th:text="${dg.diem} + '⭐'"></span><br/>
-                        <small class="text-muted" th:text="${#temporals.format(dg.ngayDanhGia, 'dd/MM/yyyy HH:mm')}"></small><br/>
-                        <span th:text="${dg.nhanXet}">Nhận xét...</span>
-                    </li>
-                </ul>
-
-                <!-- Nút xem thêm -->
-                <div class="mt-3" th:if="${!daHienThiHet}">
-                    <a th:href="@{'/chi-tiet/' + ${sanPham.id} + '?full=true'}" class="btn btn-primary">Xem thêm đánh giá</a>
-                    <!-- Nếu ĐANG FULL thì hiện nút Thu gọn -->
-
+<body>
+<section layout:fragment="content">
+    <main class="flex-fill">
+        <div class="container mt-5">
+            <h2 class="text-center mb-4" th:text="${sanPham.tenSanPham}">Tên sản phẩm</h2>
+            <div class="row">
+                <!-- Ảnh sản phẩm -->
+                <div class="col-md-6">
+                    <img th:src="@{'/images/' + ${sanPham.anhDaiDien}}" class="img-dong-bo" alt="Ảnh sản phẩm">
                 </div>
 
+                <!-- Thông tin và form -->
+                <div class="col-md-6">
+                    <p th:text="${sanPham.moTa}" class="chu-song-mau"></p>
+
+                    <form th:action="@{/them-vao-gio-hang-chi-tiet}" method="post">
+                        <input type="hidden" name="sanPhamId" th:value="${sanPham.id}" />
+
+                        <!-- Màu sắc -->
+                        <label for="mauSac">Chọn màu sắc:</label>
+                        <select name="mauSacId" id="mauSac" class="form-select" required>
+                            <option th:each="mau : ${danhSachMauSac}"
+                                    th:value="${mau.id}"
+                                    th:text="${mau.tenMau}"
+                                    th:selected="${mau.selected}">
+                            </option>
+                        </select>
+
+                        <!-- Kích cỡ -->
+                        <div class="mt-3">
+                            <label for="kichCoId">Kích cỡ:</label>
+                            <select class="form-select" name="kichCoId" id="kichCoId" required>
+                                <option th:each="size : ${danhSachKichCo}"
+                                        th:value="${size.id}"
+                                        th:text="${size.tenKichCo}"
+                                        th:selected="${size.selected}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Giá sản phẩm -->
+                        <div class="mt-3">
+                            <h5>Giá: <span class="fw-bold text-danger" th:text="${gia} + ' đ'">0 đ</span></h5>
+                        </div>
+
+                        <!-- Số lượng còn -->
+                        <div class="mt-3">
+                            <h5>
+                                Số lượng còn:
+                                <span th:if="${tongSoLuong > 0}" class="text-success"><strong th:text="${tongSoLuong}">0</strong></span>
+                                <span th:if="${tongSoLuong == 0}" class="text-danger">Hết hàng</span>
+                            </h5>
+                        </div>
+
+                        <!-- Đã bán -->
+                        <div class="mt-2">
+                            <h5>Đã bán: <span class="text-info fw-bold" th:text="${soLuongDaBan}"></span> sản phẩm</h5>
+                        </div>
+
+                        <!-- Nút mua -->
+                        <div class="muasam">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success w-100" th:disabled="${tongSoLuong == 0}">
+                                    <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                                </button>
+                                <button type="submit" formaction="/mua-ngay-chi-tiet" class="btn btn-danger w-100" th:disabled="${tongSoLuong == 0}">
+                                    <i class="fas fa-bolt"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
 
+            <!-- Đánh giá sản phẩm -->
+            <hr class="my-5">
+            <div class="row">
+                <!-- Form đánh giá -->
+                <div class="col-md-6">
+                    <h4>📝 Viết đánh giá</h4>
+                    <form th:action="@{/danh-gia-san-pham}" method="post">
+                        <input type="hidden" name="sanPhamId" th:value="${sanPham.id}" />
+                        <input type="hidden" name="diem" id="diemInput" value="0">
+
+                        <div class="mb-3">
+                            <label>Đánh giá sản phẩm:</label>
+                            <div id="starContainer">
+                                <span class="star" data-value="1">&#9733;</span>
+                                <span class="star" data-value="2">&#9733;</span>
+                                <span class="star" data-value="3">&#9733;</span>
+                                <span class="star" data-value="4">&#9733;</span>
+                                <span class="star" data-value="5">&#9733;</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nhanXet">Nhận xét:</label>
+                            <textarea name="nhanXet" class="form-control" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                    </form>
+                </div>
+
+                <!-- Hiển thị đánh giá -->
+                <div class="col-md-6">
+                    <h4>⭐ Đánh giá của người dùng</h4>
+                    <p><strong>Trung bình:</strong> <span th:text="${#numbers.formatDecimal(diemTrungBinh, 1, 1)} + '/5'"></span></p>
+                    <p><strong>Tổng số nhận xét:</strong> <span th:text="${tongNhanXet}">0</span></p>
+                    <ul class="list-group">
+                        <li class="list-group-item" th:each="dg : ${danhGiaList}">
+                            <strong th:text="${dg.nguoiDung.hoTen}">Tên người dùng</strong>
+                            <span class="badge bg-warning text-dark ms-2" th:text="${dg.diem} + '⭐'"></span><br/>
+                            <small class="text-muted" th:text="${#temporals.format(dg.ngayDanhGia, 'dd/MM/yyyy HH:mm')}"></small><br/>
+                            <span th:text="${dg.nhanXet}">Nhận xét...</span>
+                        </li>
+                    </ul>
+                    <div class="mt-3" th:if="${!daHienThiHet}">
+                        <a th:href="@{'/chi-tiet/' + ${sanPham.id} + '?full=true'}" class="btn btn-primary">Xem thêm đánh giá</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<!-- Footer -->
-<footer class="bg-dark text-white text-center p-4">
-    © 2025 Bán Hàng Online | Địa chỉ: 243 Khuất Duy Tiến, Nhân Chính, Thanh Xuân, Hà Nội
-</footer>
+    <!-- Script đánh giá sao -->
+    <script>
+        const stars = document.querySelectorAll(".star");
+        const diemInput = document.getElementById("diemInput");
+        let selectedValue = 0;
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const stars = document.querySelectorAll(".star");
-    const diemInput = document.getElementById("diemInput");
-    let selectedValue = 0;
-
-    stars.forEach(star => {
-        star.addEventListener("mouseover", () => {
-            const val = parseInt(star.getAttribute("data-value"));
-            highlightStars(val);
-        });
-
-        star.addEventListener("mouseout", () => {
-            highlightStars(selectedValue);
-        });
-
-        star.addEventListener("click", () => {
-            const val = parseInt(star.getAttribute("data-value"));
-            if (val === selectedValue) {
-                selectedValue = 0;
-                diemInput.value = "";
-            } else {
-                selectedValue = val;
-                diemInput.value = val;
-            }
-            highlightStars(selectedValue);
-        });
-    });
-
-    function highlightStars(val) {
         stars.forEach(star => {
-            const starVal = parseInt(star.getAttribute("data-value"));
-            if (starVal <= val) {
-                star.classList.add("selected");
-            } else {
-                star.classList.remove("selected");
-            }
+            star.addEventListener("mouseover", () => {
+                const val = parseInt(star.getAttribute("data-value"));
+                highlightStars(val);
+            });
+
+            star.addEventListener("mouseout", () => {
+                highlightStars(selectedValue);
+            });
+
+            star.addEventListener("click", () => {
+                const val = parseInt(star.getAttribute("data-value"));
+                selectedValue = val === selectedValue ? 0 : val;
+                diemInput.value = selectedValue;
+                highlightStars(selectedValue);
+            });
         });
-    }
 
-    // Ẩn thông báo sau 3 giây
-    setTimeout(function () {
-        const errorAlert = document.getElementById("errorAlert");
-        const successAlert = document.getElementById("successAlert");
-
-        if (errorAlert) {
-            errorAlert.classList.remove("show");
-            errorAlert.classList.add("hide");
+        function highlightStars(val) {
+            stars.forEach(star => {
+                const starVal = parseInt(star.getAttribute("data-value"));
+                if (starVal <= val) {
+                    star.classList.add("selected");
+                } else {
+                    star.classList.remove("selected");
+                }
+            });
         }
-
-        if (successAlert) {
-            successAlert.classList.remove("show");
-            successAlert.classList.add("hide");
-        }
-    }, 3000);
-
-</script>
+    </script>
+</section>
 </body>
 </html>

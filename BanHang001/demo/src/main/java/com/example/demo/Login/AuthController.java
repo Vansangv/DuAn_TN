@@ -5,6 +5,7 @@ import com.example.demo.Offline.Repository.OnlineGioHangRepository;
 import com.example.demo.Offline.Repository.OnlineSanPhamChiTietRepository;
 import com.example.demo.Offline.Repository.OnlineSanPhamTrongGioHangRepository;
 import com.example.demo.Offline.Repository.YeuThichSanPhamRepository;
+import com.example.demo.PhanQuyen.BaseController;
 import com.example.demo.Repository.*;
 import com.example.demo.Service.EmailService;
 import com.example.demo.Service.NguoiDungService;
@@ -31,7 +32,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
-public class AuthController {
+public class AuthController extends BaseController {
 
     @Autowired
     private OnlineSanPhamChiTietRepository sanPhamChiTietRepository;
@@ -103,30 +104,8 @@ public class AuthController {
 
 
     @GetMapping("/online-home")
-    public String onlineHome(Model model, Authentication authentication) {
-        int soLuongTrongGio = 0;
-        long soLuongYeuThich = 0;
-        Set<Long> danhSachIdYeuThich = new HashSet<>();
-
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
-
-            if (nguoiDung != null) {
-                model.addAttribute("tenNguoiDung", nguoiDung.getHoTen());
-                soLuongTrongGio = sanPhamTrongGioHangRepository.demSoLuongSanPhamTrongGio(nguoiDung.getId());
-                soLuongYeuThich = yeuThichSanPhamRepository.countByNguoiDung_Id(nguoiDung.getId());
-                danhSachIdYeuThich = yeuThichSanPhamRepository.findSanPhamChiTietIdsByNguoiDung_Id(nguoiDung.getId());
-            }
-        } else {
-            model.addAttribute("tenNguoiDung", "Khách");
-        }
-
-        model.addAttribute("soLuongTrongGio", soLuongTrongGio);
-        model.addAttribute("soLuongYeuThich", soLuongYeuThich);
-        model.addAttribute("danhSachSanPham", sanPhamChiTietRepository.findAll());
-        model.addAttribute("danhSachIdYeuThich", danhSachIdYeuThich);
-
+    public String onlineHome(Model model) {
+        model.addAttribute("danhSachSanPham", sanPhamChiTietRepository.findByNoiBatTrue());
         return "index";
     }
 

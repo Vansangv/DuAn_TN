@@ -2,9 +2,12 @@ package com.example.demo.Offline.Controller;
 
 import com.example.demo.Entity.DonHang;
 import com.example.demo.Entity.NguoiDung;
+import com.example.demo.Entity.TraHang;
 import com.example.demo.Entity.VanChuyen;
 import com.example.demo.Offline.Repository.OnlineDonHangRepository;
+import com.example.demo.Offline.Repository.TraHangRepository;
 import com.example.demo.Offline.Repository.VanChuyenRepository;
+import com.example.demo.PhanQuyen.BaseController;
 import com.example.demo.Repository.DonHangRepository;
 import com.example.demo.Service.NguoiDungService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/loc-theo-trangthai")
-public class DonHangVanChuyenController {
+public class DonHangVanChuyenController extends BaseController {
     @Autowired
     private OnlineDonHangRepository donHangRepository;
 
@@ -29,6 +32,9 @@ public class DonHangVanChuyenController {
 
     @Autowired
     private NguoiDungService nguoiDungService;
+
+    @Autowired
+    private TraHangRepository traHangRepository;
 
     @GetMapping
     public String locTrangThai(@RequestParam(defaultValue = "donhang") String loai,
@@ -51,6 +57,9 @@ public class DonHangVanChuyenController {
                 } else if ("vanchuyen".equals(loai)) {
                     List<VanChuyen> danhSach = vanChuyenRepository.findByTrangThaiAndNguoiDungId(trangThai, nguoiDungId);
                     model.addAttribute("vanChuyenList", danhSach);
+                } else if ("trahang".equals(loai)) {
+                    List<TraHang> danhSach = traHangRepository.findByDonHang_NguoiDung_Id(nguoiDungId);
+                    model.addAttribute("traHangList", danhSach);
                 }
 
                 model.addAttribute("tenNguoiDung", nguoiDung.getHoTen());
@@ -63,4 +72,5 @@ public class DonHangVanChuyenController {
 
         return "BanHangOnline/trang-thai-donhang";
     }
+
 }

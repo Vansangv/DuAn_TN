@@ -1,23 +1,18 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Nạp tiền</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
+
+<section layout:fragment="content">
     <style>
-        /* Reset & fonts */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-        }
-        body {
+        .nap-page {
             background: linear-gradient(135deg, #6fc3ff 0%, #e3f6fc 100%);
-            min-height: 100vh;
+            min-height: calc(100vh - 100px);
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 2rem 1rem;
         }
         .container {
             background: #fff;
@@ -123,32 +118,38 @@
             }
         }
     </style>
+
     <script>
         function toggleForm() {
             const form = document.getElementById('napTienForm');
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
         }
     </script>
-</head>
-<body>
-<div class="container">
-    <h2>Nạp tiền vào ví</h2>
-    <div class="balance">
-        <svg class="balance-icon" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="12" fill="#e3f6fc"/>
-            <path d="M7.5 12c0-2.485 2.015-4.5 4.5-4.5s4.5 2.015 4.5 4.5-2.015 4.5-4.5 4.5" stroke="#1492e6" stroke-width="1.5"/>
-            <path d="M12 8.5v7" stroke="#1492e6" stroke-width="1.2"/>
-        </svg>
-        <span class="balance-value" th:text="${soDu} + ' VNĐ'">0 VNĐ</span>
+
+    <div class="nap-page">
+        <div class="container">
+            <h2>Nạp tiền vào ví</h2>
+
+            <div class="balance">
+                <svg class="balance-icon" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="12" fill="#e3f6fc"/>
+                    <path d="M7.5 12c0-2.485 2.015-4.5 4.5-4.5s4.5 2.015 4.5 4.5-2.015 4.5-4.5 4.5"
+                          stroke="#1492e6" stroke-width="1.5"/>
+                    <path d="M12 8.5v7" stroke="#1492e6" stroke-width="1.2"/>
+                </svg>
+                <span class="balance-value" th:text="${soDu} + ' VNĐ'">0 VNĐ</span>
+            </div>
+
+            <button class="main-btn" onclick="toggleForm()">Nạp tiền</button>
+
+            <div id="napTienForm" style="display: none;">
+                <form th:action="@{/nap-tien}" method="post" autocomplete="off">
+                    <label for="soTien">Số tiền (tối thiểu 1.000đ):</label>
+                    <input type="number" id="soTien" name="soTien" min="1000" required placeholder="Nhập số tiền..."/>
+                    <button class="submit-btn" type="submit">Tạo mã QR</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <button class="main-btn" onclick="toggleForm()">Nạp tiền</button>
-    <div id="napTienForm" style="display: none;">
-        <form th:action="@{/nap-tien}" method="post" autocomplete="off">
-            <label for="soTien">Số tiền (tối thiểu 1.000đ):</label>
-            <input type="number" id="soTien" name="soTien" min="1000" required placeholder="Nhập số tiền..."/>
-            <button class="submit-btn" type="submit">Tạo mã QR</button>
-        </form>
-    </div>
-</div>
-</body>
+</section>
 </html>

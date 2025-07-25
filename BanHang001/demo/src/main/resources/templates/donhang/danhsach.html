@@ -12,6 +12,18 @@
 <div layout:fragment="content">
 <div class="container mt-4">
     <h2 class="mb-3">Danh sách Đơn Hàng</h2>
+
+    <!-- FORM TÌM KIẾM -->
+    <form class="row mb-3" th:action="@{/danh-sach-don-hang}" method="get">
+        <div class="col-md-4">
+            <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên người dùng"
+                   th:value="${keyword}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </div>
+    </form>
+
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
@@ -29,7 +41,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="dh : ${donHangs}">
+        <tr th:each="dh : ${donHangPage.content}">
             <td th:text="${dh.id}"></td>
             <td th:text="${dh.nguoiDung != null ? dh.nguoiDung.hoTen : 'Chưa có người dùng'}"></td>
             <td th:text="${dh.diaChiGiaoHang != null ? dh.diaChiGiaoHang.diaChi : 'Chưa có địa chỉ'}"></td>
@@ -46,6 +58,31 @@
         </tr>
         </tbody>
     </table>
+
+    <!-- PHÂN TRANG -->
+    <nav th:if="${donHangPage.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+
+            <!-- Nút Previous -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/danh-sach-don-hang(page=${currentPage - 1}, keyword=${keyword})}">&laquo;</a>
+            </li>
+
+            <!-- Chỉ hiển thị 3 trang: currentPage -1, currentPage, currentPage +1 -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence((currentPage > 0 ? currentPage - 1 : 0),
+                                             (currentPage + 1 < totalPages - 1 ? currentPage + 1 : totalPages - 1))}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/danh-sach-don-hang(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}"></a>
+            </li>
+
+            <!-- Nút Next -->
+            <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/danh-sach-don-hang(page=${currentPage + 1}, keyword=${keyword})}">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </div>
 </body>

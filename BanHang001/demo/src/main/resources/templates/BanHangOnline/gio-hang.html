@@ -1,192 +1,134 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Trang Chủ - Bán Hàng Online</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
+<section layout:fragment="content">
+    <main class="container py-5">
+        <h2 class="mb-4 text-primary fw-bold">
+            <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng của bạn
+        </h2>
 
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        main {
-            flex: 1;
-        }
-
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
-        .card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease-in-out;
-        }
-
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .product-card {
-            border-radius: 10px;
-            overflow: hidden;
-            background-color: #fff;
-            border: none;
-        }
-
-        .banner-img {
-            height: 400px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        footer {
-            background-color: #343a40;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            margin-top: auto;
-        }
-
-        .btn-light i {
-            font-size: 1.1rem;
-        }
-    </style>
-</head>
-<body>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-    <a class="navbar-brand" href="#">🛍️ Bán Hàng</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link active" href="/online-home">Trang chủ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/san-pham-online">Sản phẩm</a></li>
-            <li class="nav-item"><a class="nav-link" href="/khuyen-mai">Khuyến mãi</a></li>
-            <li class="nav-item"><a class="nav-link" href="/don-hang-huy/danh-sach-don-hang">Đơn hàng</a></li>
-            <li class="nav-item"><a class="nav-link" href="/tra-hang">Trả hàng </a></li>
-            <li class="nav-item"><a class="nav-link" href="/chi-dan/hh1">Địa chỉ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/loc-theo-trangthai">Trạng thái</a></li>
-            <li class="nav-item"><a class="nav-link" href="/nap-tien">Nạp tiền</a></li>
-            <!--            <li class="nav-item"><a class="nav-link" href="/xac-nhan-nap">XÁc nhận nạp</a></li>-->
-            <li class="nav-item"><a class="nav-link" href="/lien-he">Liên hệ</a></li>
-        </ul>
-
-        <form class="d-flex me-2" th:action="@{/tim-kiem}" method="get">
-            <input class="form-control me-2" name="keyword" type="search" placeholder="Tìm kiếm...">
-            <button class="btn btn-outline-light" type="submit">Tìm</button>
-        </form>
-
-        <a href="/gio-hang" class="btn btn-warning me-2">
-            <i class="fas fa-shopping-cart"></i> Giỏ hàng
-        </a>
-        <a href="/yeu-thich" class="btn btn-outline-danger me-2">
-            <i class="fas fa-heart"></i> Yêu thích
-        </a>
-
-        <div class="dropdown">
-            <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-user-circle"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Xin chào, <span th:text="${tenNguoiDung}">Người dùng</span></a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-id-card"></i> Thông tin cá nhân</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Đổi mật khẩu</a></li>
-                <li><a class="dropdown-item" href="/lich-su-dang-nhap"><i class="fas fa-history"></i> Lịch sử đăng nhập</a></li>
-                <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
-            </ul>
+        <!-- THÔNG BÁO GIỎ TRỐNG -->
+        <div th:if="${#lists.isEmpty(danhSachSanPhamTrongGio)}">
+            <div class="alert alert-info d-flex align-items-center gap-2 shadow-sm p-3 rounded">
+                <i class="fas fa-info-circle fa-lg"></i>
+                <span>Giỏ hàng của bạn đang trống.</span>
+            </div>
         </div>
-    </div>
-</nav>
 
-<!-- MAIN CONTENT -->
-<main class="container mt-5">
-    <h2 class="mb-4">🛒 Giỏ Hàng của bạn</h2>
+        <!-- Hiển thị thông báo thành công -->
+        <div id="autoDismissAlert"
+             th:if="${successMessage}"
+             class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3"
+             role="alert"
+             style="z-index: 9999; min-width: 300px;">
+            <span th:text="${successMessage}"></span>
+        </div>
 
-    <div th:if="${#lists.isEmpty(danhSachSanPhamTrongGio)}">
-        <div class="alert alert-info">Giỏ hàng của bạn đang trống.</div>
-    </div>
 
-    <div th:unless="${#lists.isEmpty(danhSachSanPhamTrongGio)}">
-        <form th:action="@{/mua-hang}" method="post">
-            <table class="table table-bordered">
-                <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Sản phẩm</th>
-                    <th>Màu sắc</th>
-                    <th>Kích cỡ</th>
-                    <th>Ảnh</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
-                    <th>Hành động</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="sp, stat : ${danhSachSanPhamTrongGio}">
-                    <td th:text="${stat.index + 1}"></td>
-                    <td th:text="${sp.sanPhamChiTiet.sanPham.tenSanPham}"></td>
-                    <td th:text="${sp.sanPhamChiTiet.mauSac.tenMau}"></td>
-                    <td th:text="${sp.sanPhamChiTiet.kichCo.tenKichCo}"></td>
-                    <td><img th:src="@{'/images/' + ${sp.sanPhamChiTiet.sanPham.anhDaiDien}}" style="height: 60px;"></td>
-                    <td th:text="${sp.sanPhamChiTiet.gia} + ' đ'"></td>
-                    <td>
-                        <input type="number"
-                               name="soLuongMap[__${sp.id}__]"
-                               th:value="${sp.soLuong}"
-                               min="1"
-                               max="20"
-                               class="form-control form-control-sm"
-                               required />
-                    </td>
-                    <td>
-                        <a th:href="@{'/gio-hang/huy/' + ${sp.id}}"
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirmDelete();">
-                            Hủy
-                        </a>
-                    </td>
-                </tr>
-                </tbody>
-                <tfoot>
-                <tr>
-                    <td colspan="8" class="text-end">
-                        <a th:href="@{/xac-nhan-don-hang}" class="btn btn-primary">Mua hàng</a>
-                    </td>
-                </tr>
-                </tfoot>
-            </table>
-        </form>
-    </div>
-</main>
+        <!-- DANH SÁCH SẢN PHẨM TRONG GIỎ -->
+        <div th:unless="${#lists.isEmpty(danhSachSanPhamTrongGio)}">
+            <form th:action="@{/mua-hang}" method="post">
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-primary text-center text-uppercase">
+                        <tr>
+                            <th>STT</th>
+                            <th>ID</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Màu</th>
+                            <th>Kích cỡ</th>
+                            <th>Ảnh</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="sp, stat : ${danhSachSanPhamTrongGio}">
+                            <td class="text-center fw-semibold" th:text="${stat.index + 1}"></td>
+                            <td class="text-center" th:text="${sp.id}"></td>
+                            <td th:text="${sp.sanPhamChiTiet.sanPham.tenSanPham}"></td>
+                            <td class="text-center" th:text="${sp.sanPhamChiTiet.mauSac.tenMau}"></td>
+                            <td class="text-center" th:text="${sp.sanPhamChiTiet.kichCo.tenKichCo}"></td>
+                            <td class="text-center">
+                                <!-- Luôn hiển thị ảnh -->
+                                <img th:src="@{'/images/' + ${sp.sanPhamChiTiet.sanPham.anhDaiDien}}"
+                                     class="img-fluid rounded shadow-sm mb-1"
+                                     style="height: 60px; width: 60px; object-fit: cover;">
+                            </td>
 
-<!-- FOOTER -->
-<footer>
-    © 2025 Bán Hàng Online | Địa chỉ: 243 Khuất Duy Tiến, Nhân Chính, Thanh Xuân, Hà Nội
-</footer>
 
-<script>
-    function confirmDelete() {
-        return confirm("Bạn có chắc chắn muốn hủy sản phẩm này khỏi giỏ hàng?");
-    }
-</script>
+                            <td class="text-center text-danger fw-bold">
+                                <span th:text="${sp.sanPhamChiTiet.gia} + ' đ'"></span>
+                            </td>
+                            <td class="text-center">
+                                <input type="number"
+                                       name="soLuongMap[__${sp.id}__]"
+                                       th:value="${sp.soLuong}"
+                                       min="1"
+                                       max="20"
+                                       class="form-control form-control-sm text-center"
+                                       style="width: 80px;"
+                                       required />
+                            </td>
+                            <td class="text-center">
+                                <a th:href="@{'/gio-hang/huy/' + ${sp.id}}"
+                                   class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center gap-1"
+                                   onclick="return confirmDeleteCustom(this, event);"
+                                   style="min-width: 80px;">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span>Hủy</span>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="9" class="text-end pt-4">
+                                <a th:href="@{/xac-nhan-don-hang}"
+                                   class="btn btn-success btn-lg px-5 shadow-sm">
+                                    <i class="fas fa-check-circle me-2"></i>Tiến hành đặt hàng
+                                </a>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDeleteCustom(anchor, event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Xác nhận hủy?',
+                text: "Bạn có chắc chắn muốn xóa sản phẩm khỏi giỏ hàng?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Có, hãy hủy!',
+                cancelButtonText: 'Không'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = anchor.getAttribute("href");
+                }
+            });
+        }
+
+        setTimeout(function () {
+            const alert = document.getElementById('autoDismissAlert');
+            if (alert) {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+                alert.style.display = 'none';
+            }
+        }, 3000);
+    </script>
+</section>
 </html>

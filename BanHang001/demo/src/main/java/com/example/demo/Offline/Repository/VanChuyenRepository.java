@@ -2,6 +2,8 @@ package com.example.demo.Offline.Repository;
 
 import com.example.demo.Entity.DonHang;
 import com.example.demo.Entity.VanChuyen;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +20,5 @@ public interface VanChuyenRepository extends JpaRepository<VanChuyen,Long> {
                                                   @Param("nguoiDungId") Long nguoiDungId);
 
 
+    Page<VanChuyen> findByDonHangNguoiDungHoTenContainingIgnoreCase(String hoTen, Pageable pageable);
 }

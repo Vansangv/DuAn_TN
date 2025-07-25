@@ -7,6 +7,10 @@ import com.example.demo.Offline.Repository.OnlineSanPhamChiTietRepository;
 import com.example.demo.Offline.Repository.VanChuyenRepository;
 import com.example.demo.Repository.LichSuThanhToanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +34,32 @@ public class VanChuyenController {
     @Autowired
     private OnlineSanPhamChiTietRepository onlineSanPhamChiTietRepository;
 
-    // Trang danh sách vận chuyển
     @GetMapping("/danh-sach")
-    public String danhSachVanChuyen(Model model) {
-        model.addAttribute("vanchuyens", vanChuyenRepository.findAll());
+    public String danhSachVanChuyen(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+
+        // Sắp xếp theo id giảm dần (mới nhất lên đầu)
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
+        Page<VanChuyen> vanChuyenPage;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            vanChuyenPage = vanChuyenRepository.findByDonHangNguoiDungHoTenContainingIgnoreCase(keyword, pageable);
+        } else {
+            vanChuyenPage = vanChuyenRepository.findAll(pageable);
+        }
+
+        model.addAttribute("vanchuyens", vanChuyenPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", vanChuyenPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
         model.addAttribute("page", "van-chuyen");
+
         return "BanHangOnline/vanchuyen-list";
     }
+
+
 
     // Cập nhật trạng thái vận chuyển thành công
     @PostMapping("/giao-thanh-cong/{id}")

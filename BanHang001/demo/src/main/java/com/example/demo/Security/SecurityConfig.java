@@ -37,14 +37,23 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain onlineSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/login-online", "/online-home", "/register-online", "/verify-email-online", "/resend-verification-code-online", "/css/**", "/js/**")
+                .securityMatcher("/login-online", "/register-online", "/verify-email-online", "/resend-verification-code-online", "/online-home", "/logout-online", "/xac-nhan-nap/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login-online", "/register-online", "/verify-email-online", "/resend-verification-code-online", "/xac-nhan-nap/**","/css/**", "/js/**").permitAll()
+                        .requestMatchers(
+                                "/login-online",
+                                "/register-online",
+                                "/verify-email-online",
+                                "/resend-verification-code-online",
+                                "/xac-nhan-nap/**",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login-online")
-                        .loginProcessingUrl("/login-online") // submit form tại đây
+                        .loginProcessingUrl("/login-online")
                         .defaultSuccessUrl("/online-home", true)
                         .permitAll()
                 )
@@ -52,21 +61,19 @@ public class SecurityConfig {
                         .logoutUrl("/logout-online")
                         .logoutSuccessUrl("/login-online")
                         .permitAll()
-                )
-                 .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/yeu-thich/them") // bỏ qua kiểm tra CSRF cho URL này
-        );
+                );
+
+
         return http.build();
     }
-
 
     @Bean
     @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationSuccessHandler successHandler) throws Exception {
         http
+                .securityMatcher("/**") // giữ lại cho tất cả những cái còn lại
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register" ,"/verify-email","/resend-verification-code", "/verify-email/**","/quen-mat-khau","/dat-lai-mat-khau/**", "/css/**", "/js/**").permitAll()
-                        //.requestMatchers("/home", "/**").hasAnyAuthority("ADMIN", "NHÂN VIÊN")
+                        .requestMatchers("/login", "/register", "/verify-email", "/resend-verification-code", "/verify-email/**", "/quen-mat-khau", "/dat-lai-mat-khau/**", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/nguoi-dung/them", "/nguoi-dung/sua/**", "/nguoi-dung/xoa/**").hasRole("ADMIN")
                         .requestMatchers("/nguoi-dung/**").hasAnyRole("ADMIN", "NHANVIEN")
                         .requestMatchers("/vai-tro-nguoi-dung/add", "/vai-tro-nguoi-dung/update/**").hasRole("ADMIN")
@@ -81,9 +88,11 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login")
                         .permitAll()
-                );
+                )
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/yeu-thich/them"));
         return http.build();
     }
+
 
     @Bean
     public AuthenticationSuccessHandler successHandler(LoginHistoryService loginHistoryService, LogHeThongService logHeThongService) {

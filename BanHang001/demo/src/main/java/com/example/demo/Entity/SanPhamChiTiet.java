@@ -30,4 +30,7 @@ public class SanPhamChiTiet {
     @Column(name = "gia")
     private Integer gia;
 
+    @Column(name = "noi_bat")
+    private Boolean noiBat ;
+
 }

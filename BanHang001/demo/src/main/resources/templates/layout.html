@@ -255,12 +255,7 @@
             </div>
 
             <!-- Vận chuyển & Trả hàng -->
-            <a class="nav-link collapsed"
-               data-bs-toggle="collapse"
-               href="#collapse-shipping"
-               role="button"
-               aria-expanded="false"
-               aria-controls="collapse-shipping"
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#collapse-shipping" role="button" aria-expanded="false" aria-controls="collapse-shipping"
                th:classappend="${pageGroup == 'van-chuyen'} ? '' : 'collapsed'">
                 <i class="fa-solid fa-truck-fast fa-fw"></i>
                 Vận chuyển &amp; Trả hàng
@@ -296,6 +291,8 @@
     <!-- Nội dung chính -->
     <div class="content mt-4" layout:fragment="content">
         <!-- Nội dung động sẽ được Thymeleaf render tại đây -->
+        <div th:insert="fragments/san-pham :: sanPhamContent"></div>
+
     </div>
 </div>
 

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Chủ - Shop Online</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap & FontAwesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- AOS Animation -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        @media (max-width: 991px) {
+            #bannerCarousel img {max-height:210px;}
+            .product-title {font-size:1rem;}
+        }
+        @media (max-width: 767px) {
+            .product-card {margin-bottom:20px;}
+            .product-title {font-size:.98rem;}
+        }
+        .btn-heart:focus, .btn-heart:hover {
+            background: #ffeaea !important;
+            box-shadow: 0 2px 8px #e6394633 !important;
+        }
+        .card.product-card:hover {
+            background: var(--card-hover);
+            box-shadow: 0 6px 22px 0 rgba(30,144,255,0.13);
+            transform: translateY(-3px) scale(1.02);
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="homeContent">
+
+    <!-- Carousel banner -->
+    <div style="margin-left: 40px; margin-right: 40px;">
+        <div id="bannerCarousel" class="carousel slide mt-3 mb-5" data-bs-ride="carousel"
+             style="border-radius:18px;overflow:hidden;box-shadow:0 4px 32px 0 rgba(30,144,255,0.08);background:#e3f0ff;">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="/images/AoCroptop.jpg" class="d-block mx-auto w-100"
+                         style="max-height:320px;object-fit:cover;" alt="Banner 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="/images/aokhoacda1.jpg" class="d-block mx-auto w-100"
+                         style="max-height:320px;object-fit:cover;" alt="Banner 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="/images/qasomithegood_md.jpg" class="d-block mx-auto w-100"
+                         style="max-height:320px;object-fit:cover;" alt="Banner 3">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-primary rounded-circle p-2"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-primary rounded-circle p-2"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 🌟 Banner chào mừng -->
+    <div style="margin-left: 80px; margin-right: 100px;">
+        <div class="container banner-section mb-4">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-12 order-lg-1 order-2 banner-content">
+                    <div class="banner-title">Chào mừng đến với ShopOnline!</div>
+                    <div class="banner-desc">
+                        Khám phá hàng ngàn sản phẩm mới, ưu đãi cực lớn mỗi ngày.<br>
+                        Đăng nhập để nhận quà tặng hấp dẫn và ưu đãi thành viên!
+                    </div>
+                    <div class="mt-4">
+                        <a href="/san-pham-online" class="btn btn-primary px-4 py-2 me-2">
+                            <i class="fas fa-shopping-basket"></i> Xem sản phẩm
+                        </a>
+                        <a href="/khuyen-mai" class="btn btn-outline-primary px-4 py-2">
+                            <i class="fas fa-gift"></i> Ưu đãi
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div >
+
+    <!-- Sản phẩm nổi bật -->
+    <div class="container mt-3">
+        <h2 class="text-center mb-4" style="color:#1e90ff;font-weight:700;">🔥 Sản phẩm nổi bật</h2>
+        <!-- Thông báo thành công (Tự động ẩn sau 2s) -->
+        <div id="autoDismissAlert"
+             th:if="${successMessage}"
+             class="position-fixed top-0 start-50 translate-middle-x mt-3 alert alert-success d-flex align-items-center shadow"
+             style="z-index: 1050; min-width: 300px; opacity: 1; transition: opacity 0.5s ease;" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <div th:text="${successMessage}">Thành công!</div>
+        </div>
+
+        <!-- Thông báo Yêu thích (Tùy ý gọi bằng JS) -->
+        <div id="heartAlert"
+             class="position-fixed top-0 start-50 translate-middle-x mt-3 alert alert-success alert-dismissible fade show d-none shadow"
+             style="z-index: 1050; min-width: 300px;" role="alert">
+            <span id="heartAlertMessage">Đã thêm vào danh sách yêu thích!</span>
+            <button type="button" class="btn-close" onclick="hideHeartAlert()"></button>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-3" th:each="sp : ${danhSachSanPham}">
+                <div class="card product-card h-100 position-relative">
+                    <div class="position-absolute top-0 end-0 m-2 d-flex flex-column align-items-end gap-2 z-2">
+                        <!-- Toast yêu thích -->
+                        <button type="button" class="btn btn-light btn-sm btn-heart border-0 shadow-sm"
+                                title="Yêu thích" onclick="toggleHeart(this)" th:attr="data-id=${sp.id}">
+                            <i th:classappend="${danhSachIdYeuThich.contains(sp.id)} ? 'fas text-danger' : 'far text-secondary'"
+                               class="fa-heart"></i>
+                        </button>
+                        <a th:href="@{'/chi-tiet/' + ${sp.id}}"
+                           class="btn btn-light btn-sm border-0 shadow-sm"
+                           title="Xem chi tiết">
+                            <i class="fas fa-eye text-primary"></i>
+                        </a>
+                    </div>
+                    <img th:src="@{'/images/' + ${sp.sanPham.anhDaiDien}}"
+                         class="card-img-top bg-white"
+                         style="height:180px; width:100%; object-fit:contain; padding:10px;"
+                         alt="Ảnh sản phẩm">
+                    <div class="card-body d-flex flex-column justify-content-between product-card-body">
+                        <div>
+                            <h5 class="product-title mb-1" th:text="${sp.sanPham.tenSanPham}"></h5>
+                            <div class="product-price mb-1"
+                                 th:text="${#numbers.formatDecimal(sp.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></div>
+                        </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <form th:action="@{'/them-vao-gio-hang/' + ${sp.id}}" method="post" class="w-50">
+                                <button type="submit" class="btn btn-warning btn-sm w-100 rounded-3 shadow-sm">
+                                    <i class="fas fa-cart-plus"></i>
+                                    <span class="d-none d-md-inline">Giỏ hàng</span>
+                                </button>
+                            </form>
+                            <form th:action="@{'/mua-ngay/' + ${sp.id}}" method="post" class="w-50">
+                                <button type="submit" class="btn btn-danger btn-sm w-100 rounded-3 shadow-sm">
+                                    <i class="fas fa-bolt"></i>
+                                    <span class="d-none d-md-inline">Mua ngay</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh mục sản phẩm -->
+    <div class="container my-5" data-aos="fade-up">
+        <h2 class="text-center mb-4" style="color:#ff6f61;font-weight:700;">🛒 Danh mục phổ biến</h2>
+        <div class="row text-center">
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card shadow-sm p-3 h-100 border-0">
+                    <i class="fas fa-tshirt fa-2x text-primary mb-2"></i>
+                    <h6>Áo thời trang</h6>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card shadow-sm p-3 h-100 border-0">
+                    <i class="fas fa-shoe-prints fa-2x text-warning mb-2"></i>
+                    <h6>Giày dép</h6>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card shadow-sm p-3 h-100 border-0">
+                    <i class="fas fa-hat-cowboy fa-2x text-success mb-2"></i>
+                    <h6>Phụ kiện</h6>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card shadow-sm p-3 h-100 border-0">
+                    <i class="fas fa-child fa-2x text-danger mb-2"></i>
+                    <h6>Thời trang trẻ em</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ưu điểm -->
+    <div class="container my-5" data-aos="fade-up">
+        <h2 class="text-center mb-4" style="color:#20c997;font-weight:700;">🎯 Vì sao chọn SH-Shop?</h2>
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <i class="fas fa-shipping-fast fa-2x mb-2 text-primary"></i>
+                <h6>Giao hàng nhanh</h6>
+                <p class="text-muted small">Toàn quốc chỉ 1-3 ngày.</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <i class="fas fa-undo fa-2x mb-2 text-warning"></i>
+                <h6>Đổi trả dễ</h6>
+                <p class="text-muted small">7 ngày miễn phí.</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <i class="fas fa-shield-alt fa-2x mb-2 text-success"></i>
+                <h6>Hàng chính hãng</h6>
+                <p class="text-muted small">Cam kết chất lượng.</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <i class="fas fa-headset fa-2x mb-2 text-danger"></i>
+                <h6>Hỗ trợ 24/7</h6>
+                <p class="text-muted small">Tư vấn nhiệt tình.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog / Tin tức (Carousel) -->
+    <div class="container my-5" data-aos="fade-up">
+        <h2 class="text-center mb-4" style="color:#ff9800;font-weight:700;">📰 Tin tức mới nhất</h2>
+
+        <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+
+                <!-- Slide 1 -->
+                <div class="carousel-item active">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card shadow-sm h-100">
+                                <img src="/images/aobocotay_md.jpg" class="card-img-top" alt="blog1">
+                                <div class="card-body">
+                                    <h6 class="card-title">Top xu hướng thời trang hè 2025</h6>
+                                    <p class="card-text text-muted small">Cập nhật xu hướng hot nhất: croptop, quần suông, chất liệu mỏng nhẹ…</p>
+                                    <a href="/tin-tuc/1" class="btn btn-sm btn-outline-primary">Đọc thêm</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card shadow-sm h-100">
+                                <img src="/images/blog2.jpg" class="card-img-top" alt="blog2">
+                                <div class="card-body">
+                                    <h6 class="card-title">Bí quyết phối đồ đi làm không nhàm chán</h6>
+                                    <p class="card-text text-muted small">Gợi ý 5 phong cách thanh lịch, sáng tạo giúp bạn luôn nổi bật nơi công sở.</p>
+                                    <a href="/tin-tuc/2" class="btn btn-sm btn-outline-primary">Đọc thêm</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card shadow-sm h-100">
+                                <img src="/images/blog3.jpg" class="card-img-top" alt="blog3">
+                                <div class="card-body">
+                                    <h6 class="card-title">Mẹo chọn size quần áo chuẩn online</h6>
+                                    <p class="card-text text-muted small">Hướng dẫn đo số đo cơ thể và chọn size phù hợp theo từng bảng kích thước.</p>
+                                    <a href="/tin-tuc/3" class="btn btn-sm btn-outline-primary">Đọc thêm</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card shadow-sm h-100">
+                                <img src="/images/blog4.jpg" class="card-img-top" alt="blog4">
+                                <div class="card-body">
+                                    <h6 class="card-title">Phong cách Y2K trở lại mạnh mẽ</h6>
+                                    <p class="card-text text-muted small">Từ quần ống loe đến áo ôm sát – Y2K đang khiến giới trẻ phát cuồng trở lại.</p>
+                                    <a href="/tin-tuc/4" class="btn btn-sm btn-outline-primary">Đọc thêm</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card shadow-sm h-100">
+                                <img src="/images/blog5.jpg" class="card-img-top" alt="blog5">
+                                <div class="card-body">
+                                    <h6 class="card-title">Mix & Match: Tối giản nhưng sang trọng</h6>
+                                    <p class="card-text text-muted small">Cách phối đồ tone-sur-tone và chọn phụ kiện giúp bạn nổi bật mà không cầu kỳ.</p>
+                                    <a href="/tin-tuc/5" class="btn btn-sm btn-outline-primary">Đọc thêm</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card shadow-sm h-100">
+                                <img src="/images/blog6.jpg" class="card-img-top" alt="blog6">
+                                <div class="card-body">
+                                    <h6 class="card-title">Top phụ kiện nhất định phải có hè này</h6>
+                                    <p class="card-text text-muted small">Túi mini, kính mắt màu, vòng cổ ngọc trai – bạn đã có món nào chưa?</p>
+                                    <a href="/tin-tuc/6" class="btn btn-sm btn-outline-primary">Đọc thêm</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Nút chuyển slider -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                <span class="visually-hidden">Trước</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                <span class="visually-hidden">Sau</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Đăng ký nhận ưu đãi -->
+    <div class="container my-5" data-aos="fade-up">
+        <div class="p-5 rounded shadow bg-light text-center">
+            <h4 class="mb-3 text-primary">🎁 Nhận ưu đãi độc quyền!</h4>
+            <p class="text-muted mb-4">Đăng ký email để không bỏ lỡ khuyến mãi.</p>
+            <form class="row justify-content-center g-2">
+                <div class="col-md-6">
+                    <input type="email" class="form-control" placeholder="Nhập email của bạn">
+                </div>
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary">Đăng ký</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+    AOS.init();
+</script>
+
+</body>
+</html>

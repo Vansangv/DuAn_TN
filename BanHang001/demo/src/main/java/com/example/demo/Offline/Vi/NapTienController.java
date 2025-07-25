@@ -5,6 +5,7 @@ import com.example.demo.Entity.ViDienTu;
 import com.example.demo.Entity.YeuCauNapTien;
 import com.example.demo.Offline.Repository.ViDienTuRepository;
 import com.example.demo.Offline.Repository.YeuCauNapTienRepository;
+import com.example.demo.PhanQuyen.BaseController;
 import com.example.demo.Service.NguoiDungService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/nap-tien")
-public class NapTienController {
+public class NapTienController extends BaseController {
     @Autowired
     private YeuCauNapTienRepository yeuCauNapTienRepository;
 

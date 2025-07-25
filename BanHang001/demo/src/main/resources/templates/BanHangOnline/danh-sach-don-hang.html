@@ -19,7 +19,7 @@
         <tbody>
         <tr th:each="dh : ${donHangs}">
             <td th:text="${dh.id}"></td>
-            <td th:text="${dh.tongTien}"></td>
+            <td th:text="${#numbers.formatInteger(dh.tongTien, 3, 'COMMA') + 'đ'}"></td>
             <td th:text="${dh.trangThai}"></td>
             <td>
                 <a th:href="@{'/tra-hang/yeu-cau/' + ${dh.id}}" class="btn btn-danger btn-sm">Trả hàng</a>

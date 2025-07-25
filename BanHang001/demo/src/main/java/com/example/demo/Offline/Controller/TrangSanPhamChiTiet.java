@@ -6,6 +6,7 @@ import com.example.demo.Entity.*;
 import com.example.demo.Offline.DTO.KichCoDTO;
 import com.example.demo.Offline.DTO.MauSacDTO;
 import com.example.demo.Offline.Repository.*;
+import com.example.demo.PhanQuyen.BaseController;
 import com.example.demo.Repository.KichCoRepository;
 import com.example.demo.Repository.MauSacRepository;
 import com.example.demo.Repository.SanPhamRepository;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-public class TrangSanPhamChiTiet {
+public class TrangSanPhamChiTiet extends BaseController {
 
     @Autowired
     private SanPhamRepository sanPhamRepository;
@@ -52,26 +53,7 @@ public class TrangSanPhamChiTiet {
     @GetMapping("/chi-tiet/{id}")
     public String hienThiChiTietSanPham(@PathVariable("id") Long id,
                                         @RequestParam(value = "full", required = false, defaultValue = "false") boolean full,
-                                        Model model, Authentication authentication) {
-
-
-        int soLuongTrongGio = 0;
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(username);
-
-            if (nguoiDung != null) {
-                model.addAttribute("tenNguoiDung", nguoiDung.getHoTen());
-                soLuongTrongGio = sanPhamTrongGioHangRepository.demSoLuongSanPhamTrongGio(nguoiDung.getId());
-            } else {
-                model.addAttribute("tenNguoiDung", "Khách");
-            }
-        } else {
-            model.addAttribute("tenNguoiDung", "Khách");
-        }
-
-        model.addAttribute("soLuongTrongGio", soLuongTrongGio);
-
+                                        Model model) {
 
         // Lấy thông tin sản phẩm
         SanPham sanPham = sanPhamRepository.findById(id).orElse(null);

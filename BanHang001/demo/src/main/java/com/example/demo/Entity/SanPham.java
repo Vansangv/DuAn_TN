@@ -33,10 +33,4 @@ public class SanPham {
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao ;
 
-
-    @Column(name = "noi_bat")
-    private Integer noibat ;
-
-
-
 }
